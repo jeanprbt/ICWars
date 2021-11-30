@@ -9,7 +9,6 @@ public class Level0 extends ICWarsArea{
     @Override
     protected void createArea() {
         registerActor(new Background(this));
-        registerActor(new Foreground(this));
     }
 
     @Override
