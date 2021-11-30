@@ -16,8 +16,15 @@ public class ICWarsBehavior extends AreaBehavior {
      * @param window (Window) : Window in which the game is launched
      * @param name (String) : Name of the file containing the behavior image
      * */
-    public ICWarsBehavior (Window window, String name){
+    public ICWarsBehavior (Window window, String name) {
         super(window, name);
+        int height = getHeight();
+        int width = getWidth();
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                setCell(x, y, new ICWarsCell(x, y));
+            }
+        }
     }
 
     /**

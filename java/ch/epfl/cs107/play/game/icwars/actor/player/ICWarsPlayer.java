@@ -23,6 +23,7 @@ public abstract class ICWarsPlayer extends ICWarsActor {
      */
     public ICWarsPlayer(Area area, DiscreteCoordinates position, Faction faction, Unit... units) {
         super(area, position, faction);
+        effectives = new ArrayList<Unit>();
         for (Unit unit : units) {
             effectives.add(unit);
             area.registerActor(unit);
