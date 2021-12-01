@@ -40,10 +40,14 @@ public abstract class Unit extends ICWarsActor {
      */
     public Unit(Area area, DiscreteCoordinates position, Faction faction) {
         super(area, position, faction);
-
         for (int x = -radius ; x <= radius ; x++) {
             for (int y = -radius; y <= radius; y++) {
-
+                boolean hasLeftEdge, hasRightEdge, hasDownEdge, hasUpEdge ;
+                hasLeftEdge = x > (-radius) && (x + position.x) > 0;
+                hasRightEdge = x < radius && (x + position.x) < (radius + position.x);
+                hasUpEdge = y > (-radius) && (y + position.y) > 0;
+                hasDownEdge = y < radius && (y + position.y) < (radius + position.y);
+                range.addNode(new DiscreteCoordinates(position.x + x, position.y + y), hasLeftEdge, hasUpEdge, hasRightEdge, hasDownEdge);
             }
         }
     }
