@@ -30,11 +30,14 @@ public class Tank extends Unit {
     public int getDamage() {
         return 7;
     }
-    public int getRange(){
+    public int getRadius(){
         return 4 ;
     }
     public int getMaxHp(){
         return 10;
+    }
+    public String getName(){
+        return "Tank";
     }
 }
 

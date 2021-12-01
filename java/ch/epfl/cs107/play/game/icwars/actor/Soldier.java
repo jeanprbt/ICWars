@@ -30,12 +30,13 @@ public class Soldier extends Unit {
     public int getDamage(){
         return 2 ;
     }
-
-    public int getRange(){
+    public int getRadius(){
         return 2 ;
     }
-
     public int getMaxHp(){
         return 5 ;
+    }
+    public String getName(){
+        return "Soldier";
     }
 }

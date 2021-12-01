@@ -22,8 +22,6 @@ public class ICWars extends AreaGame {
     public static final float CAMERA_SCALE_FACTOR = 16.f ;
 
     private RealPlayer player;
-    private final String[] areas = {"icwars/Level0", "icwars/Level1"};
-    private int areaIndex;
 
     /**
      * Add all the areas
@@ -41,7 +39,7 @@ public class ICWars extends AreaGame {
         Button key = keyboard.get(Keyboard.N);
         if(key.isPressed()) changeArea();
 
-        //Reseting game if key "R" is pressed
+        //Resetting game if key "R" is pressed
         key = keyboard.get(Keyboard.R);
         if(key.isPressed()) begin(getWindow(), getFileSystem());
         super.update(deltaTime);
@@ -56,8 +54,7 @@ public class ICWars extends AreaGame {
     public boolean begin(Window window, FileSystem fileSystem) {
         if (super.begin(window, fileSystem)) {
             createAreas();
-            areaIndex = 0;
-            initArea(areas[areaIndex]);
+            initArea("icwars/Level0");
             return true;
         }
         return false;
@@ -82,10 +79,12 @@ public class ICWars extends AreaGame {
      */
     protected void changeArea() {
         player.leaveArea();
-        areaIndex = (areaIndex==0) ? 1 : 2 ;
-        if(areaIndex == 2) end();
-        ICWarsArea currentArea = (ICWarsArea) setCurrentArea(areas[areaIndex], false);
-        player.enterArea(currentArea, currentArea.getPlayerSpawnCoordinates());
+        if(getCurrentArea().getTitle() == "icwars/Level0") {
+            ICWarsArea currentArea = (ICWarsArea) setCurrentArea("icwars/Level1", false);
+            player.enterArea(currentArea, currentArea.getPlayerSpawnCoordinates());
+        } else {
+            end();
+        }
     }
 
     @Override
