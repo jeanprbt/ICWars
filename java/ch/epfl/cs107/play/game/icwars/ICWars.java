@@ -36,13 +36,14 @@ public class ICWars extends AreaGame {
         int index = 0;
 
         //Changing area if key "N" is pressed
-        Keyboard keyboard= getWindow().getKeyboard();
-        if(keyboard.get(Keyboard.N).isPressed()) changeArea();
+        Keyboard keyboard = getWindow().getKeyboard();
+        if (keyboard.get(Keyboard.N).isPressed()) changeArea();
 
         //Resetting game if key "R" is pressed
-        if(keyboard.get(Keyboard.R).isPressed()) begin(getWindow(), getFileSystem());
+        if (keyboard.get(Keyboard.R).isPressed()) begin(getWindow(), getFileSystem());
         super.update(deltaTime);
 
+        /*
         //Selecting unit if key "U" is pressed
         if(keyboard.get(Keyboard.U).isReleased()){
             ((RealPlayer)player).selectUnit(1);

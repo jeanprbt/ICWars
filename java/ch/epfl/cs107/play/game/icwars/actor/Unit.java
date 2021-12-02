@@ -17,6 +17,7 @@ public abstract class Unit extends ICWarsActor {
     private int radius ;
     private int maxHp ;
     private ICWarsRange range ;
+    private boolean hasBeenUsed ;
 
     protected int hp ;
     protected Sprite sprite ;
@@ -44,17 +45,8 @@ public abstract class Unit extends ICWarsActor {
         radius = getRadius() ;
         name = getName() ;
         maxHp = getMaxHp() ;
-
-        for (int x = -radius ; x <= radius ; x++) {
-            for (int y = -radius; y <= radius; y++) {
-                boolean hasLeftEdge, hasRightEdge, hasDownEdge, hasUpEdge ;
-                hasLeftEdge = x > (-radius) && (x + position.x) > 0;
-                hasRightEdge = x < radius && (x + position.x) < (radius + position.x);
-                hasUpEdge = y > (-radius) && (y + position.y) > 0;
-                hasDownEdge = y < radius && (y + position.y) < (radius + position.y);
-                range.addNode(new DiscreteCoordinates(position.x + x, position.y + y), hasLeftEdge, hasUpEdge, hasRightEdge, hasDownEdge);
-            }
-        }
+        hasBeenUsed = false ;
+        fillRange(position);
     }
 
     public int getHp() {

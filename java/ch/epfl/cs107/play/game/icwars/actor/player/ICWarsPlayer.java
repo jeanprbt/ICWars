@@ -13,7 +13,8 @@ import java.util.ArrayList;
 public abstract class ICWarsPlayer extends ICWarsActor {
 
     private ArrayList<Unit> effectives ;
-    protected Unit selectedUnit;
+    private ICWarsPlayerState state ;
+    protected Unit selectedUnit ;
 
     /**
      * Default constructor for ICWarsActor
@@ -25,10 +26,67 @@ public abstract class ICWarsPlayer extends ICWarsActor {
     public ICWarsPlayer(Area area, DiscreteCoordinates position, Faction faction, Unit... units) {
         super(area, position, faction);
         effectives = new ArrayList<Unit>();
+        state = ICWarsPlayerState.IDLE ;
         for (Unit unit : units) {
             effectives.add(unit);
             area.registerActor(unit);
         }
+    }
+
+    /**
+     * Enumeration of all possible states of a player
+     * during the game :IDLE, NORMAL, SELECT_CELL, MOVE_UNIT,
+     * ACTION_SELECTION, ACTION
+     *
+     */
+    public enum ICWarsPlayerState {
+        IDLE,
+        NORMAL,
+        SELECT_CELL,
+        MOVE_UNIT,
+        ACTION_SELECTION,
+        ACTION
+    }
+
+    /**
+     * Method to update player's state if certain conditions are met
+     * The method is called by the update method of RealPlayer.java
+     * @param state
+     */
+    public void updateState(ICWarsPlayerState state){
+        Keyboard keyboard = getOwnerArea().getKeyboard();
+        switch (state){
+            case IDLE : break ;
+            case NORMAL :
+                if(keyboard.get(Keyboard.ENTER).isReleased()) state = ICWarsPlayerState.SELECT_CELL ;
+                break;
+            case SELECT_CELL:
+                if(selectedUnit != null) state = ICWarsPlayerState.MOVE_UNIT ;
+                break;
+            case MOVE_UNIT:
+                //TODO move selected unit to current location
+                if(keyboard.get(Keyboard.ENTER).isReleased()) state = ICWarsPlayerState.NORMAL ;
+                break;
+            case ACTION:
+            case ACTION_SELECTION:
+            default: break;
+        }
+    }
+
+    /**
+     * Method to call when a new player is starting his turn
+     * The method changes its state to NORMAL and centers the camera
+     * on itself
+     */
+    public void startTurn() {
+        state = ICWarsPlayerState.NORMAL;
+        centerCamera();
+    }
+
+    @Override
+    public void onLeaving(List<DiscreteCoordinates> coordinates) {
+        super.onLeaving(coordinates);
+        if(state == ICWarsPlayerState.SELECT_CELL) state = ICWarsPlayerState.NORMAL ;
     }
 
     @Override
@@ -75,7 +133,7 @@ public abstract class ICWarsPlayer extends ICWarsActor {
             selectedUnit = effectives.get(index);
         }
     }
-
+    */
 
     @Override
     public void update(float deltaTime) {
