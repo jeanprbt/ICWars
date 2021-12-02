@@ -33,6 +33,7 @@ public class ICWars extends AreaGame {
 
     @Override
     public void update(float deltaTime) {
+        int index = 0;
 
         //Changing area if key "N" is pressed
         Keyboard keyboard= getWindow().getKeyboard();

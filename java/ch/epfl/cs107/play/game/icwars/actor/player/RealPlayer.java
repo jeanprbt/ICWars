@@ -39,6 +39,8 @@ public class RealPlayer extends ICWarsPlayer {
     @Override
     public void draw(Canvas canvas) {
         sprite.draw(canvas);
+        if(selectedUnit == null) ;
+        else gui.draw(canvas, selectedUnit);
     }
 
     @Override
