@@ -48,7 +48,7 @@ public class ICWars extends AreaGame {
         if(keyboard.get(Keyboard.U).isReleased()){
             ((RealPlayer)player).selectUnit(1);
 
-        }
+        }*/
     }
 
     @Override
@@ -61,6 +61,7 @@ public class ICWars extends AreaGame {
         if (super.begin(window, fileSystem)) {
             createAreas();
             initArea("icwars/Level0");
+            player.startTurn();
             return true;
         }
         return false;

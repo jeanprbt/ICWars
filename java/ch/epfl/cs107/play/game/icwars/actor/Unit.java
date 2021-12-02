@@ -57,6 +57,37 @@ public abstract class Unit extends ICWarsActor {
     }
 
     /**
+     * Method that modifies the attribute range :
+     * Il creates a new empty ICWarsRange, and then fills it with all the nodes that
+     * fits its conditions.
+     * @param  : pair of DiscreteCoordinates from which the range is being created
+     * @return : the new full ICWarsRange
+     */
+    public ICWarsRange fillRange(DiscreteCoordinates position){
+        range = new ICWarsRange();
+        for (int x = -radius ; x <= radius ; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                boolean hasLeftEdge, hasRightEdge, hasDownEdge, hasUpEdge ;
+                hasLeftEdge = x > (-radius) && (x + position.x) > 0;
+                hasRightEdge = x < radius && (x + position.x) < (radius + position.x);
+                hasUpEdge = y > (-radius) && (y + position.y) > 0;
+                hasDownEdge = y < radius && (y + position.y) < (radius + position.y);
+                range.addNode(new DiscreteCoordinates(position.x + x,position.y + y), hasLeftEdge, hasUpEdge, hasRightEdge, hasDownEdge);
+            }
+        }
+        return range ; 
+    }
+
+    @Override
+    public boolean changePosition(DiscreteCoordinates newPosition) {
+         if (!super.changePosition(newPosition) || !range.nodeExists(newPosition)) {
+             return false;
+         }
+         fillRange(newPosition);
+         return true;
+    }
+
+    /**
      * Function that lowers the health points and determines if
      * the unit is dead or not, it also returns 0 if health points
      * are negative

@@ -8,7 +8,10 @@ import ch.epfl.cs107.play.game.icwars.actor.Soldier;
 import ch.epfl.cs107.play.game.icwars.actor.Unit;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Canvas;
+import ch.epfl.cs107.play.window.Keyboard;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ICWarsPlayer extends ICWarsActor {
 
@@ -120,13 +123,13 @@ public abstract class ICWarsPlayer extends ICWarsActor {
         return(effectives.size() == 0);
     }
 
-
+    /*
     /**
      * Method that select the unit corresponding to the index
      * passed in element in its array effectives. If the index is too
      * big, then the method just does nothing
      * @param index : integer representing the selected unit among the arraylist effectives
-     */
+     *//*
     public void selectUnit(int index){
         if(index > effectives.size()) ;
         else {
