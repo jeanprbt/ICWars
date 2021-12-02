@@ -4,6 +4,7 @@ import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.icwars.actor.Unit;
+import ch.epfl.cs107.play.game.icwars.gui.ICWarsPlayerGUI;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
@@ -12,6 +13,8 @@ import ch.epfl.cs107.play.window.Keyboard;
 public class RealPlayer extends ICWarsPlayer {
     private final static int MOVE_DURATION = 8;
     private Sprite sprite ;
+    private ICWarsPlayerGUI gui ;
+
 
     /**
      * Default constructor for ICWarsActor
@@ -22,6 +25,7 @@ public class RealPlayer extends ICWarsPlayer {
      */
     public RealPlayer(Area area, DiscreteCoordinates position, Faction faction, Unit... units) {
         super(area, position, faction, units);
+        gui = new ICWarsPlayerGUI(area.getCameraScaleFactor(), this);
         switch(faction) {
             case ALLY:
                 sprite = new Sprite("icwars/allyCursor", 1.f, 1.f, this);

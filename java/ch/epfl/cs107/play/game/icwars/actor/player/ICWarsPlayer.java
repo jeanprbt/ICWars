@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public abstract class ICWarsPlayer extends ICWarsActor {
 
     private ArrayList<Unit> effectives ;
+    protected Unit selectedUnit;
 
     /**
      * Default constructor for ICWarsActor
@@ -60,6 +61,21 @@ public abstract class ICWarsPlayer extends ICWarsActor {
     public boolean isVanquished(){
         return(effectives.size() == 0);
     }
+
+
+    /**
+     * Method that select the unit corresponding to the index
+     * passed in element in its array effectives. If the index is too
+     * big, then the method just does nothing
+     * @param index : integer representing the selected unit among the arraylist effectives
+     */
+    public void selectUnit(int index){
+        if(index > effectives.size()) ;
+        else {
+            selectedUnit = effectives.get(index);
+        }
+    }
+
 
     @Override
     public void update(float deltaTime) {
