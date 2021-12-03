@@ -8,6 +8,8 @@ import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.Unit;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Keyboard;
+import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
+import jdk.swing.interop.SwingInterOpUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +68,10 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
                 if(selectedUnit != null) currentState = ICWarsPlayerState.MOVE_UNIT ;
                 break;
             case MOVE_UNIT:
-                //TODO move selected unit to current location, set boolean hasBennUsed to trie
-                if(keyboard.get(Keyboard.ENTER).isReleased()) currentState = ICWarsPlayerState.NORMAL ;
+                if(keyboard.get(Keyboard.ENTER).isReleased()){
+                    changePosition(new DiscreteCoordinates(12, 7));
+                    currentState = ICWarsPlayerState.NORMAL ;
+                }
                 break;
             case ACTION:
             case ACTION_SELECTION:

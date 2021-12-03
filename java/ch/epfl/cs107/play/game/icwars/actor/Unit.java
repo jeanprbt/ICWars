@@ -88,11 +88,11 @@ public abstract class Unit extends ICWarsActor {
 
     @Override
     public boolean changePosition(DiscreteCoordinates newPosition) {
-         if (!super.changePosition(newPosition) || !range.nodeExists(newPosition)) {
-             return false;
+        if (!super.changePosition(newPosition) || !range.nodeExists(newPosition) || hasBeenUsed) {
+             return false ;
          }
-         fillRange(newPosition);
-         return true;
+        super.changePosition(newPosition);
+        return true ;
     }
 
     /**

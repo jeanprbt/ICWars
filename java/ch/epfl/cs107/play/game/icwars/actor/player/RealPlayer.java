@@ -7,6 +7,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.Unit;
 import ch.epfl.cs107.play.game.icwars.gui.ICWarsPlayerGUI;
+import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
@@ -16,6 +17,7 @@ public class RealPlayer extends ICWarsPlayer {
     private final static int MOVE_DURATION = 8;
     private Sprite sprite ;
     private ICWarsPlayerGUI gui ;
+    private final ICWarsPlayerInteractionHandler handler;
 
 
     /**
@@ -48,6 +50,7 @@ public class RealPlayer extends ICWarsPlayer {
     @Override
     public void update(float deltaTime) {
         Keyboard keyboard= getOwnerArea().getKeyboard();
+
 
         if (currentState == ICWarsPlayerState.NORMAL || currentState == ICWarsPlayerState.SELECT_CELL || currentState == ICWarsPlayerState.MOVE_UNIT) {
             moveIfPressed(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
