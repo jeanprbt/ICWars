@@ -57,14 +57,14 @@ public abstract class ICWarsPlayer extends ICWarsActor {
      */
     public void updateState(){
         Keyboard keyboard = getOwnerArea().getKeyboard();
-        switch (state){
+        switch (currentState){
             case IDLE : break ;
             case NORMAL :
                 if(keyboard.get(Keyboard.TAB).isPressed()) currentState = ICWarsPlayerState.IDLE ;
                 if(keyboard.get(Keyboard.ENTER).isReleased()) currentState = ICWarsPlayerState.SELECT_CELL ;
                 break;
             case SELECT_CELL:
-                if(selectedUnit != null) state = ICWarsPlayerState.MOVE_UNIT ;
+                if(selectedUnit != null) currentState = ICWarsPlayerState.MOVE_UNIT ;
                 break;
             case MOVE_UNIT:
                 //TODO move selected unit to current location, set boolean hasBennUsed to trie
