@@ -28,6 +28,10 @@ public abstract class ICWarsActor extends MovableAreaEntity {
         this.faction = faction ;
     }
 
+    public Faction getFaction() {
+        return faction;
+    }
+
     /**
      * Leave an area and unregister player
      */

@@ -1,19 +1,18 @@
 package ch.epfl.cs107.play.game.icwars.actor.player;
 
 import ch.epfl.cs107.play.game.areagame.Area;
-import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.areagame.actor.Interactable;
+import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
-import ch.epfl.cs107.play.game.icwars.actor.Soldier;
 import ch.epfl.cs107.play.game.icwars.actor.Unit;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ICWarsPlayer extends ICWarsActor {
+public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     private ArrayList<Unit> effectives ;
     protected ICWarsPlayerState currentState ;
@@ -154,6 +153,26 @@ public abstract class ICWarsPlayer extends ICWarsActor {
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v) {
+        ((ICWarInteractionVisitor)v).interactWith(this);
+    }
+
+    @Override
+    public List<DiscreteCoordinates> getFieldOfViewCells() {
+        return null;
+    }
+
+    @Override
+    public boolean wantsCellInteraction() {
+        return true;
+    }
+
+    @Override
+    public boolean wantsViewInteraction() {
+        return false;
+    }
+
+    @Override
+    public void interactWith(Interactable other) {
 
     }
 }

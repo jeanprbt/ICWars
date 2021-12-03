@@ -1,8 +1,10 @@
 package ch.epfl.cs107.play.game.icwars.actor.player;
 
 import ch.epfl.cs107.play.game.areagame.Area;
+import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.Unit;
 import ch.epfl.cs107.play.game.icwars.gui.ICWarsPlayerGUI;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -26,6 +28,7 @@ public class RealPlayer extends ICWarsPlayer {
     public RealPlayer(Area area, DiscreteCoordinates position, Faction faction, Unit... units) {
         super(area, position, faction, units);
         gui = new ICWarsPlayerGUI(area.getCameraScaleFactor(), this);
+        handler = new ICWarsPlayerInteractionHandler();
         switch(faction) {
             case ALLY:
                 sprite = new Sprite("icwars/allyCursor", 1.f, 1.f, this);
@@ -39,8 +42,7 @@ public class RealPlayer extends ICWarsPlayer {
     @Override
     public void draw(Canvas canvas) {
         sprite.draw(canvas);
-        if(selectedUnit == null || currentState != ICWarsPlayerState.MOVE_UNIT) ;
-        else gui.draw(canvas, selectedUnit);
+        if(selectedUnit != null && currentState == ICWarsPlayerState.MOVE_UNIT) gui.draw(canvas, selectedUnit);
     }
 
     @Override
@@ -68,6 +70,20 @@ public class RealPlayer extends ICWarsPlayer {
             if (!isDisplacementOccurs()) {
                 orientate(orientation);
                 move(MOVE_DURATION);
+            }
+        }
+    }
+
+    public void interactWith(Interactable other) {
+        other.acceptInteraction(handler);
+    }
+
+    private class ICWarsPlayerInteractionHandler implements ICWarInteractionVisitor {
+
+        @Override
+        public void interactWith(Unit unit) {
+            if (currentState == ICWarsPlayerState.SELECT_CELL && unit.getFaction() == getFaction()) {
+                selectedUnit = unit;
             }
         }
     }
