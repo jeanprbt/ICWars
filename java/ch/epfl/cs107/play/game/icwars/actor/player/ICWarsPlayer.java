@@ -16,7 +16,7 @@ import java.util.List;
 public abstract class ICWarsPlayer extends ICWarsActor {
 
     private ArrayList<Unit> effectives ;
-    private ICWarsPlayerState state ;
+    protected ICWarsPlayerState currentState ;
     protected Unit selectedUnit ;
 
     /**
@@ -29,7 +29,7 @@ public abstract class ICWarsPlayer extends ICWarsActor {
     public ICWarsPlayer(Area area, DiscreteCoordinates position, Faction faction, Unit... units) {
         super(area, position, faction);
         effectives = new ArrayList<Unit>();
-        state = ICWarsPlayerState.IDLE ;
+        currentState = ICWarsPlayerState.IDLE ;
         for (Unit unit : units) {
             effectives.add(unit);
             area.registerActor(unit);
@@ -54,21 +54,21 @@ public abstract class ICWarsPlayer extends ICWarsActor {
     /**
      * Method to update player's state if certain conditions are met
      * The method is called by the update method of RealPlayer.java
-     * @param state
      */
-    public void updateState(ICWarsPlayerState state){
+    public void updateState(){
         Keyboard keyboard = getOwnerArea().getKeyboard();
         switch (state){
             case IDLE : break ;
             case NORMAL :
-                if(keyboard.get(Keyboard.ENTER).isReleased()) state = ICWarsPlayerState.SELECT_CELL ;
+                if(keyboard.get(Keyboard.TAB).isPressed()) currentState = ICWarsPlayerState.IDLE ;
+                if(keyboard.get(Keyboard.ENTER).isReleased()) currentState = ICWarsPlayerState.SELECT_CELL ;
                 break;
             case SELECT_CELL:
                 if(selectedUnit != null) state = ICWarsPlayerState.MOVE_UNIT ;
                 break;
             case MOVE_UNIT:
-                //TODO move selected unit to current location
-                if(keyboard.get(Keyboard.ENTER).isReleased()) state = ICWarsPlayerState.NORMAL ;
+                //TODO move selected unit to current location, set boolean hasBennUsed to trie
+                if(keyboard.get(Keyboard.ENTER).isReleased()) currentState = ICWarsPlayerState.NORMAL ;
                 break;
             case ACTION:
             case ACTION_SELECTION:
@@ -82,14 +82,17 @@ public abstract class ICWarsPlayer extends ICWarsActor {
      * on itself
      */
     public void startTurn() {
-        state = ICWarsPlayerState.NORMAL;
+        currentState = ICWarsPlayerState.NORMAL;
         centerCamera();
+        for (Unit effective : effectives) {
+            effective.setHasBeenUsed(false);
+        }
     }
 
     @Override
     public void onLeaving(List<DiscreteCoordinates> coordinates) {
         super.onLeaving(coordinates);
-        if(state == ICWarsPlayerState.SELECT_CELL) state = ICWarsPlayerState.NORMAL ;
+        if(currentState == ICWarsPlayerState.SELECT_CELL) currentState = ICWarsPlayerState.NORMAL;
     }
 
     @Override
@@ -122,21 +125,6 @@ public abstract class ICWarsPlayer extends ICWarsActor {
     public boolean isVanquished(){
         return(effectives.size() == 0);
     }
-
-    /*
-    /**
-     * Method that select the unit corresponding to the index
-     * passed in element in its array effectives. If the index is too
-     * big, then the method just does nothing
-     * @param index : integer representing the selected unit among the arraylist effectives
-     *//*
-    public void selectUnit(int index){
-        if(index > effectives.size()) ;
-        else {
-            selectedUnit = effectives.get(index);
-        }
-    }
-    */
 
     @Override
     public void update(float deltaTime) {

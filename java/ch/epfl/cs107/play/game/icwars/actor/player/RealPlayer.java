@@ -39,7 +39,7 @@ public class RealPlayer extends ICWarsPlayer {
     @Override
     public void draw(Canvas canvas) {
         sprite.draw(canvas);
-        if(selectedUnit == null) ;
+        if(selectedUnit == null || currentState != ICWarsPlayerState.MOVE_UNIT) ;
         else gui.draw(canvas, selectedUnit);
     }
 
@@ -47,14 +47,15 @@ public class RealPlayer extends ICWarsPlayer {
     public void update(float deltaTime) {
         Keyboard keyboard= getOwnerArea().getKeyboard();
 
-        moveIfPressed(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
-        moveIfPressed(Orientation.UP, keyboard.get(Keyboard.UP));
-        moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
-        moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
+        if (currentState == ICWarsPlayerState.NORMAL || currentState == ICWarsPlayerState.SELECT_CELL || currentState == ICWarsPlayerState.MOVE_UNIT) {
+            moveIfPressed(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
+            moveIfPressed(Orientation.UP, keyboard.get(Keyboard.UP));
+            moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
+            moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
+        }
 
-
+        updateState();
         super.update(deltaTime);
-        updateState(currentState);
     }
 
     /**

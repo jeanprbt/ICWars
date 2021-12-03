@@ -56,6 +56,14 @@ public abstract class Unit extends ICWarsActor {
         return isDead;
     }
 
+    //Getter and Setter for hasBeenUsed
+    public boolean isHasBeenUsed() {
+        return hasBeenUsed;
+    }
+    public void setHasBeenUsed(boolean hasBeenUsed) {
+        this.hasBeenUsed = hasBeenUsed;
+    }
+
     /**
      * Method that modifies the attribute range :
      * Il creates a new empty ICWarsRange, and then fills it with all the nodes that
