@@ -38,6 +38,14 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     }
 
     /**
+     * Method that returns the player's current position in the form of DiscreteCoordinates
+     * @return current Discrete Coordinates
+     */
+    public DiscreteCoordinates getCoordinates() {
+        return new DiscreteCoordinates((int) getPosition().x, (int) getPosition().y);
+    }
+
+    /**
      * Enumeration of all possible states of a player
      * during the game :IDLE, NORMAL, SELECT_CELL, MOVE_UNIT,
      * ACTION_SELECTION, ACTION
@@ -58,14 +66,13 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
      */
     public void updateState(){
         Keyboard keyboard = getOwnerArea().getKeyboard();
-        switch (currentState){
-            case IDLE : break ;
-            case NORMAL :
-                if(keyboard.get(Keyboard.TAB).isPressed()) currentState = ICWarsPlayerState.IDLE ;
-                if(keyboard.get(Keyboard.ENTER).isReleased()) currentState = ICWarsPlayerState.SELECT_CELL ;
+        switch (currentState) {
+            case NORMAL:
+                if (keyboard.get(Keyboard.TAB).isPressed()) currentState = ICWarsPlayerState.IDLE;
+                if (keyboard.get(Keyboard.ENTER).isReleased()) currentState = ICWarsPlayerState.SELECT_CELL;
                 break;
             case SELECT_CELL:
-                if(selectedUnit != null) currentState = ICWarsPlayerState.MOVE_UNIT ;
+                if (selectedUnit != null && !selectedUnit.isHasBeenUsed()) currentState = ICWarsPlayerState.MOVE_UNIT;
                 break;
             case MOVE_UNIT:
                 if (keyboard.get(Keyboard.TAB).isReleased()){
@@ -77,6 +84,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
                     currentState = ICWarsPlayerState.NORMAL ;
                 }
                 break;
+            case IDLE:
             case ACTION:
             case ACTION_SELECTION:
             default: break;

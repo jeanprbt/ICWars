@@ -64,6 +64,7 @@ public abstract class Unit extends ICWarsActor {
         this.hasBeenUsed = hasBeenUsed;
     }
 
+
     /**
      * Method that modifies the attribute range :
      * Il creates a new empty ICWarsRange, and then fills it with all the nodes that
