@@ -153,7 +153,7 @@ public abstract class AreaBehavior implements Interactable.Listener, Interactor.
 
         /**
          * Do the given draggableAreaEntity interacts with all Droppable sharing the same cell
-         * @param Interactor (Interactor), not null
+         * @param interactor (Interactor), not null
          */
         private void dropInteractionOf(Draggable draggable) {
         	for(Interactable interactable : entities){
