@@ -68,8 +68,12 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
                 if(selectedUnit != null) currentState = ICWarsPlayerState.MOVE_UNIT ;
                 break;
             case MOVE_UNIT:
+                if (keyboard.get(Keyboard.TAB).isReleased()){
+                    selectedUnit.setHasBeenUsed(true);
+                    currentState = ICWarsPlayerState.NORMAL;
+                }
                 if(keyboard.get(Keyboard.ENTER).isReleased()){
-                    changePosition(new DiscreteCoordinates(12, 7));
+                    selectedUnit.changePosition(getCoordinates());
                     currentState = ICWarsPlayerState.NORMAL ;
                 }
                 break;
