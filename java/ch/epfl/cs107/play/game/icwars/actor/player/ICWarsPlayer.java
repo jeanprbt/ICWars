@@ -115,7 +115,9 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         super.enterArea(area, position);
         for (Unit effective : effectives) {
             area.registerActor(effective);
+            effective.setHasBeenUsed(false);
         }
+
     }
 
     @Override
