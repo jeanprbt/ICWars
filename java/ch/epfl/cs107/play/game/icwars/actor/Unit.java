@@ -64,6 +64,12 @@ public abstract class Unit extends ICWarsActor {
         this.hasBeenUsed = hasBeenUsed;
     }
 
+    //Setter for currentPosition when entering a new area
+    public void setCurrentPosition(DiscreteCoordinates newPosition){
+        setCurrentPosition(newPosition.toVector());
+    }
+    abstract public DiscreteCoordinates getSpawnCoordinates();
+
 
     /**
      * Method that modifies the attribute range :

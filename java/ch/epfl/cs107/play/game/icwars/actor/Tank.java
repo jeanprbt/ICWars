@@ -27,6 +27,11 @@ public class Tank extends Unit {
         }
     }
 
+
+    public DiscreteCoordinates getSpawnCoordinates(){
+        return new DiscreteCoordinates(3, 5);
+    }
+
     public int getDamage() {
         return 7;
     }

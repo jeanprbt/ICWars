@@ -43,12 +43,6 @@ public class ICWars extends AreaGame {
         if (keyboard.get(Keyboard.R).isPressed()) begin(getWindow(), getFileSystem());
         super.update(deltaTime);
 
-        /*
-        //Selecting unit if key "U" is pressed
-        if(keyboard.get(Keyboard.U).isReleased()){
-            ((RealPlayer)player).selectUnit(1);
-
-        }*/
     }
 
     @Override

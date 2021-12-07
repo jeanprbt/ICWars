@@ -14,7 +14,7 @@ import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
 public class RealPlayer extends ICWarsPlayer {
-    private final static int MOVE_DURATION = 8;
+    private final static int MOVE_DURATION = 4;
     private Sprite sprite ;
     private ICWarsPlayerGUI gui ;
     private final ICWarsPlayerInteractionHandler handler;

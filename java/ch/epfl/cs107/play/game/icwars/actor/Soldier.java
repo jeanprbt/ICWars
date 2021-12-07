@@ -27,6 +27,10 @@ public class Soldier extends Unit {
         }
     }
 
+    public DiscreteCoordinates getSpawnCoordinates(){
+        return new DiscreteCoordinates(2, 5);
+    }
+
     public int getDamage(){
         return 2 ;
     }

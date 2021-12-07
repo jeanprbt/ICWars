@@ -116,7 +116,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
             area.registerActor(effective);
             effective.setHasBeenUsed(false);
         }
-
     }
 
     @Override
