@@ -91,6 +91,7 @@ public class ICWars extends AreaGame {
     @Override
     public void end() {
         System.out.println("Game Over");
+        System.exit(0);
     }
 
 }
