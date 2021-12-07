@@ -18,12 +18,11 @@ public abstract class Unit extends ICWarsActor {
     private int maxHp ;
     private ICWarsRange range ;
     private boolean hasBeenUsed ;
-    private boolean isDead ;
 
     protected int hp ;
     protected Sprite sprite ;
 
-    public UnitType unitType ;
+    private boolean isDead = false ;
 
     abstract int getDamage();
     abstract int getRadius();
@@ -47,16 +46,7 @@ public abstract class Unit extends ICWarsActor {
         name = getName() ;
         maxHp = getMaxHp() ;
         hasBeenUsed = false ;
-        isDead = false ;
         fillRange(position);
-    }
-
-    /**
-     * Enumeration of all possible types of unit
-     */
-    public enum UnitType {
-        SOLDIER,
-        TANK
     }
 
     public int getHp() {
@@ -74,26 +64,12 @@ public abstract class Unit extends ICWarsActor {
         this.hasBeenUsed = hasBeenUsed;
     }
 
-    public void setCurrentPosition(Vector v) {
-        super.setCurrentPosition(v);
+    //Setter for currentPosition when entering a new area
+    public void setCurrentPosition(DiscreteCoordinates newPosition){
+        setCurrentPosition(newPosition.toVector());
     }
+    abstract public DiscreteCoordinates getSpawnCoordinates();
 
-    /**
-     * Function that returns the spawn coordinates of the desired unit, according to
-     * its faction and type (soldier, tank, etc.)
-     * It calls the static function getSpawnCoordinates() of the type in argument
-     * @param faction : Ally or Enemy
-     * @param unitType : Soldier or Tank
-     */
-    public DiscreteCoordinates getSpawnCoordinates(Faction faction, UnitType unitType){
-        switch (unitType){
-            case TANK:
-                return Tank.getSpawnCoordinates(faction);
-            case SOLDIER:
-                return Soldier.getSpawnCoordinates(faction);
-        }
-        return null ;
-    }
 
     /**
      * Method that modifies the attribute range :
@@ -169,14 +145,12 @@ public abstract class Unit extends ICWarsActor {
 
     @Override
     public void draw(Canvas canvas) {
-        if (isHasBeenUsed()) sprite.setAlpha(0.3f);
-        else sprite.setAlpha(1.f);
         sprite.draw(canvas);
     }
 
     @Override
     public boolean takeCellSpace() {
-        return true;
+        return false;
     }
 
     @Override
