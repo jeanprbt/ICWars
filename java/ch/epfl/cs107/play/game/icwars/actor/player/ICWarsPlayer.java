@@ -76,7 +76,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
                 break;
             case MOVE_UNIT:
                 if (keyboard.get(Keyboard.TAB).isReleased()){
-                    selectedUnit.setHasBeenUsed(true);
                     currentState = ICWarsPlayerState.NORMAL;
                 }
                 if(keyboard.get(Keyboard.ENTER).isReleased()){
