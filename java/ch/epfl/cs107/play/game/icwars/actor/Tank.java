@@ -29,8 +29,10 @@ public class Tank extends Unit {
     }
 
 
-    public DiscreteCoordinates getSpawnCoordinates(){
-        return new DiscreteCoordinates(3, 5);
+    public static DiscreteCoordinates getSpawnCoordinates(Faction faction){
+        DiscreteCoordinates coordinates ;
+        coordinates = (faction == Faction.ALLY) ? new DiscreteCoordinates(2, 5) : new DiscreteCoordinates(8, 5);
+        return coordinates;
     }
 
     public int getDamage() {

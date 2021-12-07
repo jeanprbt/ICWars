@@ -40,10 +40,13 @@ public class ICWars extends AreaGame {
 
         //Changing area if key "N" is pressed
         Keyboard keyboard = getWindow().getKeyboard();
-        if (keyboard.get(Keyboard.N).isPressed()) changeArea();
+        if (keyboard.get(Keyboard.N).isReleased()) changeArea();
 
         //Resetting game if key "R" is pressed
-        if (keyboard.get(Keyboard.R).isPressed()) begin(getWindow(), getFileSystem());
+        if (keyboard.get(Keyboard.R).isPressed()) {
+            begin(getWindow(), getFileSystem());
+            counter = 1;
+        }
         super.update(deltaTime);
 
     }
@@ -93,6 +96,9 @@ public class ICWars extends AreaGame {
     /**
      * Changing area to the following level, and
      * ending game if final level has been reached
+     *
+     * Creates a small counter which makes sure that all players and their units are registered in the area
+     * depending on how much they are
      */
     protected void changeArea() {
         for (ICWarsPlayer player : players) {
@@ -107,6 +113,7 @@ public class ICWars extends AreaGame {
             currentPlayer.startTurn();
             ++counter;
         }
+
     }
 
     /**
@@ -125,5 +132,12 @@ public class ICWars extends AreaGame {
         System.exit(0);
     }
 
+    /**
+     * Private function used in begin() method to randomly choose the player which starts
+     * * @return
+     */
+    private int random() {
+        return (int) Math.floor(2*Math.random());
+    }
 }
 
