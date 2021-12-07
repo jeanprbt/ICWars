@@ -13,6 +13,7 @@ import jdk.swing.interop.SwingInterOpUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.SocketHandler;
 
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
@@ -114,8 +115,8 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         super.enterArea(area, position);
         for (Unit effective : effectives) {
             area.registerActor(effective);
-            effective.setCurrentPosition(effective.getSpawnCoordinates());
-            effective.fillRange(effective.getSpawnCoordinates());
+            effective.setCurrentPosition(effective.getSpawnCoordinates(effective.getFaction(), effective.unitType).toVector());
+            effective.fillRange(effective.getSpawnCoordinates(effective.getFaction(), effective.unitType));
             effective.setHasBeenUsed(false);
         }
     }
