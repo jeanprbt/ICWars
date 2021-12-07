@@ -20,4 +20,9 @@ public class Level0 extends ICWarsArea{
     public DiscreteCoordinates getPlayerSpawnCoordinates() {
         return new DiscreteCoordinates(0, 0);
     }
+
+    @Override
+    public DiscreteCoordinates getEnemySpawnCoordinates() {
+        return new DiscreteCoordinates(7, 4);
+    }
 }

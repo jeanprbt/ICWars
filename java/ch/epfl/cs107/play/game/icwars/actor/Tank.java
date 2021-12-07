@@ -17,6 +17,7 @@ public class Tank extends Unit {
     public Tank(Area area, DiscreteCoordinates position, Faction faction) {
         super(area, position, faction);
         hp = getMaxHp();
+        unitType = UnitType.TANK;
         switch (faction) {
             case ALLY:
                 sprite = new Sprite("icwars/friendlyTank", 1.5f, 1.5f, this, null, new Vector(-0.25f, -0.25f));

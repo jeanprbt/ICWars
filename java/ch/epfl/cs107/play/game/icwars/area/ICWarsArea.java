@@ -18,7 +18,8 @@ public abstract class ICWarsArea extends Area {
      * Note it set the Behavior as needed !
      */
     protected abstract void createArea();
-    public abstract DiscreteCoordinates getPlayerSpawnCoordinates();
+    public abstract DiscreteCoordinates getAllySpawnCoordinates();
+    public abstract DiscreteCoordinates getEnemySpawnCoordinates();
 
     @Override
     public boolean begin(Window window, FileSystem fileSystem) {

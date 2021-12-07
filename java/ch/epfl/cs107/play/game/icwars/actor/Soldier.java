@@ -17,6 +17,7 @@ public class Soldier extends Unit {
     public Soldier(Area area, DiscreteCoordinates position, Faction faction) {
         super(area, position, faction);
         hp = getMaxHp() ;
+        unitType = UnitType.SOLDIER;
         switch (faction){
             case ALLY:
                 sprite = new Sprite("icwars/friendlySoldier", 1.5f, 1.5f, this, null, new Vector(-0.25f, -0.25f));
@@ -27,8 +28,10 @@ public class Soldier extends Unit {
         }
     }
 
-    public DiscreteCoordinates getSpawnCoordinates(){
-        return new DiscreteCoordinates(2, 5);
+    public static DiscreteCoordinates getSpawnCoordinates(Faction faction){
+        DiscreteCoordinates coordinates ;
+        coordinates = (faction == Faction.ALLY) ? new DiscreteCoordinates(3, 5) : new DiscreteCoordinates(9, 5);
+        return coordinates;
     }
 
     public int getDamage(){

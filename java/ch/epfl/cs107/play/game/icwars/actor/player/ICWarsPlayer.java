@@ -13,6 +13,7 @@ import jdk.swing.interop.SwingInterOpUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.SocketHandler;
 
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 

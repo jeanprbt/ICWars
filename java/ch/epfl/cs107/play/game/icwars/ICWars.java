@@ -1,7 +1,6 @@
 package ch.epfl.cs107.play.game.icwars;
 
 import ch.epfl.cs107.play.game.areagame.AreaGame;
-import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.Soldier;
 import ch.epfl.cs107.play.game.icwars.actor.Tank;
@@ -10,18 +9,22 @@ import ch.epfl.cs107.play.game.icwars.actor.player.RealPlayer;
 import ch.epfl.cs107.play.game.icwars.area.Level0;
 import ch.epfl.cs107.play.game.icwars.area.Level1;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
-import ch.epfl.cs107.play.game.tutosSolution.area.Tuto2Area;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.window.Window;
+
+import java.util.ArrayList;
 
 public class ICWars extends AreaGame {
 
     public static final float CAMERA_SCALE_FACTOR = 16.f ;
 
-    private RealPlayer player;
+    private ArrayList<ICWarsPlayer> players ;
+    private ArrayList<ICWarsPlayer> pastPlayers ;
+    private ArrayList<ICWarsPlayer> nextPlayers ;
+    private ICWarsPlayer currentPlayer;
+    private int counter = 1 ;
 
     /**
      * Add all the areas
@@ -54,8 +57,12 @@ public class ICWars extends AreaGame {
     public boolean begin(Window window, FileSystem fileSystem) {
         if (super.begin(window, fileSystem)) {
             createAreas();
+            players = new ArrayList<ICWarsPlayer>();
+            pastPlayers = new ArrayList<ICWarsPlayer>();
+            nextPlayers = new ArrayList<ICWarsPlayer>();
             initArea("icwars/Level0");
-            player.startTurn();
+            currentPlayer = players.get(random());
+            currentPlayer.startTurn();
             return true;
         }
         return false;
@@ -67,11 +74,20 @@ public class ICWars extends AreaGame {
      */
     private void initArea(String areaKey) {
         ICWarsArea area = (ICWarsArea) setCurrentArea(areaKey, true);
-        DiscreteCoordinates coords = area.getPlayerSpawnCoordinates();
-        Tank tank1 = new Tank(area, new DiscreteCoordinates(2, 5), ICWarsActor.Faction.ALLY);
-        Soldier soldier1 = new Soldier(area, new DiscreteCoordinates(3, 5), ICWarsActor.Faction.ALLY);
-        player = new RealPlayer(area, coords, ICWarsActor.Faction.ALLY, tank1, soldier1);
-        player.enterArea(area, coords);
+
+        DiscreteCoordinates [] coords = {area.getAllySpawnCoordinates(), area.getEnemySpawnCoordinates()};
+        ICWarsActor.Faction [] factions = {ICWarsActor.Faction.ALLY, ICWarsActor.Faction.ENEMY};
+        Tank [] tanks = new Tank[2];
+        Soldier [] soldiers = new Soldier[2];
+
+        for (int i = 0; i < 2 ; i++) {
+            Tank tank = new Tank(area, Tank.getSpawnCoordinates(factions[i]), factions[i]);
+            tanks[i] = tank;
+            Soldier soldier = new Soldier(area, Soldier.getSpawnCoordinates(factions[i]), factions[i]);
+            soldiers[i] = soldier;
+            players.add(i, new RealPlayer(area, coords[i], factions[i], tanks[i], soldiers[i]));
+            players.get(i).enterArea(area, coords[i]);
+        }
     }
 
     /**
@@ -79,12 +95,27 @@ public class ICWars extends AreaGame {
      * ending game if final level has been reached
      */
     protected void changeArea() {
-        player.leaveArea();
-        if(getCurrentArea().getTitle() == "icwars/Level0") {
-            ICWarsArea currentArea = (ICWarsArea) setCurrentArea("icwars/Level1", false);
-            player.enterArea(currentArea, currentArea.getPlayerSpawnCoordinates());
-        } else {
-            end();
+        for (ICWarsPlayer player : players) {
+            player.leaveArea();
+            if(counter <= players.toArray().length) {
+                ICWarsArea currentArea = (ICWarsArea) setCurrentArea("icwars/Level1", false);
+                DiscreteCoordinates coordinates = player.getFaction() == ICWarsActor.Faction.ALLY ? currentArea.getAllySpawnCoordinates() : currentArea.getEnemySpawnCoordinates();
+                player.enterArea(currentArea, coordinates);
+            } else {
+                end();
+            }
+            currentPlayer.startTurn();
+            ++counter;
+        }
+    }
+
+    /**
+     * Method to call at the end of each turn on order to check
+     * how many players left there are in the game
+     */
+    public void controlPlayers() {
+        for (ICWarsPlayer player : players) {
+            if (player.isVanquished()) nextPlayers.remove(player);
         }
     }
 
