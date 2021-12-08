@@ -21,10 +21,14 @@ public class ICWars extends AreaGame {
     public static final float CAMERA_SCALE_FACTOR = 16.f ;
 
     private ArrayList<ICWarsPlayer> players ;
-    private ArrayList<ICWarsPlayer> pastPlayers ;
-    private ArrayList<ICWarsPlayer> nextPlayers ;
+
+    //List of players waiting for next round
+    private ArrayList<ICWarsPlayer> nextRoundPlayers ;
+
+    //List of players waiting for current round
+    private ArrayList<ICWarsPlayer> currentRoundPlayers ;
+
     private ICWarsPlayer currentPlayer;
-    private int counter = 1 ;
 
     /**
      * Add all the areas
@@ -36,7 +40,6 @@ public class ICWars extends AreaGame {
 
     @Override
     public void update(float deltaTime) {
-        int index = 0;
 
         //Changing area if key "N" is pressed
         Keyboard keyboard = getWindow().getKeyboard();
@@ -45,7 +48,6 @@ public class ICWars extends AreaGame {
         //Resetting game if key "R" is pressed
         if (keyboard.get(Keyboard.R).isPressed()) {
             begin(getWindow(), getFileSystem());
-            counter = 1;
         }
         super.update(deltaTime);
 
@@ -61,8 +63,8 @@ public class ICWars extends AreaGame {
         if (super.begin(window, fileSystem)) {
             createAreas();
             players = new ArrayList<ICWarsPlayer>();
-            pastPlayers = new ArrayList<ICWarsPlayer>();
-            nextPlayers = new ArrayList<ICWarsPlayer>();
+            nextRoundPlayers= new ArrayList<ICWarsPlayer>();
+            currentRoundPlayers = new ArrayList<ICWarsPlayer>();
             initArea("icwars/Level0");
             currentPlayer = players.get(random());
             currentPlayer.startTurn();
@@ -96,24 +98,17 @@ public class ICWars extends AreaGame {
     /**
      * Changing area to the following level, and
      * ending game if final level has been reached
-     *
-     * Creates a small counter which makes sure that all players and their units are registered in the area
-     * depending on how much they are
      */
     protected void changeArea() {
-        for (ICWarsPlayer player : players) {
-            player.leaveArea();
-            if(counter <= players.toArray().length) {
-                ICWarsArea currentArea = (ICWarsArea) setCurrentArea("icwars/Level1", false);
-                DiscreteCoordinates coordinates = player.getFaction() == ICWarsActor.Faction.ALLY ? currentArea.getAllySpawnCoordinates() : currentArea.getEnemySpawnCoordinates();
-                player.enterArea(currentArea, coordinates);
-            } else {
-                end();
+        if(getCurrentArea().getTitle() == "icwars/Level0") {
+            ICWarsArea currentArea = (ICWarsArea) setCurrentArea("icwars/Level1", false);
+            for (int i = 0; i < players.size(); i++) {
+                players.get(i).leaveArea();
+                DiscreteCoordinates coordinates = (players.get(i).getFaction() == ICWarsActor.Faction.ALLY) ? currentArea.getAllySpawnCoordinates() : currentArea.getEnemySpawnCoordinates();
+                players.get(i).enterArea(currentArea, coordinates);
+                currentPlayer.startTurn();
             }
-            currentPlayer.startTurn();
-            ++counter;
-        }
-
+        } else end();
     }
 
     /**
@@ -122,7 +117,7 @@ public class ICWars extends AreaGame {
      */
     public void controlPlayers() {
         for (ICWarsPlayer player : players) {
-            if (player.isVanquished()) nextPlayers.remove(player);
+            if (player.isVanquished()) nextRoundPlayers.remove(player);
         }
     }
 
@@ -134,7 +129,6 @@ public class ICWars extends AreaGame {
 
     /**
      * Private function used in begin() method to randomly choose the player which starts
-     * * @return
      */
     private int random() {
         return (int) Math.floor(2*Math.random());

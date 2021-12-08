@@ -118,7 +118,6 @@ public class AreaGraph {
         }
 
         private void addNeighbor(String neighborString, boolean hasNeighbor, DiscreteCoordinates c) {
-
             if(hasNeighbor){
                 if(nodes.containsKey(c)){
                     connectedNodes.add(nodes.get(c));

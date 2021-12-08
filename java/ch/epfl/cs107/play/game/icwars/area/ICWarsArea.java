@@ -24,7 +24,6 @@ public abstract class ICWarsArea extends Area {
     @Override
     public boolean begin(Window window, FileSystem fileSystem) {
         if (super.begin(window, fileSystem)) {
-            // Set the behavior map
             behavior = new ICWarsBehavior(window, getTitle());
             setBehavior(behavior);
             createArea();

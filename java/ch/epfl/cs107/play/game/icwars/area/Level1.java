@@ -22,6 +22,6 @@ public class Level1 extends ICWarsArea {
 
     @Override
     public DiscreteCoordinates getEnemySpawnCoordinates() {
-        return new DiscreteCoordinates(17, 5);
+        return new DiscreteCoordinates(8, 5);
     }
 }

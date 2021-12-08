@@ -50,15 +50,12 @@ public class RealPlayer extends ICWarsPlayer {
     @Override
     public void update(float deltaTime) {
         Keyboard keyboard= getOwnerArea().getKeyboard();
-
-
         if (currentState == ICWarsPlayerState.NORMAL || currentState == ICWarsPlayerState.SELECT_CELL || currentState == ICWarsPlayerState.MOVE_UNIT) {
             moveIfPressed(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
             moveIfPressed(Orientation.UP, keyboard.get(Keyboard.UP));
             moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
             moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
         }
-
         updateState();
         super.update(deltaTime);
     }

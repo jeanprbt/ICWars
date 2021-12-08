@@ -51,6 +51,7 @@ public abstract class Unit extends ICWarsActor {
         fillRange(position);
     }
 
+
     /**
      * Enumeration of all possible types of unit
      */
@@ -102,7 +103,7 @@ public abstract class Unit extends ICWarsActor {
      * @param  : pair of DiscreteCoordinates from which the range is being created
      * @return : the new full ICWarsRange
      */
-    public ICWarsRange fillRange(DiscreteCoordinates position){
+    public void fillRange(DiscreteCoordinates position){
         range = new ICWarsRange();
         for (int x = -radius ; x <= radius ; x++) {
             for (int y = -radius; y <= radius; y++) {
@@ -114,7 +115,12 @@ public abstract class Unit extends ICWarsActor {
                 range.addNode(new DiscreteCoordinates(position.x + x,position.y + y), hasLeftEdge, hasUpEdge, hasRightEdge, hasDownEdge);
             }
         }
-        return range ; 
+        this.range = range ;
+    }
+
+    @Override
+    public void setOwnerArea(Area newArea) {
+        super.setOwnerArea(newArea);
     }
 
     @Override
@@ -176,7 +182,7 @@ public abstract class Unit extends ICWarsActor {
 
     @Override
     public boolean takeCellSpace() {
-        return true;
+        return true ;
     }
 
     @Override

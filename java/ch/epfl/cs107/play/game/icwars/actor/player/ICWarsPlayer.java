@@ -99,9 +99,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     public void startTurn() {
         currentState = ICWarsPlayerState.NORMAL;
         centerCamera();
-        for (Unit effective : effectives) {
-            effective.setHasBeenUsed(false);
-        }
     }
 
     @Override
@@ -118,6 +115,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
             effective.setCurrentPosition(effective.getSpawnCoordinates(effective.getFaction(), effective.unitType).toVector());
             effective.fillRange(effective.getSpawnCoordinates(effective.getFaction(), effective.unitType));
             effective.setHasBeenUsed(false);
+            effective.setOwnerArea(area);
         }
     }
 

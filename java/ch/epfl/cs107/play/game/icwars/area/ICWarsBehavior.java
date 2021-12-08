@@ -25,6 +25,7 @@ public class ICWarsBehavior extends AreaBehavior {
                 setCell(x, y, new ICWarsCell(x, y));
             }
         }
+        System.out.println(this.getWidth());
     }
 
     /**

@@ -18,11 +18,11 @@ public class Level0 extends ICWarsArea{
 
     @Override
     public DiscreteCoordinates getAllySpawnCoordinates() {
-        return new DiscreteCoordinates(0, 0);
+        return new DiscreteCoordinates(0, 4);
     }
 
     @Override
     public DiscreteCoordinates getEnemySpawnCoordinates() {
-        return new DiscreteCoordinates(7, 4);
+        return new DiscreteCoordinates(8, 5);
     }
 }
