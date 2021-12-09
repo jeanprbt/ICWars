@@ -18,7 +18,7 @@ import java.util.logging.SocketHandler;
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     private ArrayList<Unit> effectives ;
-    protected ICWarsPlayerState currentState ;
+    protected ICWarsPlayerState currentPlayerState ;
     protected Unit selectedUnit ;
 
     /**
@@ -31,7 +31,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     public ICWarsPlayer(Area area, DiscreteCoordinates position, Faction faction, Unit... units) {
         super(area, position, faction);
         effectives = new ArrayList<Unit>();
-        currentState = ICWarsPlayerState.IDLE ;
+        currentPlayerState = ICWarsPlayerState.IDLE ;
         for (Unit unit : units) {
             effectives.add(unit);
             area.registerActor(unit);
@@ -50,7 +50,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
      * Enumeration of all possible states of a player
      * during the game :IDLE, NORMAL, SELECT_CELL, MOVE_UNIT,
      * ACTION_SELECTION, ACTION
-     *
      */
     public enum ICWarsPlayerState {
         IDLE,
@@ -61,27 +60,31 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         ACTION
     }
 
+    public ICWarsPlayerState getCurrentPlayerState() {
+        return currentPlayerState;
+    }
+
     /**
      * Method to update player's state if certain conditions are met
      * The method is called by the update method of RealPlayer.java
      */
     public void updateState(){
         Keyboard keyboard = getOwnerArea().getKeyboard();
-        switch (currentState) {
+        switch (currentPlayerState) {
             case NORMAL:
-                if (keyboard.get(Keyboard.TAB).isPressed()) currentState = ICWarsPlayerState.IDLE;
-                if (keyboard.get(Keyboard.ENTER).isReleased()) currentState = ICWarsPlayerState.SELECT_CELL;
+                if (keyboard.get(Keyboard.TAB).isPressed()) currentPlayerState = ICWarsPlayerState.IDLE;
+                if (keyboard.get(Keyboard.ENTER).isReleased()) currentPlayerState = ICWarsPlayerState.SELECT_CELL;
                 break;
             case SELECT_CELL:
-                if (selectedUnit != null && !selectedUnit.isHasBeenUsed()) currentState = ICWarsPlayerState.MOVE_UNIT;
+                if (selectedUnit != null && !selectedUnit.isHasBeenUsed()) currentPlayerState = ICWarsPlayerState.MOVE_UNIT;
                 break;
             case MOVE_UNIT:
                 if (keyboard.get(Keyboard.TAB).isReleased()){
-                    currentState = ICWarsPlayerState.NORMAL;
+                    currentPlayerState = ICWarsPlayerState.NORMAL;
                 }
                 if(keyboard.get(Keyboard.ENTER).isReleased()){
                     selectedUnit.changePosition(getCoordinates());
-                    currentState = ICWarsPlayerState.NORMAL ;
+                    currentPlayerState = ICWarsPlayerState.NORMAL ;
                 }
                 break;
             case IDLE:
@@ -97,14 +100,24 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
      * on itself
      */
     public void startTurn() {
-        currentState = ICWarsPlayerState.NORMAL;
+        currentPlayerState = ICWarsPlayerState.NORMAL;
         centerCamera();
+    }
+
+    /**
+     * Method that sets all units as available for asked player
+     * (used in updateState in ICWars.java)
+     */
+    public void setUnitsAvailable() {
+        for (Unit effective : effectives) {
+            effective.setHasBeenUsed(false);
+        }
     }
 
     @Override
     public void onLeaving(List<DiscreteCoordinates> coordinates) {
         super.onLeaving(coordinates);
-        if(currentState == ICWarsPlayerState.SELECT_CELL) currentState = ICWarsPlayerState.NORMAL;
+        if(currentPlayerState == ICWarsPlayerState.SELECT_CELL) currentPlayerState = ICWarsPlayerState.NORMAL;
     }
 
     @Override
@@ -114,8 +127,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
             area.registerActor(effective);
             effective.setCurrentPosition(effective.getSpawnCoordinates(effective.getFaction(), effective.unitType).toVector());
             effective.fillRange(effective.getSpawnCoordinates(effective.getFaction(), effective.unitType));
-            effective.setHasBeenUsed(false);
-            effective.setOwnerArea(area);
         }
     }
 

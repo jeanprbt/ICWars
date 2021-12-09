@@ -119,11 +119,6 @@ public abstract class Unit extends ICWarsActor {
     }
 
     @Override
-    public void setOwnerArea(Area newArea) {
-        super.setOwnerArea(newArea);
-    }
-
-    @Override
     public boolean changePosition(DiscreteCoordinates newPosition) {
         if (!range.nodeExists(newPosition)) {
             return false;

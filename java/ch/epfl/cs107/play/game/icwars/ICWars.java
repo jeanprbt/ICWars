@@ -21,14 +21,13 @@ public class ICWars extends AreaGame {
     public static final float CAMERA_SCALE_FACTOR = 16.f ;
 
     private ArrayList<ICWarsPlayer> players ;
-
     //List of players waiting for next round
     private ArrayList<ICWarsPlayer> nextRoundPlayers ;
-
     //List of players waiting for current round
     private ArrayList<ICWarsPlayer> currentRoundPlayers ;
 
     private ICWarsPlayer currentPlayer;
+    private ICWarsRoundState currentRoundState ;
 
     /**
      * Add all the areas
@@ -49,8 +48,70 @@ public class ICWars extends AreaGame {
         if (keyboard.get(Keyboard.R).isPressed()) {
             begin(getWindow(), getFileSystem());
         }
+
+
         super.update(deltaTime);
 
+    }
+
+    /**
+     * Enumeration of all possible states of a round :
+     * INIT, CHOOSE_PLAYER, START_PLAYER_TURN, PLAYER_TURN, EN_PLAYER_TURN,
+     * END_TURN, END
+     */
+    private enum ICWarsRoundState{
+        INIT,
+        CHOOSE_PLAYER,
+        START_PLAYER_TURN,
+        PLAYER_TURN,
+        END_PLAYER_TURN,
+        END_TURN,
+        END
+    }
+
+    private void updateRoundState(){
+        switch(currentRoundState) {
+            case INIT:
+                currentRoundPlayers = new ArrayList<ICWarsPlayer>();
+                nextRoundPlayers= new ArrayList<ICWarsPlayer>();
+                currentRoundPlayers.addAll(players);
+                currentRoundState = ICWarsRoundState.CHOOSE_PLAYER ;
+                break;
+            case CHOOSE_PLAYER:
+                if(currentRoundPlayers.size() == 0) currentRoundState = ICWarsRoundState.END_TURN;
+                else {
+                    currentPlayer = currentRoundPlayers.get(0);
+                    currentRoundPlayers.remove(currentPlayer);
+                    currentRoundState = ICWarsRoundState.START_PLAYER_TURN;
+                }
+                break;
+            case START_PLAYER_TURN:
+                currentPlayer.startTurn();
+                currentRoundState = ICWarsRoundState.PLAYER_TURN;
+                break;
+            case PLAYER_TURN:
+              if (currentPlayer.getCurrentPlayerState() == ICWarsPlayer.ICWarsPlayerState.IDLE) currentRoundState = ICWarsRoundState.END_PLAYER_TURN;
+                break;
+            case END_PLAYER_TURN:
+                if(currentPlayer.isVanquished()) getCurrentArea().unregisterActor(currentPlayer);
+                else{
+                    nextRoundPlayers.add(currentPlayer);
+                    currentPlayer.setUnitsAvailable();
+                }
+                currentRoundState = ICWarsRoundState.CHOOSE_PLAYER;
+                break;
+            case END_TURN:
+                controlPlayers();
+                if (players.size() == 1) currentRoundState = ICWarsRoundState.END;
+                else {
+                    currentRoundPlayers.addAll(nextRoundPlayers);
+                    currentRoundState = ICWarsRoundState.CHOOSE_PLAYER;
+                }
+                break;
+            case END:
+                changeArea();
+
+        }
     }
 
     @Override
@@ -63,11 +124,8 @@ public class ICWars extends AreaGame {
         if (super.begin(window, fileSystem)) {
             createAreas();
             players = new ArrayList<ICWarsPlayer>();
-            nextRoundPlayers= new ArrayList<ICWarsPlayer>();
-            currentRoundPlayers = new ArrayList<ICWarsPlayer>();
+            currentRoundState = ICWarsRoundState.INIT;
             initArea("icwars/Level0");
-            currentPlayer = players.get(random());
-            currentPlayer.startTurn();
             return true;
         }
         return false;
@@ -117,7 +175,11 @@ public class ICWars extends AreaGame {
      */
     public void controlPlayers() {
         for (ICWarsPlayer player : players) {
-            if (player.isVanquished()) nextRoundPlayers.remove(player);
+            if (player.isVanquished()) {
+                nextRoundPlayers.remove(player);
+                getCurrentArea().unregisterActor(player);
+            }
+
         }
     }
 
