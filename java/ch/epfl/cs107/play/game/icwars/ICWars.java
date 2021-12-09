@@ -39,10 +39,8 @@ public class ICWars extends AreaGame {
 
     @Override
     public void update(float deltaTime) {
+         Keyboard keyboard = getWindow().getKeyboard();
 
-        //Changing area if key "N" is pressed
-        Keyboard keyboard = getWindow().getKeyboard();
-        if (keyboard.get(Keyboard.N).isReleased()) changeArea();
 
         //Resetting game if key "R" is pressed
         if (keyboard.get(Keyboard.R).isPressed()) {
@@ -51,7 +49,7 @@ public class ICWars extends AreaGame {
 
 
         super.update(deltaTime);
-
+        updateRoundState();
     }
 
     /**
@@ -149,6 +147,7 @@ public class ICWars extends AreaGame {
             Soldier soldier = new Soldier(area, Soldier.getSpawnCoordinates(factions[i]), factions[i]);
             soldiers[i] = soldier;
             players.add(i, new RealPlayer(area, coords[i], factions[i], tanks[i], soldiers[i]));
+            System.out.println(players.get(0));
             players.get(i).enterArea(area, coords[i]);
         }
     }

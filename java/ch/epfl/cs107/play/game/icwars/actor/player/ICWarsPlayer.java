@@ -124,8 +124,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     public void enterArea(Area area, DiscreteCoordinates position) {
         super.enterArea(area, position);
         for (Unit effective : effectives) {
-            area.registerActor(effective);
-            effective.setCurrentPosition(effective.getSpawnCoordinates(effective.getFaction(), effective.unitType).toVector());
+            effective.enterArea(area, effective.getSpawnCoordinates(effective.getFaction(), effective.unitType));
             effective.fillRange(effective.getSpawnCoordinates(effective.getFaction(), effective.unitType));
         }
     }
