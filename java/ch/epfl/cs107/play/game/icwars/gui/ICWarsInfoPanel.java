@@ -72,7 +72,6 @@ public class ICWarsInfoPanel implements Graphics {
     }
 
 
-
     public void setCurrentCell(ICWarsBehavior.ICWarsCellType cellType) {
         this.cellType = cellType;
     }

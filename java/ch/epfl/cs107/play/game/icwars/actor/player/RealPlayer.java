@@ -44,6 +44,9 @@ public class RealPlayer extends ICWarsPlayer {
     public void draw(Canvas canvas) {
         if(getCurrentPlayerState() != ICWarsPlayerState.IDLE) sprite.draw(canvas);
         if(selectedUnit != null && currentPlayerState == ICWarsPlayerState.MOVE_UNIT) gui.draw(canvas, selectedUnit);
+        if(currentPlayerState == ICWarsPlayerState.NORMAL || currentPlayerState == ICWarsPlayerState.SELECT_CELL) gui.draw(canvas, unitOnCell, cellType);
+        if(currentPlayerState == ICWarsPlayerState.ACTION_SELECTION) gui.draw(canvas, selectedUnit, true);
+        if(currentPlayerState == ICWarsPlayerState.ACTION) actionToExecute.draw(canvas);
     }
 
     @Override
@@ -85,6 +88,11 @@ public class RealPlayer extends ICWarsPlayer {
                 if (selectedUnit != null) selectedUnit.setSelectedUnit(false);
                 selectedUnit = unit;
             }
+        }
+
+        @Override
+        public void interactWith(ICWarsBehavior.ICWarsCell cell) {
+            cellType = cell.getType();
         }
     }
 }

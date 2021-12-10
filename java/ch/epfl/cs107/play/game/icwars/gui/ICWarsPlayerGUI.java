@@ -3,9 +3,8 @@ package ch.epfl.cs107.play.game.icwars.gui;
 import ch.epfl.cs107.play.game.actor.Graphics;
 import ch.epfl.cs107.play.game.icwars.actor.Unit ;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
-import ch.epfl.cs107.play.game.icwars.actor.player.RealPlayer;
+import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class ICWarsPlayerGUI implements Graphics {
@@ -17,6 +16,8 @@ public class ICWarsPlayerGUI implements Graphics {
      * @param player : Player whose turn it is
      */
     public ICWarsPlayerGUI(float cameraScaleFactor, ICWarsPlayer player){
+        infoPanel = new ICWarsInfoPanel(ICWars.CAMERA_SCALE_FACTOR);
+        actionsPanel = new ICWarsActionsPanel(ICWars.CAMERA_SCALE_FACTOR);
         this.player = player;
     }
 
@@ -32,6 +33,17 @@ public class ICWarsPlayerGUI implements Graphics {
         int x = (int) player.getPosition().x ;
         int y = (int) player.getPosition().y ;
         selectedUnit.drawRangeAndPathTo(new DiscreteCoordinates(x, y), canvas);
+    }
+
+    public void draw(Canvas canvas, Unit selectedUnit, boolean bool){
+        actionsPanel.setActions(selectedUnit.actionsList);
+        actionsPanel.draw(canvas);
+    }
+
+    public void draw(Canvas canvas, Unit unitOnCell, ICWarsBehavior.ICWarsCellType type) {
+        infoPanel.setUnit(unitOnCell);
+        infoPanel.setCurrentCell(type);
+        infoPanel.draw(canvas);
     }
 
     @Override

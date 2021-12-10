@@ -55,9 +55,9 @@ public abstract class Unit extends ICWarsActor implements Interactor{
         maxHp = getMaxHp();
         hasBeenUsed = false;
         isDead = false;
+        handler = new ICWarsUnitInteractionHandler();
         fillRange(position);
     }
-
 
     /**
      * Center the camera on the player
@@ -95,7 +95,6 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     public void setCurrentPosition(Vector v) {
         super.setCurrentPosition(v);
     }
-
 
     /**
      * Function that returns the spawn coordinates of the desired unit, according to

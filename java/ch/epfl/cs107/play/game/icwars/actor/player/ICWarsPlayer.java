@@ -6,6 +6,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -18,7 +19,7 @@ import java.util.List;
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     private ArrayList<Unit> effectives ;
-    private ICWarsAction actionToExecute ;
+    protected ICWarsAction actionToExecute ;
     protected ICWarsPlayerState currentPlayerState ;
     protected Unit selectedUnit ;
 
@@ -101,6 +102,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
                         currentPlayerState = ICWarsPlayerState.ACTION ;
                     }
                 }
+                break;
             case ACTION:
                 actionToExecute.doAction(1.f, this, keyboard);
             case IDLE:

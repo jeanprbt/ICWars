@@ -33,12 +33,10 @@ public class AttackAction extends ICWarsAction{
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
         targetsIndexes = findTargetsIndexes();
-        while (!keyboard.get(Keyboard.ENTER).isPressed()) {
-            if (targetsIndexes.size() == 0 || keyboard.get(Keyboard.TAB).isPressed()) {
-                player.centerCamera();
-                player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.ACTION_SELECTION);
-                break;
-            }
+        if (targetsIndexes.size() == 0 || keyboard.get(Keyboard.TAB).isPressed()) {
+            player.centerCamera();
+            player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.ACTION_SELECTION);
+        } else {
             targetIndex = targetsIndexes.get(index);
             if (keyboard.get(Keyboard.RIGHT).isPressed() && index < targetsIndexes.size() - 1) {
                 ++index;
@@ -48,21 +46,17 @@ public class AttackAction extends ICWarsAction{
                 --index;
                 targetIndex = targetsIndexes.get(index);
             }
-            if (keyboard.get(Keyboard.ENTER).isPressed()) attack(area.unitList.get(targetIndex), player);
+            if (keyboard.get(Keyboard.ENTER).isPressed()) {
+                area.unitList.get(targetIndex).takeInjure(ownerUnit.getDamage());
+                player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
+            }
+            ownerUnit.setHasBeenUsed(true);
         }
-    }
-
-    private void attack(Unit unit, ICWarsPlayer player){
-        unit.takeInjure(ownerUnit.getDamage());
-        ownerUnit.setHasBeenUsed(true);
-        player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
-
     }
 
     @Override
     public void draw(Canvas canvas) {
 
     }
-
 }
 

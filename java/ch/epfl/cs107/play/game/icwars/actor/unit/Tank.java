@@ -27,6 +27,7 @@ public class Tank extends Unit {
         super(area, position, faction);
         hp = getMaxHp();
         unitType = UnitType.TANK;
+        actionsList = new ArrayList<ICWarsAction>();
         actionsList.add(new AttackAction((ICWarsArea)area, this));
         actionsList.add(new WaitAction((ICWarsArea)area, this));
         switch (faction) {
