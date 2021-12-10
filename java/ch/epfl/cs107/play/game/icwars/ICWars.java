@@ -151,7 +151,6 @@ public class ICWars extends AreaGame {
             Soldier soldier = new Soldier(area, Soldier.getSpawnCoordinates(factions[i]), factions[i]);
             soldiers[i] = soldier;
             players.add(i, new RealPlayer(area, coords[i], factions[i], tanks[i], soldiers[i]));
-            System.out.println(players.get(0));
             players.get(i).enterArea(area, coords[i]);
         }
     }

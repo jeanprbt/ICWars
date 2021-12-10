@@ -209,7 +209,7 @@ public abstract class Unit extends ICWarsActor implements Interactor {
 
     @Override
     public boolean isViewInteractable() {
-        return false;
+        return true;
     }
 
     @Override

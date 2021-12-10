@@ -83,6 +83,7 @@ public class RealPlayer extends ICWarsPlayer {
         @Override
         public void interactWith(Unit unit) {
             if (currentPlayerState == ICWarsPlayerState.SELECT_CELL && unit.getFaction() == getFaction()) {
+                if (selectedUnit != null) selectedUnit.setSelectedUnit(false);
                 selectedUnit = unit;
                 unit.setSelectedUnit(true);
             }

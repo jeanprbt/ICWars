@@ -25,6 +25,34 @@ public abstract class ICWarsArea extends Area {
     public abstract DiscreteCoordinates getAllySpawnCoordinates();
     public abstract DiscreteCoordinates getEnemySpawnCoordinates();
 
+    /**
+     * Little method aiming at adding the unit in parameter to unitList
+     * used in the method enterArea() of ICWarsPlayer for all effectives
+     */
+    public void addToUnitList(Unit unit){
+        unitList.add(unit);
+        if(unitList.size() >= 4){
+            System.out.println(unitList);
+        }
+    }
+
+    /**
+     * Litte method aiming at removing everything from unitList when charging
+     * a new area, called in method changeArea() of ICWars.java
+     */
+    public void removeAllUnitList(){
+        unitList.removeAll(unitList);
+    }
+
+    /**
+     * @param unit : unit whose index is needed
+     * @return : index of unit from unitList
+     */
+    public int getIndexInUnitList(Unit unit) {
+        assert(unitList.contains(unit));
+        return unitList.indexOf(unit);
+    }
+
     @Override
     public boolean begin(Window window, FileSystem fileSystem) {
         if (super.begin(window, fileSystem)) {
