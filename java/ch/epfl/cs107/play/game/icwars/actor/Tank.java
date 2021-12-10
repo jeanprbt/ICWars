@@ -1,9 +1,12 @@
 package ch.epfl.cs107.play.game.icwars.actor;
 
 import ch.epfl.cs107.play.game.areagame.Area;
+import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.math.Vector;
+
+import java.util.List;
 
 public class Tank extends Unit {
 
@@ -34,6 +37,7 @@ public class Tank extends Unit {
         coordinates = (faction == Faction.ALLY) ? new DiscreteCoordinates(2, 5) : new DiscreteCoordinates(8, 5);
         return coordinates;
     }
+
 
     public int getDamage() {
         return 7;

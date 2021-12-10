@@ -41,6 +41,10 @@ public class ICWars extends AreaGame {
     public void update(float deltaTime) {
          Keyboard keyboard = getWindow().getKeyboard();
 
+         //Resetting game is key "N" is pressed
+        if(keyboard.get(Keyboard.N).isPressed()) {
+            changeArea();
+        }
 
         //Resetting game if key "R" is pressed
         if (keyboard.get(Keyboard.R).isPressed()) {
@@ -161,6 +165,7 @@ public class ICWars extends AreaGame {
             ICWarsArea currentArea = (ICWarsArea) setCurrentArea("icwars/Level1", false);
             for (int i = 0; i < players.size(); i++) {
                 players.get(i).leaveArea();
+                currentArea.removeAllUnitList();
                 DiscreteCoordinates coordinates = (players.get(i).getFaction() == ICWarsActor.Faction.ALLY) ? currentArea.getAllySpawnCoordinates() : currentArea.getEnemySpawnCoordinates();
                 players.get(i).enterArea(currentArea, coordinates);
                 currentPlayer.startTurn();

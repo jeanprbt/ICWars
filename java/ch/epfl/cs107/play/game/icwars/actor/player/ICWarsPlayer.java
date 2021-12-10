@@ -6,14 +6,13 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.Unit;
+import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
-import jdk.swing.interop.SwingInterOpUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.SocketHandler;
 
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
@@ -60,8 +59,14 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         ACTION
     }
 
+    /**
+     * Getter and setter for currentPlayerState
+     */
     public ICWarsPlayerState getCurrentPlayerState() {
         return currentPlayerState;
+    }
+    public void setCurrentPlayerState(ICWarsPlayerState state){
+        this.currentPlayerState = state ;
     }
 
     /**
@@ -121,11 +126,12 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     }
 
     @Override
-    public void enterArea(Area area, DiscreteCoordinates position) {
+    public void enterArea(ICWarsArea area, DiscreteCoordinates position) {
         super.enterArea(area, position);
         for (Unit effective : effectives) {
             effective.enterArea(area, effective.getSpawnCoordinates(effective.getFaction(), effective.unitType));
             effective.fillRange(effective.getSpawnCoordinates(effective.getFaction(), effective.unitType));
+            area.addToUnitList(effective);
         }
     }
 

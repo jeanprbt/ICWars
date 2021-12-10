@@ -63,8 +63,9 @@ public abstract class AreaBehavior implements Interactable.Listener, Interactor.
     @Override
     public void viewInteractionOf(Interactor interactor){
         for(DiscreteCoordinates dc : interactor.getFieldOfViewCells()){
-            if(dc.x < 0 || dc.y < 0 || dc.x >= width || dc.y >= height)
+            if(dc.x < 0 || dc.y < 0 || dc.x >= width || dc.y >= height){
                 continue;
+            }
             cells[dc.x][dc.y].viewInteractionOf(interactor);
         }
     }
@@ -190,8 +191,9 @@ public abstract class AreaBehavior implements Interactable.Listener, Interactor.
         private void viewInteractionOf(Interactor interactor){
             interactor.interactWith(this);
             for(Interactable interactable : entities){
-                if(interactable.isViewInteractable())
+                if(interactable.isViewInteractable()) {
                     interactor.interactWith(interactable);
+                }
             }
         }
 

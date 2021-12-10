@@ -3,6 +3,7 @@ package ch.epfl.cs107.play.game.icwars.actor;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.MovableAreaEntity;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
+import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
 import java.awt.image.DirectColorModel;
@@ -44,7 +45,7 @@ public abstract class ICWarsActor extends MovableAreaEntity {
      * @param area (Area): initial area, not null
      * @param position (DiscreteCoordinates): initial position, not null
      */
-    public void enterArea(Area area, DiscreteCoordinates position){
+    public void enterArea(ICWarsArea area, DiscreteCoordinates position){
         area.registerActor(this);
         setOwnerArea(area);
         setCurrentPosition(position.toVector());

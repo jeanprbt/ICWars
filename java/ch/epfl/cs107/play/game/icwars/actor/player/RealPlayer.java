@@ -4,7 +4,6 @@ import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
-import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.Unit;
 import ch.epfl.cs107.play.game.icwars.gui.ICWarsPlayerGUI;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
@@ -12,6 +11,7 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
+
 
 public class RealPlayer extends ICWarsPlayer {
     private final static int MOVE_DURATION = 4;
@@ -84,6 +84,7 @@ public class RealPlayer extends ICWarsPlayer {
         public void interactWith(Unit unit) {
             if (currentPlayerState == ICWarsPlayerState.SELECT_CELL && unit.getFaction() == getFaction()) {
                 selectedUnit = unit;
+                unit.setSelectedUnit(true);
             }
         }
     }
