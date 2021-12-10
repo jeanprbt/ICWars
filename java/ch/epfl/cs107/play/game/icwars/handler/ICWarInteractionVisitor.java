@@ -8,7 +8,11 @@ import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
 
 public interface ICWarInteractionVisitor extends AreaInteractionVisitor {
 
-    default void interactWith(Interactable interactable){
+    default void interactWith(Interactable other){
+
+    }
+
+    default void interactWith(ICWarsBehavior.ICWarsCell cell){
 
     }
 

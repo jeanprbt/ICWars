@@ -1,7 +1,8 @@
 package ch.epfl.cs107.play.game.icwars.gui;
 
 import ch.epfl.cs107.play.game.actor.Graphics;
-import ch.epfl.cs107.play.game.icwars.actor.Unit ;
+import ch.epfl.cs107.play.game.icwars.ICWars;
+import ch.epfl.cs107.play.game.icwars.actor.unit.Unit ;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -9,6 +10,9 @@ import ch.epfl.cs107.play.window.Canvas;
 
 public class ICWarsPlayerGUI implements Graphics {
     private ICWarsPlayer player ;
+    private ICWarsActionsPanel actionsPanel;
+    private ICWarsInfoPanel infoPanel;
+    public final static float FONT_SIZE = 20.f;
 
     /**
      * Default constructor for ICWarsPlayerGUI

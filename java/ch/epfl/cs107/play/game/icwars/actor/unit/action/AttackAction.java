@@ -1,17 +1,26 @@
 package ch.epfl.cs107.play.game.icwars.actor.unit.action;
 
-import ch.epfl.cs107.play.game.icwars.actor.Unit;
+import ch.epfl.cs107.play.game.actor.ImageGraphics;
+import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
+import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
+import java.util.ArrayList;
 
 public class AttackAction extends ICWarsAction{
 
+    private ImageGraphics cursor;
+    private int targetIndex ;
+    private ArrayList<Integer> targetsIndexes;
+    private int index = 0 ;
+
     public AttackAction(ICWarsArea area, Unit ownerUnit) {
         super(area, ownerUnit, Keyboard.A, "(A)ttack");
+        cursor = new ImageGraphics(ResourcePath.getSprite("icwars/UIpackSheet"), 1f, 1f, new RegionOfInterest(4*18, 26*18,16,16));
     }
 
     public ArrayList<Integer> findTargetsIndexes() {
@@ -56,7 +65,12 @@ public class AttackAction extends ICWarsAction{
 
     @Override
     public void draw(Canvas canvas) {
-
+        if (targetsIndexes == null);
+        else {
+            area.unitList.get(targetIndex).centerCamera();
+            cursor.setAnchor(canvas.getPosition().add(1,0));
+            cursor.draw(canvas);
+        }
     }
 }
 

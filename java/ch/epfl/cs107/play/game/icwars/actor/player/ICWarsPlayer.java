@@ -77,10 +77,14 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
      * The method is called by the update method of RealPlayer.java
      */
     public void updateState(){
+        System.out.println(currentPlayerState);
         Keyboard keyboard = getOwnerArea().getKeyboard();
         switch (currentPlayerState) {
             case NORMAL:
-                if (keyboard.get(Keyboard.TAB).isPressed()) currentPlayerState = ICWarsPlayerState.IDLE;
+                centerCamera();
+                if (keyboard.get(Keyboard.TAB).isPressed()){
+                    currentPlayerState = ICWarsPlayerState.IDLE;
+                }
                 if (keyboard.get(Keyboard.ENTER).isReleased()) currentPlayerState = ICWarsPlayerState.SELECT_CELL;
                 break;
             case SELECT_CELL:
@@ -92,10 +96,11 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
                 }
                 if(keyboard.get(Keyboard.ENTER).isReleased()){
                     selectedUnit.changePosition(getCoordinates());
-                    currentPlayerState = ICWarsPlayerState.NORMAL ;
+                    currentPlayerState = ICWarsPlayerState.ACTION_SELECTION ;
                 }
                 break;
             case ACTION_SELECTION:
+                actionToExecute = new AttackAction((ICWarsArea)getOwnerArea(), selectedUnit);
                 for (ICWarsAction act : selectedUnit.actionsList) {
                     if(keyboard.get(act.getKey()).isPressed()){
                         actionToExecute = act ;
@@ -105,6 +110,8 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
                 break;
             case ACTION:
                 actionToExecute.doAction(1.f, this, keyboard);
+
+                break;
             case IDLE:
             default: break;
         }

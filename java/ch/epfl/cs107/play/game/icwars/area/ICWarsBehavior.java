@@ -3,6 +3,7 @@ package ch.epfl.cs107.play.game.icwars.area;
 import ch.epfl.cs107.play.game.areagame.AreaBehavior;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
 import ch.epfl.cs107.play.game.tutosSolution.Tuto2Behavior;
 import ch.epfl.cs107.play.window.Window;
 
@@ -77,13 +78,15 @@ public class ICWarsBehavior extends AreaBehavior {
     }
 
     public class ICWarsCell extends AreaBehavior.Cell {
+        private final ICWarsCellType type;
         /**
          * Default ICWarsCell Constructor
          * @param x (int): x coordinate of the cell
          * @param y (int): y coordinate of the cell
          */
-        public ICWarsCell(int x, int y){
+        public ICWarsCell(int x, int y, ICWarsCellType type){
             super(x, y);
+            this.type = type;
         }
 
 
@@ -122,6 +125,7 @@ public class ICWarsBehavior extends AreaBehavior {
 
         @Override
         public void acceptInteraction(AreaInteractionVisitor v) {
+            ((ICWarInteractionVisitor) v).interactWith(this);
         }
     }
 }
