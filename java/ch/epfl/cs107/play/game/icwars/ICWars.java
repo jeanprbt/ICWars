@@ -2,10 +2,11 @@ package ch.epfl.cs107.play.game.icwars;
 
 import ch.epfl.cs107.play.game.areagame.AreaGame;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
-import ch.epfl.cs107.play.game.icwars.actor.Soldier;
-import ch.epfl.cs107.play.game.icwars.actor.Tank;
+import ch.epfl.cs107.play.game.icwars.actor.unit.Soldier;
+import ch.epfl.cs107.play.game.icwars.actor.unit.Tank;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.RealPlayer;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
 import ch.epfl.cs107.play.game.icwars.area.Level0;
 import ch.epfl.cs107.play.game.icwars.area.Level1;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
@@ -162,9 +163,9 @@ public class ICWars extends AreaGame {
     protected void changeArea() {
         if(getCurrentArea().getTitle() == "icwars/Level0") {
             ICWarsArea currentArea = (ICWarsArea) setCurrentArea("icwars/Level1", false);
+            currentArea.removeAllUnitList();
             for (int i = 0; i < players.size(); i++) {
                 players.get(i).leaveArea();
-                currentArea.removeAllUnitList();
                 DiscreteCoordinates coordinates = (players.get(i).getFaction() == ICWarsActor.Faction.ALLY) ? currentArea.getAllySpawnCoordinates() : currentArea.getEnemySpawnCoordinates();
                 players.get(i).enterArea(currentArea, coordinates);
                 currentPlayer.startTurn();

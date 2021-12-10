@@ -22,7 +22,8 @@ public class ICWarsBehavior extends AreaBehavior {
         int width = getWidth();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                setCell(x, y, new ICWarsCell(x, y));
+                ICWarsCellType type = ICWarsCellType.toType(getRGB(height-1-y, x));
+                setCell(x, y, new ICWarsCell(x, y, type));
             }
         }
     }
@@ -65,6 +66,14 @@ public class ICWarsBehavior extends AreaBehavior {
             System.out.println(type);
             return NONE;
         }
+
+        public int getDefenseStars() {
+            return defenseStars;
+        }
+
+        public String typeToString(){
+            return name();
+        }
     }
 
     public class ICWarsCell extends AreaBehavior.Cell {
@@ -76,6 +85,7 @@ public class ICWarsBehavior extends AreaBehavior {
         public ICWarsCell(int x, int y){
             super(x, y);
         }
+
 
         @Override
         protected boolean canLeave(Interactable entity) {
@@ -92,6 +102,13 @@ public class ICWarsBehavior extends AreaBehavior {
             return true ;
         }
 
+        public ICWarsCellType getType() {
+            return type;
+        }
+
+        public int getDefenseStars(ICWarsCellType type) {
+            return type.defenseStars;
+        }
 
         @Override
         public boolean isCellInteractable() {

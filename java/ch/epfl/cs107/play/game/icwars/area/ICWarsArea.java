@@ -2,7 +2,7 @@ package ch.epfl.cs107.play.game.icwars.area;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.icwars.ICWars;
-import ch.epfl.cs107.play.game.icwars.actor.Unit;
+import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.tutosSolution.Tuto2;
 import ch.epfl.cs107.play.game.tutosSolution.Tuto2Behavior;
 import ch.epfl.cs107.play.io.FileSystem;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public abstract class ICWarsArea extends Area {
 
     private ICWarsBehavior behavior ;
-    private ArrayList<Unit> unitList ;
+    public ArrayList<Unit> unitList ;
 
     /**
      * Create the area by adding it all actors
@@ -31,9 +31,7 @@ public abstract class ICWarsArea extends Area {
      */
     public void addToUnitList(Unit unit){
         unitList.add(unit);
-        if(unitList.size() >= 4){
-            System.out.println(unitList);
-        }
+        System.out.println(unitList);
     }
 
     /**
@@ -44,12 +42,7 @@ public abstract class ICWarsArea extends Area {
         unitList.removeAll(unitList);
     }
 
-    /**
-     * @param unit : unit whose index is needed
-     * @return : index of unit from unitList
-     */
-    public int getIndexInUnitList(Unit unit) {
-        assert(unitList.contains(unit));
+    public int getIndexInUnitList(Unit unit){
         return unitList.indexOf(unit);
     }
 

@@ -1,9 +1,11 @@
-package ch.epfl.cs107.play.game.icwars.actor;
+package ch.epfl.cs107.play.game.icwars.actor.unit;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
-import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
+import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
+import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsRange;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -14,28 +16,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
-public abstract class Unit extends ICWarsActor implements Interactor {
+public abstract class Unit extends ICWarsActor implements Interactor{
     private String name;
     private int radius;
     private int maxHp;
     private ICWarsRange range;
     private boolean hasBeenUsed;
     private boolean isDead;
-    private ICWarsUnitInteractionHandler handler;
-    private int indexOfTargetedUnit;
-    private ArrayList<Integer> indexOfTargetableUnits;
-    private ICWarsArea icWarsArea;
-    private boolean isSelectedUnit ;
+    private ICWarsUnitInteractionHandler handler ;
+    private int cellDefenseStars ;
 
     protected int hp;
     protected Sprite sprite;
 
     public UnitType unitType;
+    public ArrayList<ICWarsAction> actionsList;
 
-    abstract int getDamage();
-    abstract int getRadius();
-    abstract int getMaxHp();
-    abstract String getName();
+    abstract public int getDamage();
+    abstract public int getRadius();
+    abstract public  int getMaxHp();
+    abstract public String getName();
 
 
     /**
@@ -55,11 +55,15 @@ public abstract class Unit extends ICWarsActor implements Interactor {
         maxHp = getMaxHp();
         hasBeenUsed = false;
         isDead = false;
-        handler = new ICWarsUnitInteractionHandler();
-        icWarsArea = (ICWarsArea) area;
-        indexOfTargetableUnits = new ArrayList<Integer>();
-        isSelectedUnit = false ;
         fillRange(position);
+    }
+
+
+    /**
+     * Center the camera on the player
+     */
+    public void centerCamera() {
+        getOwnerArea().setViewCandidate(this);
     }
 
 
@@ -92,9 +96,6 @@ public abstract class Unit extends ICWarsActor implements Interactor {
         super.setCurrentPosition(v);
     }
 
-    public void setSelectedUnit(boolean selectedUnit) {
-        isSelectedUnit = selectedUnit;
-    }
 
     /**
      * Function that returns the spawn coordinates of the desired unit, according to
@@ -157,7 +158,7 @@ public abstract class Unit extends ICWarsActor implements Interactor {
      * @param damage : the number of healthPoints to decrease
      */
     public void takeInjure(int damage) {
-        hp -= damage;
+        hp = hp - damage + cellDefenseStars;
         hp = (hp <= 0) ? 0 : hp;
         if (hp == 0) isDead = true;
     }
@@ -213,51 +214,37 @@ public abstract class Unit extends ICWarsActor implements Interactor {
     }
 
     @Override
+    public boolean wantsViewInteraction() {
+        return false;
+    }
+
+    @Override
+    public boolean wantsCellInteraction() {
+        return true;
+    }
+
+    @Override
     public void acceptInteraction(AreaInteractionVisitor v) {
         ((ICWarInteractionVisitor) v).interactWith(this);
     }
 
     @Override
     public List<DiscreteCoordinates> getFieldOfViewCells() {
-        ArrayList<DiscreteCoordinates> fieldOfView = new ArrayList<DiscreteCoordinates>();
-        for (int x = -getRadius(); x <= getRadius(); x++) {
-            for (int y = -getRadius(); y <= getRadius(); y++) {
-                DiscreteCoordinates position = new DiscreteCoordinates((int) getPosition().x + x, (int) getPosition().y + y);
-                if ((position.x + x >= 0) && (position.x + x < getOwnerArea().getWidth()) && (position.y + y >= 0) && (position.y + y < getOwnerArea().getHeight())) {
-                    fieldOfView.add(position);
-                }
-            }
-        }
-        return fieldOfView;
+        return null;
     }
 
-    @Override
-    public boolean wantsCellInteraction() {
-        return false;
-    }
-
-    @Override
-    public boolean wantsViewInteraction() {
-        if(isSelectedUnit) return true ;
-        else return false;
-    }
-
-    @Override
     public void interactWith(Interactable other) {
         other.acceptInteraction(handler);
     }
 
-
     private class ICWarsUnitInteractionHandler implements ICWarInteractionVisitor {
+
         @Override
-        public void interactWith(Unit unit) {
-            if (unit.getFaction() != getFaction() && !indexOfTargetableUnits.contains(icWarsArea.getIndexInUnitList(unit))) {
-                indexOfTargetableUnits.add(icWarsArea.getIndexInUnitList(unit));
-            }
-            System.out.println(Unit.this);
-            System.out.println(indexOfTargetableUnits);
+        public void interactWith(ICWarsBehavior.ICWarsCell cell) {
+            cellDefenseStars =  cell.getDefenseStars(cell.getType());
         }
     }
 }
+
 
 
