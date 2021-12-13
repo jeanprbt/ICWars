@@ -49,7 +49,7 @@ public class ICWars extends AreaGame {
 
         //Resetting game if key "R" is pressed
         if (keyboard.get(Keyboard.R).isPressed()) {
-            begin(getWindow(), getFileSystem());
+            resetGame();
         }
 
 
@@ -164,12 +164,22 @@ public class ICWars extends AreaGame {
         if(getCurrentArea().getTitle() == "icwars/Level0") {
             ICWarsArea currentArea = (ICWarsArea) setCurrentArea("icwars/Level1", false);
             currentArea.removeAllUnitList();
-            for (int i = 0; i < players.size(); i++) {
-                players.get(i).leaveArea();
-                DiscreteCoordinates coordinates = (players.get(i).getFaction() == ICWarsActor.Faction.ALLY) ? currentArea.getAllySpawnCoordinates() : currentArea.getEnemySpawnCoordinates();
-                players.get(i).enterArea(currentArea, coordinates);
-                currentPlayer.startTurn();
+
+            DiscreteCoordinates [] coords = {currentArea.getAllySpawnCoordinates(), currentArea.getEnemySpawnCoordinates()};
+            ICWarsActor.Faction [] factions = {ICWarsActor.Faction.ALLY, ICWarsActor.Faction.ENEMY};
+            Tank [] tanks = new Tank[2];
+            Soldier [] soldiers = new Soldier[2];
+
+            for (int i = 0; i < 2 ; i++) {
+                Tank tank = new Tank(currentArea, Tank.getSpawnCoordinates(factions[i]), factions[i]);
+                tanks[i] = tank;
+                    Soldier soldier = new Soldier(currentArea, Soldier.getSpawnCoordinates(factions[i]), factions[i]);
+                soldiers[i] = soldier;
+                players.add(i, new RealPlayer(currentArea, coords[i], factions[i], tanks[i], soldiers[i]));
+                players.get(i).enterArea(currentArea, coords[i]);
             }
+            currentRoundState = ICWarsRoundState.INIT;
+            currentPlayer.startTurn();
         } else end();
     }
 
@@ -192,6 +202,16 @@ public class ICWars extends AreaGame {
     public void end() {
         System.out.println("Game Over");
         System.exit(0);
+    }
+
+    /**
+     * Resets game
+     */
+    public void resetGame(){
+        createAreas();
+        players = new ArrayList<ICWarsPlayer>();
+        currentRoundState = ICWarsRoundState.INIT;
+        initArea("icwars/Level0");
     }
 
     /**

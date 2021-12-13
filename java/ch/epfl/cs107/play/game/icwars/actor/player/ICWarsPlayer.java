@@ -126,6 +126,9 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         centerCamera();
     }
 
+    /**
+     * Method to call at then end of the selectedUnit's action to check if units died
+     */
     public void controlUnits() {
         for (Unit effective : effectives) {
             if(effective.isDead()) {
