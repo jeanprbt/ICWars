@@ -51,6 +51,10 @@ public class RealPlayer extends ICWarsPlayer {
         this.unitOnCell = unitOnCell;
     }
 
+    public Unit getUnitOnCell() {
+        return unitOnCell;
+    }
+
     @Override
     public void draw(Canvas canvas) {
         if(getCurrentPlayerState() != ICWarsPlayerState.IDLE) sprite.draw(canvas);

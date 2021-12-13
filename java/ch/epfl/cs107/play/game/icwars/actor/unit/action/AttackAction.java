@@ -55,7 +55,7 @@ public class AttackAction extends ICWarsAction{
                 --index;
                 targetIndex = targetsIndexes.get(index);
             }
-            if (keyboard.get(Keyboard.ENTER).isPressed()) {
+            if (keyboard.get(Keyboard.ENTER).isReleased()) {
                 area.unitList.get(targetIndex).takeInjure(ownerUnit.getDamage());
                 player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
             }
