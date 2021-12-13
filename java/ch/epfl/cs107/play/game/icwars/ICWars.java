@@ -105,6 +105,9 @@ public class ICWars extends AreaGame {
                 break;
             case END_TURN:
                 controlPlayers();
+                for (ICWarsPlayer player : players) {
+                    player.controlUnits();
+                }
                 if (players.size() == 1) currentRoundState = ICWarsRoundState.END;
                 else {
                     currentRoundPlayers.addAll(nextRoundPlayers);
@@ -186,6 +189,7 @@ public class ICWars extends AreaGame {
 
         }
     }
+
 
     @Override
     public void end() {

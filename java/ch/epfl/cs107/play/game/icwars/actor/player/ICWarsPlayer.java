@@ -77,7 +77,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
      * The method is called by the update method of RealPlayer.java
      */
     public void updateState(){
-        System.out.println(currentPlayerState);
         Keyboard keyboard = getOwnerArea().getKeyboard();
         switch (currentPlayerState) {
             case NORMAL:
@@ -126,6 +125,17 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         currentPlayerState = ICWarsPlayerState.NORMAL;
         centerCamera();
     }
+
+    public void controlUnits() {
+        for (Unit effective : effectives) {
+            if (effective.isDead()) {
+                effectives.remove(effective);
+                getOwnerArea().unregisterActor(effective);
+            }
+
+        }
+    }
+
 
     /**
      * Method that sets all units as available for asked player
@@ -178,12 +188,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     @Override
     public void update(float deltaTime) {
-        for (Unit effective : effectives) {
-            if(effective.isDead()) {
-                effectives.remove(effective);
-                getOwnerArea().unregisterActor(effective);
-            }
-        }
         super.update(deltaTime);
     }
 
