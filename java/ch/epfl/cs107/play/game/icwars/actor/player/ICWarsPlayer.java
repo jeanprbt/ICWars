@@ -104,6 +104,13 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
                 for (ICWarsAction act : selectedUnit.actionsList) {
                     if(keyboard.get(act.getKey()).isPressed()){
                         actionToExecute = act ;
+                        //Resetting index in AttackAction only once before calling doAction()
+                        //in order to take in consideration the update of the unitList of the
+                        //ICWarsArea
+                        if(actionToExecute instanceof AttackAction){
+                            AttackAction attackActionToExecute = (AttackAction) actionToExecute ;
+                            attackActionToExecute.setIndex(0);
+                        }
                         currentPlayerState = ICWarsPlayerState.ACTION ;
                     }
                 }
@@ -130,12 +137,16 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
      * Method to call at then end of the selectedUnit's action to check if units died
      */
     public void controlUnits() {
+        ArrayList<Unit> effectivesToRemove = new ArrayList<Unit>();
         for (Unit effective : effectives) {
             if(effective.isDead()) {
+                ICWarsArea area = (ICWarsArea) getOwnerArea() ;
+                area.removeFromUnitList(effective);
                 getOwnerArea().unregisterActor(effective);
-                effectives.remove(effective);
+                effectivesToRemove.add(effective);
             }
         }
+        effectives.removeAll(effectivesToRemove);
     }
 
 

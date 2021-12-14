@@ -16,14 +16,25 @@ public class AttackAction extends ICWarsAction{
     private ImageGraphics cursor;
     private int targetIndex ;
     private ArrayList<Integer> targetsIndexes;
-    private int index = 0 ;
+    private int index;
+    // Boolean used to make sure that method draw of AttackAction is called after doAction
+    // Without it method draw is called before and error occurs because targetIndexes is not
+    // updated soon enough
+    private boolean waitingPurposeBoolean;
 
     public AttackAction(ICWarsArea area, Unit ownerUnit) {
         super(area, ownerUnit, Keyboard.A, "(A)ttack");
+        index = 0 ;
         cursor = new ImageGraphics(ResourcePath.getSprite("icwars/UIpackSheet"), 1f, 1f, new RegionOfInterest(4*18, 26*18,16,16));
     }
 
-    public ArrayList<Integer> findTargetsIndexes() {
+    /**
+     * Method to find all units that are close enough to the ownerUnit to be considered
+     * as potential targets. If it is the case, then their index in the ICWarsArea's unitList
+     * is added to the list targetIndexes
+     * @return the list of targets' indexes in ICWarsArea's unitList
+     */
+    private ArrayList<Integer> findTargetsIndexes() {
         ArrayList<Integer> targetsIndexes = new ArrayList<Integer>();
         for (Unit unit  : area.unitList) {
             if(unit.getFaction() == ownerUnit.getFaction()) continue ;
@@ -33,11 +44,18 @@ public class AttackAction extends ICWarsAction{
         return targetsIndexes ;
     }
 
+    /**
+     * Method to check if a given position is close enough to the ownerUnit's position
+     * @param position position to check
+     */
     private boolean isInRange(DiscreteCoordinates position) {
         if(Math.abs(ownerUnit.getPosition().x - position.x) <= ownerUnit.getRadius() && Math.abs(ownerUnit.getPosition().y - position.y) <= ownerUnit.getRadius()) return true;
         return false;
     }
 
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {

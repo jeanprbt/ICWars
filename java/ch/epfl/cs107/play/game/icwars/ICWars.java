@@ -6,7 +6,6 @@ import ch.epfl.cs107.play.game.icwars.actor.unit.Soldier;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Tank;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.RealPlayer;
-import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
 import ch.epfl.cs107.play.game.icwars.area.Level0;
 import ch.epfl.cs107.play.game.icwars.area.Level1;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
@@ -85,10 +84,12 @@ public class ICWars extends AreaGame {
                 else {
                     currentPlayer = currentRoundPlayers.get(0);
                     currentRoundPlayers.remove(currentPlayer);
+                    System.out.println(currentRoundPlayers);
                     currentRoundState = ICWarsRoundState.START_PLAYER_TURN;
                 }
                 break;
             case START_PLAYER_TURN:
+                if (currentPlayer.isVanquished()) currentRoundState = ICWarsRoundState.END_TURN;
                 currentPlayer.startTurn();
                 currentRoundState = ICWarsRoundState.PLAYER_TURN;
                 break;
@@ -108,12 +109,12 @@ public class ICWars extends AreaGame {
                 if (players.size() == 1) currentRoundState = ICWarsRoundState.END;
                 else {
                     currentRoundPlayers.addAll(nextRoundPlayers);
+                    nextRoundPlayers.clear();
                     currentRoundState = ICWarsRoundState.CHOOSE_PLAYER;
                 }
                 break;
             case END:
                 changeArea();
-
         }
     }
 
@@ -163,7 +164,8 @@ public class ICWars extends AreaGame {
     protected void changeArea() {
         if(getCurrentArea().getTitle() == "icwars/Level0") {
             ICWarsArea currentArea = (ICWarsArea) setCurrentArea("icwars/Level1", false);
-            currentArea.removeAllUnitList();
+            currentArea.clearUnitList();
+            players = new ArrayList<ICWarsPlayer>();
 
             DiscreteCoordinates [] coords = {currentArea.getAllySpawnCoordinates(), currentArea.getEnemySpawnCoordinates()};
             ICWarsActor.Faction [] factions = {ICWarsActor.Faction.ALLY, ICWarsActor.Faction.ENEMY};
@@ -188,12 +190,12 @@ public class ICWars extends AreaGame {
      * how many players left there are in the game
      */
     public void controlPlayers() {
+        ArrayList<ICWarsPlayer> playersToRemove = new ArrayList<ICWarsPlayer>();
         for (ICWarsPlayer player : players) {
             if (player.isVanquished()) {
                 nextRoundPlayers.remove(player);
-                getCurrentArea().unregisterActor(player);
+                playersToRemove.add(player);
             }
-
         }
     }
 

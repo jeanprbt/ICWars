@@ -38,8 +38,17 @@ public abstract class ICWarsArea extends Area {
      * Litte method aiming at removing everything from unitList when charging
      * a new area, called in method changeArea() of ICWars.java
      */
-    public void removeAllUnitList(){
-        unitList.removeAll(unitList);
+    public void clearUnitList(){
+        unitList.clear();
+    }
+
+    /**
+     * Little method at aiming at removing a unit when it's dead,
+     * called in controlUnits() method of ICWarsPlayer.java
+     * @param unit : unit to remove
+     */
+    public void removeFromUnitList(Unit unit){
+        unitList.remove(unit);
     }
 
     public int getIndexInUnitList(Unit unit){

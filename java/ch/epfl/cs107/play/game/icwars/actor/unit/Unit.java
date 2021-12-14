@@ -194,7 +194,7 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     public void draw(Canvas canvas) {
         if (isHasBeenUsed()) sprite.setAlpha(0.3f);
         else sprite.setAlpha(1.f);
-        if (!isDead()) sprite.draw(canvas);
+        if(!isDead()) sprite.draw(canvas);
     }
 
     @Override
