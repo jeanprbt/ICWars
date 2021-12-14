@@ -59,6 +59,7 @@ public class AttackAction extends ICWarsAction{
 
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
+        waitingPurposeBoolean = true;
         targetsIndexes = findTargetsIndexes();
         if (targetsIndexes.size() == 0 || keyboard.get(Keyboard.TAB).isPressed()) {
             player.centerCamera();
@@ -76,6 +77,7 @@ public class AttackAction extends ICWarsAction{
             if (keyboard.get(Keyboard.ENTER).isReleased()) {
                 area.unitList.get(targetIndex).takeInjure(ownerUnit.getDamage());
                 player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
+                waitingPurposeBoolean = false;
             }
             ownerUnit.setHasBeenUsed(true);
         }
@@ -83,11 +85,13 @@ public class AttackAction extends ICWarsAction{
 
     @Override
     public void draw(Canvas canvas) {
-        if (targetsIndexes == null);
-        else {
-            area.unitList.get(targetIndex).centerCamera();
-            cursor.setAnchor(canvas.getPosition().add(1,0));
-            cursor.draw(canvas);
+        if (waitingPurposeBoolean) {
+            if (targetsIndexes == null) ;
+            else {
+                area.unitList.get(targetIndex).centerCamera();
+                cursor.setAnchor(canvas.getPosition().add(1, 0));
+                cursor.draw(canvas);
+            }
         }
     }
 }

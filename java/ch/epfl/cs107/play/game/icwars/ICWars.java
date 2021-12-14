@@ -97,8 +97,10 @@ public class ICWars extends AreaGame {
               if (currentPlayer.getCurrentPlayerState() == ICWarsPlayer.ICWarsPlayerState.IDLE) currentRoundState = ICWarsRoundState.END_PLAYER_TURN;
                 break;
             case END_PLAYER_TURN:
-                if(currentPlayer.isVanquished()) getCurrentArea().unregisterActor(currentPlayer);
-                else{
+                if(currentPlayer.isVanquished()) {
+                    getCurrentArea().unregisterActor(currentPlayer);
+                }
+                else {
                     nextRoundPlayers.add(currentPlayer);
                     currentPlayer.setUnitsAvailable();
                 }
@@ -106,6 +108,7 @@ public class ICWars extends AreaGame {
                 break;
             case END_TURN:
                 controlPlayers();
+                System.out.println(players.size());
                 if (players.size() == 1) currentRoundState = ICWarsRoundState.END;
                 else {
                     currentRoundPlayers.addAll(nextRoundPlayers);
@@ -197,6 +200,7 @@ public class ICWars extends AreaGame {
                 playersToRemove.add(player);
             }
         }
+        players.removeAll(playersToRemove);
     }
 
 

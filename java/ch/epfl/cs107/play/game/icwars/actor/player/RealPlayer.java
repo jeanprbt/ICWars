@@ -62,6 +62,7 @@ public class RealPlayer extends ICWarsPlayer {
 
     @Override
     public void update(float deltaTime) {
+
         Keyboard keyboard= getOwnerArea().getKeyboard();
         if (currentPlayerState == ICWarsPlayerState.NORMAL || currentPlayerState == ICWarsPlayerState.SELECT_CELL || currentPlayerState == ICWarsPlayerState.MOVE_UNIT) {
             moveIfPressed(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
@@ -69,6 +70,7 @@ public class RealPlayer extends ICWarsPlayer {
             moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
             moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
         }
+        controlUnits();
         updateState();
         super.update(deltaTime);
     }

@@ -80,7 +80,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         Keyboard keyboard = getOwnerArea().getKeyboard();
         switch (currentPlayerState) {
             case NORMAL:
-                controlUnits();
                 centerCamera();
                 if (keyboard.get(Keyboard.TAB).isPressed()){
                     currentPlayerState = ICWarsPlayerState.IDLE;

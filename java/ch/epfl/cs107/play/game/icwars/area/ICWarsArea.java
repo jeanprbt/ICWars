@@ -31,7 +31,6 @@ public abstract class ICWarsArea extends Area {
      */
     public void addToUnitList(Unit unit){
         unitList.add(unit);
-        System.out.println(unitList);
     }
 
     /**
