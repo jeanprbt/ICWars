@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public abstract class ICWarsArea extends Area {
 
     private ICWarsBehavior behavior ;
-    public ArrayList<Unit> unitList ;
+    private ArrayList<Unit> unitList ;
 
     /**
      * Create the area by adding it all actors
@@ -34,14 +34,6 @@ public abstract class ICWarsArea extends Area {
     }
 
     /**
-     * Litte method aiming at removing everything from unitList when charging
-     * a new area, called in method changeArea() of ICWars.java
-     */
-    public void clearUnitList(){
-        unitList.clear();
-    }
-
-    /**
      * Little method at aiming at removing a unit when it's dead,
      * called in controlUnits() method of ICWarsPlayer.java
      * @param unit : unit to remove
@@ -50,8 +42,25 @@ public abstract class ICWarsArea extends Area {
         unitList.remove(unit);
     }
 
+    /**
+     * Litte method aiming at removing everything from unitList when charging
+     * a new area, called in method changeArea() of ICWars.java
+     */
+    public void clearUnitList(){
+        unitList.clear();
+    }
+
+
+    public Unit getUnitFromIndex(int index){
+        return unitList.get(index);
+    }
+
     public int getIndexInUnitList(Unit unit){
         return unitList.indexOf(unit);
+    }
+
+    public int getUnitListSize(){
+        return unitList.size();
     }
 
     @Override

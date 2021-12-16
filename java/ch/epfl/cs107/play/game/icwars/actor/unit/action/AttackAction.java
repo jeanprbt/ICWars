@@ -36,7 +36,8 @@ public class AttackAction extends ICWarsAction{
      */
     private ArrayList<Integer> findTargetsIndexes() {
         ArrayList<Integer> targetsIndexes = new ArrayList<Integer>();
-        for (Unit unit  : area.unitList) {
+        for (int i = 0; i < area.getUnitListSize(); i++) {
+            Unit unit = area.getUnitFromIndex(i);
             if(unit.getFaction() == ownerUnit.getFaction()) continue ;
             DiscreteCoordinates position = new DiscreteCoordinates((int)unit.getPosition().x, (int)unit.getPosition().y);
             if(isInRange(position)) targetsIndexes.add(area.getIndexInUnitList(unit));
@@ -75,7 +76,7 @@ public class AttackAction extends ICWarsAction{
                 targetIndex = targetsIndexes.get(index);
             }
             if (keyboard.get(Keyboard.ENTER).isReleased()) {
-                area.unitList.get(targetIndex).takeInjure(ownerUnit.getDamage());
+                area.getUnitFromIndex(targetIndex).takeInjure(ownerUnit.getDamage());
                 player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
                 waitingPurposeBoolean = false;
             }
@@ -88,7 +89,7 @@ public class AttackAction extends ICWarsAction{
         if (waitingPurposeBoolean) {
             if (targetsIndexes == null) ;
             else {
-                area.unitList.get(targetIndex).centerCamera();
+                area.getUnitFromIndex(targetIndex).centerCamera();
                 cursor.setAnchor(canvas.getPosition().add(1, 0));
                 cursor.draw(canvas);
             }

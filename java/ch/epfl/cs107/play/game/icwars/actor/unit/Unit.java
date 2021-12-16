@@ -129,8 +129,9 @@ public abstract class Unit extends ICWarsActor implements Interactor{
                 boolean hasLeftEdge, hasRightEdge, hasDownEdge, hasUpEdge;
                 hasLeftEdge = x > (-radius) && (x + position.x) > 0;
                 hasRightEdge = x < radius && (x + position.x) < (radius + position.x);
-                hasUpEdge = y > (-radius) && (y + position.y) > 0;
-                hasDownEdge = y < radius && (y + position.y) < (radius + position.y);
+                hasUpEdge = y < radius  && (y + position.y) > 0;
+                hasDownEdge = y > (-radius) && (y + position.y)  < (radius + position.y);
+                if(x + position.x >= getOwnerArea().getWidth() || x + position.x < 0 || y + position.y >= getOwnerArea().getHeight() || y + position.y < 0) continue;
                 range.addNode(new DiscreteCoordinates(position.x + x, position.y + y), hasLeftEdge, hasUpEdge, hasRightEdge, hasDownEdge);
             }
         }
