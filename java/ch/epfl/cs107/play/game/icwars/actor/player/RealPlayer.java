@@ -28,7 +28,7 @@ public class RealPlayer extends ICWarsPlayer {
     private Unit unitOnCell ;
     private ICWarsAction actionToExecute ;
 
-
+    //-----------------------------------API-------------------------------------//
 
     /**
      * Default constructor for ICWarsActor
@@ -52,15 +52,6 @@ public class RealPlayer extends ICWarsPlayer {
     }
 
     @Override
-    public void draw(Canvas canvas) {
-        if(getCurrentPlayerState() != ICWarsPlayerState.IDLE) sprite.draw(canvas);
-        if(selectedUnit != null && getCurrentPlayerState() == ICWarsPlayerState.MOVE_UNIT) gui.draw(canvas, selectedUnit);
-        if(getCurrentPlayerState() == ICWarsPlayerState.NORMAL || getCurrentPlayerState() == ICWarsPlayerState.SELECT_CELL) gui.draw(canvas, unitOnCell, cellType);
-        if(getCurrentPlayerState() == ICWarsPlayerState.ACTION_SELECTION) gui.draw(canvas, selectedUnit, true);
-        if(getCurrentPlayerState() == ICWarsPlayerState.ACTION) actionToExecute.draw(canvas);
-    }
-
-    @Override
     public void update(float deltaTime) {
 
         Keyboard keyboard= getOwnerArea().getKeyboard();
@@ -73,6 +64,28 @@ public class RealPlayer extends ICWarsPlayer {
         controlUnits();
         updatePlayerState();
         super.update(deltaTime);
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        if(getCurrentPlayerState() != ICWarsPlayerState.IDLE) sprite.draw(canvas);
+        if(selectedUnit != null && getCurrentPlayerState() == ICWarsPlayerState.MOVE_UNIT) gui.draw(canvas, selectedUnit);
+        if(getCurrentPlayerState() == ICWarsPlayerState.NORMAL || getCurrentPlayerState() == ICWarsPlayerState.SELECT_CELL) gui.drawInfoPanel(canvas, unitOnCell, cellType);
+        if(getCurrentPlayerState() == ICWarsPlayerState.ACTION_SELECTION) gui.drawActionsPanel(canvas, selectedUnit);
+        if(getCurrentPlayerState() == ICWarsPlayerState.ACTION) actionToExecute.draw(canvas);
+    }
+
+    @Override
+    public void onLeaving(List<DiscreteCoordinates> coordinates) {
+        super.onLeaving(coordinates);
+        unitOnCell = null;
+    }
+
+    @Override
+    public void interactWith(Interactable other) {
+        if(!isDisplacementOccurs()) {
+            other.acceptInteraction(handler);
+        }
     }
 
     /**
@@ -97,8 +110,8 @@ public class RealPlayer extends ICWarsPlayer {
                     setCurrentPlayerState(ICWarsPlayerState.NORMAL);
                 }
                 if(keyboard.get(Keyboard.ENTER).isReleased()){
-                    if(getOwnerArea().canEnterAreaCells(selectedUnit, getCurrentCells())|| getCoordinates().toVector().equals(selectedUnit.getPosition())) {
-                        selectedUnit.changePosition(getCoordinates());
+                    if(getOwnerArea().canEnterAreaCells(selectedUnit, getCurrentCells())|| new DiscreteCoordinates((int)getPosition().x, (int)getPosition().y).toVector().equals(selectedUnit.getPosition())) {
+                        selectedUnit.changePosition(new DiscreteCoordinates((int)getPosition().x, (int)getPosition().y));
                         setCurrentPlayerState(ICWarsPlayerState.ACTION_SELECTION);
                     }
                 }
@@ -127,11 +140,7 @@ public class RealPlayer extends ICWarsPlayer {
         }
     }
 
-    @Override
-    public void onLeaving(List<DiscreteCoordinates> coordinates) {
-        super.onLeaving(coordinates);
-        unitOnCell = null;
-    }
+    //-----------------------------------Private-------------------------------------//
 
     /**
      * Orientate and Move this player in the given orientation if the given button is down
@@ -144,12 +153,6 @@ public class RealPlayer extends ICWarsPlayer {
                 orientate(orientation);
                 move(MOVE_DURATION);
             }
-        }
-    }
-
-    public void interactWith(Interactable other) {
-        if(!isDisplacementOccurs()) {
-            other.acceptInteraction(handler);
         }
     }
 

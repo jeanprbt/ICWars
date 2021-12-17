@@ -9,10 +9,15 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Canvas;
 
 public class ICWarsPlayerGUI implements Graphics {
+    
+    public final static float FONT_SIZE = 20.f;
+    
     private ICWarsPlayer player ;
     private ICWarsActionsPanel actionsPanel;
     private ICWarsInfoPanel infoPanel;
-    public final static float FONT_SIZE = 20.f;
+
+
+    //-----------------------------------API-------------------------------------//
 
     /**
      * Default constructor for ICWarsPlayerGUI
@@ -25,10 +30,15 @@ public class ICWarsPlayerGUI implements Graphics {
         this.player = player;
     }
 
+    @Override
+    public void draw(Canvas canvas) {
+
+    }
+
     /**
      * Alternate draw method that allows a Unit selectedUnit in parameter
      * in order to avoid intrusive getters in RealPlayer.java
-     * This method calls drawRangeAndPathTo of ilts player until its
+     * This method calls drawRangeAndPathTo of its player until its
      * selected unit.
      * @param canvas : canvas
      * @param selectedUnit
@@ -39,19 +49,14 @@ public class ICWarsPlayerGUI implements Graphics {
         selectedUnit.drawRangeAndPathTo(new DiscreteCoordinates(x, y), canvas);
     }
 
-    public void draw(Canvas canvas, Unit selectedUnit, boolean bool){
+    public void drawActionsPanel(Canvas canvas, Unit selectedUnit){
         actionsPanel.setActions(selectedUnit.actionsList);
         actionsPanel.draw(canvas);
     }
 
-    public void draw(Canvas canvas, Unit unitOnCell, ICWarsBehavior.ICWarsCellType type) {
+    public void drawInfoPanel(Canvas canvas, Unit unitOnCell, ICWarsBehavior.ICWarsCellType type) {
         infoPanel.setUnit(unitOnCell);
         infoPanel.setCurrentCell(type);
         infoPanel.draw(canvas);
-    }
-
-    @Override
-    public void draw(Canvas canvas) {
-
     }
 }

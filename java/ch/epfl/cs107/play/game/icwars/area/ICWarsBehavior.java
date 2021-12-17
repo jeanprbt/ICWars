@@ -12,6 +12,8 @@ import java.util.function.ToDoubleBiFunction;
 
 public class ICWarsBehavior extends AreaBehavior {
 
+    //-----------------------------------API-------------------------------------//
+
     /**
      * Default ICWarsBehavior Constructor
      * @param window (Window) : Window in which the game is launched
@@ -77,8 +79,13 @@ public class ICWarsBehavior extends AreaBehavior {
         }
     }
 
+    //----------------------------------ICWarsCell-------------------------------------//
+
     public class ICWarsCell extends AreaBehavior.Cell {
+
         private final ICWarsCellType type;
+
+        //-----------------------------------API-------------------------------------//
         /**
          * Default ICWarsCell Constructor
          * @param x (int): x coordinate of the cell
@@ -89,22 +96,7 @@ public class ICWarsBehavior extends AreaBehavior {
             this.type = type;
         }
 
-
-        @Override
-        protected boolean canLeave(Interactable entity) {
-            return true;
-        }
-
-        @Override
-        protected boolean canEnter(Interactable entity){
-            boolean cellSpaceTaken = false ;
-            for (Interactable interactable : entities) {
-                if (interactable.takeCellSpace()) cellSpaceTaken = true ;
-            }
-            if(entity.takeCellSpace() && cellSpaceTaken) return false ;
-            return true ;
-        }
-
+        //Getter for type
         public ICWarsCellType getType() {
             return type;
         }
@@ -126,6 +118,22 @@ public class ICWarsBehavior extends AreaBehavior {
         @Override
         public void acceptInteraction(AreaInteractionVisitor v) {
             ((ICWarInteractionVisitor) v).interactWith(this);
+        }
+
+
+        @Override
+        protected boolean canLeave(Interactable entity) {
+            return true;
+        }
+
+        @Override
+        protected boolean canEnter(Interactable entity){
+            boolean cellSpaceTaken = false ;
+            for (Interactable interactable : entities) {
+                if (interactable.takeCellSpace()) cellSpaceTaken = true ;
+            }
+            if(entity.takeCellSpace() && cellSpaceTaken) return false ;
+            return true ;
         }
     }
 }

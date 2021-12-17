@@ -52,68 +52,12 @@ public abstract class ICWarsArea extends Area {
         unitList.clear();
     }
 
-    /**
-     * Method returning all enemies given a selectedUnit (knowing its faction this way)
-     * @param selectedUnit : the unit for which we want to know its enemies
-     * @return
-     */
-    public ArrayList<Unit> getEnemies(Unit selectedUnit) {
-        ArrayList<Unit> enemies = new ArrayList<Unit>();
-        for (Unit unit : unitList) {
-            if(unit.getFaction() == selectedUnit.getFaction()) continue ;
-            enemies.add(unit);
-        }
-        return enemies;
-    }
+    //-----------------------------------Protected-------------------------------------//
 
     /**
-     * Method returning all enemies position given a selectedUnit (knowing its faction this way)
-     * @param selectedUnit : the unit for which we want to know its enemies positions
+     * Create the area by adding it all actors
+     * called by begin method
+     * Note it set the Behavior as needed !
      */
-    public ArrayList<DiscreteCoordinates> getEnemiesPosition(Unit selectedUnit){
-        ArrayList<DiscreteCoordinates> enemiesPosition = new ArrayList<DiscreteCoordinates>();
-        for (Unit enemy : getEnemies(selectedUnit)) {
-            enemiesPosition.add(new DiscreteCoordinates((int)enemy.getPosition().x, (int)enemy.getPosition().y));
-        }
-        return enemiesPosition ;
-    }
-
-    /**
-     * Method returning the closest enemy position given a selectedUnit (we use an ArrayList
-     * of all enemies positions and calculate their euclidian distance to the selectedUnit in
-     * order to determine the min distance and therefore the closest enemy)
-     * @param selectedUnit
-     * @return
-     */
-    public DiscreteCoordinates getClosestEnemyPosition(Unit selectedUnit){
-        ArrayList<DiscreteCoordinates> coordsToTest = getEnemiesPosition(selectedUnit);
-        DiscreteCoordinates closestEnemyPosition = null ;
-        DiscreteCoordinates selectedUnitPosition = new DiscreteCoordinates((int)selectedUnit.getPosition().x, (int)selectedUnit.getPosition().y);
-        double minDistance = getWidth() ;
-        for (DiscreteCoordinates coordinates : coordsToTest) {
-            double distance = Math.sqrt(Math.pow(coordinates.x - selectedUnitPosition.x, 2) + Math.pow(coordinates.y - selectedUnitPosition.y, 2));
-            if(distance < minDistance) {
-                minDistance = distance ;
-                closestEnemyPosition = coordinates ;
-            }
-        }
-        return closestEnemyPosition ;
-    }
-
-    @Override
-    public boolean begin(Window window, FileSystem fileSystem) {
-        if (super.begin(window, fileSystem)) {
-            behavior = new ICWarsBehavior(window, getTitle());
-            unitList = new ArrayList<Unit>();
-            setBehavior(behavior);
-            createArea();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public final float getCameraScaleFactor() {
-        return ICWars.CAMERA_SCALE_FACTOR;
-    }
+    protected abstract void createArea();
 }

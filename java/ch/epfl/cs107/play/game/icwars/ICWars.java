@@ -2,11 +2,11 @@ package ch.epfl.cs107.play.game.icwars;
 
 import ch.epfl.cs107.play.game.areagame.AreaGame;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
-import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Soldier;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Tank;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.RealPlayer;
+import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.area.Level0;
 import ch.epfl.cs107.play.game.icwars.area.Level1;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
@@ -22,11 +22,8 @@ public class ICWars extends AreaGame {
     public static final float CAMERA_SCALE_FACTOR = 16.f ;
 
     private ArrayList<ICWarsPlayer> players ;
-    //List of players waiting for next round
     private ArrayList<ICWarsPlayer> nextRoundPlayers ;
-    //List of players waiting for current round
     private ArrayList<ICWarsPlayer> currentRoundPlayers ;
-
     private ICWarsPlayer currentPlayer;
     private ICWarsRoundState currentRoundState ;
 
@@ -39,22 +36,47 @@ public class ICWars extends AreaGame {
     }
 
     @Override
-    public void update(float deltaTime) {
-         Keyboard keyboard = getWindow().getKeyboard();
+    public void end() {
+        System.out.println("Game Over");
+        System.exit(0);
+    }
 
-         //Resetting game is key "N" is pressed
+    @Override
+    public void update(float deltaTime) {
+        Keyboard keyboard = getWindow().getKeyboard();
+        //Resetting game is key "N" is pressed
         if(keyboard.get(Keyboard.N).isPressed()) {
             changeArea();
         }
-
         //Resetting game if key "R" is pressed
         if (keyboard.get(Keyboard.R).isPressed()) {
             resetGame();
         }
-
-
         super.update(deltaTime);
         updateRoundState();
+        controlPlayers();
+    }
+
+    @Override
+    public String getTitle() {
+        return "ICWars";
+    }
+
+    //-----------------------------------Private-------------------------------------//
+
+    /**
+     * Enumeration of all possible states of a round :
+     * INIT, CHOOSE_PLAYER, START_PLAYER_TURN, PLAYER_TURN, EN_PLAYER_TURN,
+     * END_TURN, END
+     */
+    private enum ICWarsRoundState{
+        INIT,
+        CHOOSE_PLAYER,
+        START_PLAYER_TURN,
+        PLAYER_TURN,
+        END_PLAYER_TURN,
+        END_TURN,
+        END
     }
 
     /**
@@ -171,7 +193,7 @@ public class ICWars extends AreaGame {
             for (int i = 0; i < 2 ; i++) {
                 Tank tank = new Tank(currentArea, Tank.getSpawnCoordinates(factions[i]), factions[i]);
                 tanks[i] = tank;
-                    Soldier soldier = new Soldier(currentArea, Soldier.getSpawnCoordinates(factions[i]), factions[i]);
+                Soldier soldier = new Soldier(currentArea, Soldier.getSpawnCoordinates(factions[i]), factions[i]);
                 soldiers[i] = soldier;
                 players.add(i, new RealPlayer(currentArea, coords[i], factions[i], tanks[i], soldiers[i]));
                 players.get(i).enterArea(currentArea, coords[i]);

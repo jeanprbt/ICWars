@@ -12,47 +12,53 @@ import java.util.List;
 
 public abstract class ICWarsActor extends MovableAreaEntity {
 
-    /**
-     * Enumeration for the type of an ICWarsActor : Ally or Ennemy
-     */
-    public enum Faction {ALLY, ENEMY};
+    private Faction faction;
 
-    private Faction faction ;
+    //-----------------------------------API-------------------------------------//
 
     /**
      * Default constructor for ICWarsActor
-     * @param area : area in which the actor evolves
+     *
+     * @param area     : area in which the actor evolves
      * @param position : the coordinates of his exact position on the grid
      */
-    public ICWarsActor(Area area, DiscreteCoordinates position, Faction faction){
+    public ICWarsActor(Area area, DiscreteCoordinates position, Faction faction) {
         super(area, Orientation.UP, position);
-        this.faction = faction ;
+        this.faction = faction;
     }
 
+    /**
+     * Enumeration for the type of an ICWarsActor : Ally or Ennemy
+     */
+    public enum Faction {ALLY, ENEMY}
+
+    //Getter for faction
     public Faction getFaction() {
         return faction;
     }
 
-    /**
-     * Leave an area and unregister player
-     */
-    public void leaveArea(){
-        getOwnerArea().unregisterActor(this);
+
+    @Override
+    public List<DiscreteCoordinates> getCurrentCells() {
+        return Collections.singletonList(getCurrentMainCellCoordinates());
     }
 
     /**
      * Enter a new area and register player
-     * @param area (Area): initial area, not null
+     *
+     * @param area     (Area): initial area, not null
      * @param position (DiscreteCoordinates): initial position, not null
      */
-    public void enterArea(ICWarsArea area, DiscreteCoordinates position){
+    public void enterArea(ICWarsArea area, DiscreteCoordinates position) {
         area.registerActor(this);
         setOwnerArea(area);
         setCurrentPosition(position.toVector());
     }
 
-    @Override
-    public List<DiscreteCoordinates> getCurrentCells() {
-        return Collections.singletonList(getCurrentMainCellCoordinates());
+    /**
+     * Leave an area and unregister player
+     */
+    public void leaveArea() {
+        getOwnerArea().unregisterActor(this);
     }
 }

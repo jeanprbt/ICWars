@@ -14,6 +14,8 @@ abstract public class ICWarsAction implements Graphics {
     private String name ;
     private int key ;
 
+    //-----------------------------------API-------------------------------------//
+
     public ICWarsAction (ICWarsArea area, Unit ownerUnit, int key, String name){
         this.area = area ;
         this.ownerUnit = ownerUnit ;
@@ -21,14 +23,14 @@ abstract public class ICWarsAction implements Graphics {
         this.key = key ;
     }
 
+    public abstract void doAction(float dt, ICWarsPlayer player , Keyboard keyboard);
+    public abstract void doAutoAction(float dt, AIPlayer aiPlayer);
+
     public int getKey() {
         return key;
     }
     public String getName() {
         return name;
     }
-
-    public abstract void doAction(float dt, ICWarsPlayer player , Keyboard keyboard);
-    public abstract void doAutoAction(float dt, AIPlayer aiPlayer);
 }
 

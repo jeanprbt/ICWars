@@ -9,6 +9,8 @@ import ch.epfl.cs107.play.window.Keyboard;
 
 public class WaitAction extends ICWarsAction {
 
+    //-----------------------------------API-------------------------------------//
+
     public WaitAction(ICWarsArea area, Unit ownerUnit){
         super(area, ownerUnit, Keyboard.W, "(W)ait");
     }

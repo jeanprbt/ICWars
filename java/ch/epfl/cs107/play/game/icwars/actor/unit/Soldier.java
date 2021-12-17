@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 public class Soldier extends Unit {
 
+    //-----------------------------------API-------------------------------------//
+
     /**
      * Default constructor for a soldier. Depending on its faction it
      * gives it the correct sprite.

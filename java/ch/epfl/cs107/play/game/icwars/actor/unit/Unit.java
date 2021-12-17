@@ -32,12 +32,7 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     public UnitType unitType;
     public ArrayList<ICWarsAction> actionsList;
 
-    abstract public int getDamage();
-    abstract public int getRadius();
-    abstract public  int getMaxHp();
-    abstract public String getName();
-
-
+    //-----------------------------------API-------------------------------------//
     /**
      * Default constructor for an Unit
      * It adds all possible nodes within the max range around
@@ -60,14 +55,6 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     }
 
     /**
-     * Center the camera on the player
-     */
-    public void centerCamera() {
-        getOwnerArea().setViewCandidate(this);
-    }
-
-
-    /**
      * Enumeration of all possible types of unit
      */
     public enum UnitType {
@@ -75,10 +62,17 @@ public abstract class Unit extends ICWarsActor implements Interactor{
         TANK
     }
 
+    abstract public int getDamage();
+    abstract public int getRadius();
+    abstract public  int getMaxHp();
+    abstract public String getName();
+
+    //Getter for hP
     public int getHp() {
         return hp;
     }
 
+    //Getter for isDead
     public boolean isDead() {
         return isDead;
     }
@@ -87,13 +81,73 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     public boolean isHasBeenUsed() {
         return hasBeenUsed;
     }
-
     public void setHasBeenUsed(boolean hasBeenUsed) {
         this.hasBeenUsed = hasBeenUsed;
     }
 
+    //Setter for current position
     public void setCurrentPosition(Vector v) {
         super.setCurrentPosition(v);
+    }
+
+
+    @Override
+    public boolean changePosition(DiscreteCoordinates newPosition) {
+        if (!range.nodeExists(newPosition)) {
+            return false;
+        } else if (super.changePosition(newPosition)) {
+            hasBeenUsed = true;
+            fillRange(newPosition);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        if (isHasBeenUsed()) sprite.setAlpha(0.3f);
+        else sprite.setAlpha(1.f);
+        if(!isDead()) sprite.draw(canvas);
+    }
+
+    @Override
+    public boolean takeCellSpace() {
+        return true ;
+    }
+
+    @Override
+    public boolean isCellInteractable() {
+        return true;
+    }
+
+    @Override
+    public boolean isViewInteractable() {
+        return true;
+    }
+
+    @Override
+    public boolean wantsViewInteraction() {
+        return false;
+    }
+
+    @Override
+    public boolean wantsCellInteraction() {
+        return true;
+    }
+
+    @Override
+    public void acceptInteraction(AreaInteractionVisitor v) {
+        ((ICWarInteractionVisitor) v).interactWith(this);
+    }
+
+    @Override
+    public List<DiscreteCoordinates> getFieldOfViewCells() {
+        return null;
+    }
+
+    @Override
+    public void interactWith(Interactable other) {
+        other.acceptInteraction(handler);
     }
 
     /**
@@ -138,23 +192,26 @@ public abstract class Unit extends ICWarsActor implements Interactor{
         this.range = range;
     }
 
-    @Override
-    public boolean changePosition(DiscreteCoordinates newPosition) {
-        if (!range.nodeExists(newPosition)) {
-            return false;
-        } else if (super.changePosition(newPosition)) {
-            hasBeenUsed = true;
-            fillRange(newPosition);
-            return true;
+    /**
+     * Draw the unit's range and a path from the unit position to
+     * destination
+     *
+     * @param destination path destination
+     * @param canvas      canvas
+     */
+    public void drawRangeAndPathTo(DiscreteCoordinates destination, Canvas canvas) {
+        range.draw(canvas);
+        Queue<Orientation> path = range.shortestPath(getCurrentMainCellCoordinates(), destination);
+        //Draw path only if it exists (destination inside the range)
+        if (path != null) {
+            new Path(getCurrentMainCellCoordinates().toVector(), path).draw(canvas);
         }
-        return false;
     }
 
     /**
      * Function that lowers the health points and determines if
      * the unit is dead or not, it also returns 0 if health points
      * are negative
-     *
      * @param damage : the number of healthPoints to decrease
      */
     public void takeInjure(int damage) {
@@ -175,69 +232,15 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     }
 
     /**
-     * Draw the unit's range and a path from the unit position to
-     * destination
-     *
-     * @param destination path destination
-     * @param canvas      canvas
+     * Center the camera on the player
      */
-    public void drawRangeAndPathTo(DiscreteCoordinates destination, Canvas canvas) {
-        range.draw(canvas);
-        Queue<Orientation> path = range.shortestPath(getCurrentMainCellCoordinates(), destination);
-        //Draw path only if it exists (destination inside the range)
-        if (path != null) {
-            new Path(getCurrentMainCellCoordinates().toVector(), path).draw(canvas);
-        }
-    }
-
-
-    @Override
-    public void draw(Canvas canvas) {
-        if (isHasBeenUsed()) sprite.setAlpha(0.3f);
-        else sprite.setAlpha(1.f);
-        if(!isDead()) sprite.draw(canvas);
-    }
-
-    @Override
-    public boolean takeCellSpace() {
-        return true ;
-    }
-
-    @Override
-    public boolean isCellInteractable() {
-        return true;
-    }
-
-    @Override
-    public boolean isViewInteractable() {
-        return true;
-    }
-
-    @Override
-    public boolean wantsViewInteraction() {
-        return false;
-    }
-
-    @Override
-    public boolean wantsCellInteraction() {
-        return true;
-    }
-
-    @Override
-    public void acceptInteraction(AreaInteractionVisitor v) {
-        ((ICWarInteractionVisitor) v).interactWith(this);
-    }
-
-    @Override
-    public List<DiscreteCoordinates> getFieldOfViewCells() {
-        return null;
-    }
-
-    public void interactWith(Interactable other) {
-        other.acceptInteraction(handler);
+    public void centerCamera() {
+        getOwnerArea().setViewCandidate(this);
     }
 
     private class ICWarsUnitInteractionHandler implements ICWarInteractionVisitor {
+
+        //-----------------------------------API-------------------------------------//
 
         @Override
         public void interactWith(ICWarsBehavior.ICWarsCell cell) {

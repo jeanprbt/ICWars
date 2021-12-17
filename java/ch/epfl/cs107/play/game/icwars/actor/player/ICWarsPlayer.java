@@ -9,15 +9,17 @@ import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
+    protected Unit selectedUnit ;
 
     private ICWarsPlayerState currentPlayerState ;
-    protected ArrayList<Unit> effectives ;
-    protected Unit selectedUnit ;
+    private ArrayList<Unit> effectives ;
+
+
+    //-----------------------------------API-------------------------------------//
 
     /**
      * Default constructor for ICWarsActor
@@ -37,14 +39,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     }
 
     /**
-     * Method that returns the player's current position in the form of DiscreteCoordinates
-     * @return current Discrete Coordinates
-     */
-    public DiscreteCoordinates getCoordinates() {
-        return new DiscreteCoordinates((int) getPosition().x, (int) getPosition().y);
-    }
-
-    /**
      * Enumeration of all possible states of a player
      * during the game :IDLE, NORMAL, SELECT_CELL, MOVE_UNIT,
      * ACTION_SELECTION, ACTION
@@ -58,9 +52,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         ACTION
     }
 
-    /**
-     * Getter and setter for currentPlayerState
-     */
+    //Getter and setter for currentPlayerState
     public ICWarsPlayerState getCurrentPlayerState() {
         return currentPlayerState;
     }
@@ -68,54 +60,12 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         this.currentPlayerState = state ;
     }
 
+    //Getters for effectives : getter from index and size getter
     public Unit getUnitFromIndex(int index){
         return effectives.get(index);
     }
     public int getEffectivesSize(){
         return effectives.size();
-    }
-
-    /**
-     * Method to call when a new player is starting his turn
-     * The method changes its state to NORMAL and centers the camera
-     * on itself
-     */
-    public void startTurn() {
-        currentPlayerState = ICWarsPlayerState.NORMAL;
-        centerCamera();
-    }
-
-    /**
-     * Method to call at then end of the selectedUnit's action to check if units died
-     */
-    protected void controlUnits() {
-        ArrayList<Unit> effectivesToRemove = new ArrayList<Unit>();
-        for (Unit effective : effectives) {
-            if(effective.isDead()) {
-                ICWarsArea area = (ICWarsArea) getOwnerArea() ;
-                area.removeFromUnitList(effective);
-                getOwnerArea().unregisterActor(effective);
-                effectivesToRemove.add(effective);
-            }
-        }
-        effectives.removeAll(effectivesToRemove);
-    }
-
-
-    /**
-     * Method that sets all units as available for asked player
-     * (used in updateState in ICWars.java)
-     */
-    public void setUnitsAvailable() {
-        for (Unit effective : effectives) {
-            effective.setHasBeenUsed(false);
-        }
-    }
-
-    @Override
-    public void onLeaving(List<DiscreteCoordinates> coordinates) {
-        super.onLeaving(coordinates);
-        if(currentPlayerState == ICWarsPlayerState.SELECT_CELL) currentPlayerState = ICWarsPlayerState.NORMAL;
     }
 
     @Override
@@ -136,20 +86,12 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         }
     }
 
-    /**
-     * Center the camera on the player
-     */
-    public void centerCamera() {
-        getOwnerArea().setViewCandidate(this);
+    @Override
+    public void onLeaving(List<DiscreteCoordinates> coordinates) {
+        super.onLeaving(coordinates);
+        if(currentPlayerState == ICWarsPlayerState.SELECT_CELL) currentPlayerState = ICWarsPlayerState.NORMAL;
     }
 
-    /**
-     * Returns if the player is defeated or not
-     * based on if all its effectives are destroyed
-     */
-    public boolean isVanquished(){
-        return(effectives.size() == 0);
-    }
 
     @Override
     public void update(float deltaTime) {
@@ -194,5 +136,58 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     @Override
     public void interactWith(Interactable other) {
 
+    }
+
+    /**
+     * Method that sets all units as available for asked player
+     * (used in updateState in ICWars.java)
+     */
+    public void setUnitsAvailable() {
+        for (Unit effective : effectives) {
+            effective.setHasBeenUsed(false);
+        }
+    }
+
+    /**
+     * Method to call when a new player is starting his turn
+     * The method changes its state to NORMAL and centers the camera
+     * on itself
+     */
+    public void startTurn() {
+        currentPlayerState = ICWarsPlayerState.NORMAL;
+        centerCamera();
+    }
+
+    /**
+     * Center the camera on the player
+     */
+    public void centerCamera() {
+        getOwnerArea().setViewCandidate(this);
+    }
+
+    /**
+     * Returns if the player is defeated or not
+     * based on if all its effectives are destroyed
+     */
+    public boolean isVanquished(){
+        return(effectives.size() == 0);
+    }
+
+    //-----------------------------------Protected-------------------------------------//
+
+    /**
+     * Method to call at then end of the selectedUnit's action to check if units died
+     */
+    protected void controlUnits() {
+        ArrayList<Unit> effectivesToRemove = new ArrayList<Unit>();
+        for (Unit effective : effectives) {
+            if(effective.isDead()) {
+                ICWarsArea area = (ICWarsArea) getOwnerArea() ;
+                area.removeFromUnitList(effective);
+                getOwnerArea().unregisterActor(effective);
+                effectivesToRemove.add(effective);
+            }
+        }
+        effectives.removeAll(effectivesToRemove);
     }
 }
