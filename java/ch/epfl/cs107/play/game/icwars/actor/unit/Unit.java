@@ -200,7 +200,7 @@ public abstract class Unit extends ICWarsActor implements Interactor{
 
     @Override
     public boolean takeCellSpace() {
-        return false ;
+        return true ;
     }
 
     @Override

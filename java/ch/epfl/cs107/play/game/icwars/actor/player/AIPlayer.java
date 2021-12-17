@@ -14,20 +14,19 @@ import java.util.ArrayList;
 
 public class AIPlayer extends ICWarsPlayer {
 
-    private boolean counting ;
-    private float counter;
+
     private Sprite sprite ;
     private DiscreteCoordinates selectedUnitPosition ;
+    private ICWarsAction actionToExecute ;
+    private int counter;
+    private ArrayList<Unit> aiEffectives;
 
-    //List of units waiting for current round
-    private ArrayList<Unit> currentRoundUnits ;
 
     public AIPlayer(Area area, DiscreteCoordinates position, Faction faction, Unit... units){
         super(area, position, faction, units);
-        counting = true ;
-        counter = 0f ;
         sprite = new Sprite("icwars/enemyCursor", 1.f, 1.f, this);
-        currentRoundUnits = new ArrayList<Unit>();
+        counter = 0;
+        aiEffectives = new ArrayList<Unit>();
         fillEffectiveList();
     }
 
@@ -75,37 +74,33 @@ public class AIPlayer extends ICWarsPlayer {
     @Override
     public void update(float deltaTime) {
         updatePlayerState();
+        controlUnits();
         super.update(deltaTime);
     }
 
     /**
-     * Ensures that value time elapsed before returning true
-     * @param dt elapsed time
-     * @param value waiting time (in seconds )
-     * @return true if value seconds has elapsed , false otherwise
+     * Function making the program wait for a certain time before resuming action
+     * @param ms : Time in milliseconds
      */
-    private boolean waitFor (float value , float dt) {
-        if (counting) {
-            counter += dt;
-            if (counter > value ) {
-                counting = false ;
-                return true;
-            }
-        } else {
-            counter = 0f;
-            counting = true;
+    public static void waitFor(int ms) {
+        try {
+            Thread.sleep(ms);
         }
-        return false ;
+        catch(InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
     }
 
 
     /**
-     * Method to call when needing to fill the effective list of AIPlayer waiting
-     * for current round (which have not been playe yet).
+     * Method to call when needing to fill the general effectives list of AIPlayer and the effectives waiting
+     * for current round (which have not been played yet).
      */
     private void fillEffectiveList(){
+        counter = 0;
+        aiEffectives.clear();
         for (int i = 0; i < getEffectivesSize(); i++) {
-            currentRoundUnits.add(getUnitFromIndex(i));
+            aiEffectives.add(getUnitFromIndex(i));
         }
     }
 

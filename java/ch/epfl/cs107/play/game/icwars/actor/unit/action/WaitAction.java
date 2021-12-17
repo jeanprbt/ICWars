@@ -2,6 +2,7 @@ package ch.epfl.cs107.play.game.icwars.actor.unit.action;
 
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
+import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;

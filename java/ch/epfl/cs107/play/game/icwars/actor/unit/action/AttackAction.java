@@ -4,6 +4,7 @@ import ch.epfl.cs107.play.game.actor.ImageGraphics;
 import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
+import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.RegionOfInterest;
@@ -75,6 +76,14 @@ public class AttackAction extends ICWarsAction{
             ownerUnit.setHasBeenUsed(true);
         }
     }
+
+    @Override
+    public void doAutoAction(float dt, AIPlayer aiPlayer) {
+       ArrayList<Unit> targetsUnit = new ArrayList<Unit>();
+        targetsUnit = getCloseEnemies();
+    }
+
+
 
     @Override
     public void draw(Canvas canvas) {
