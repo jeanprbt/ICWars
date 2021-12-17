@@ -45,6 +45,10 @@ public class ICWarsBehavior extends AreaBehavior {
 
         final int type;
         final int defenseStars ;
+        // defenseStars getter
+        public int getDefenseStars() {
+            return defenseStars;
+        }
 
         /**
          * Default constructor for ICWarsCellType
@@ -68,10 +72,6 @@ public class ICWarsBehavior extends AreaBehavior {
             }
             System.out.println(type);
             return NONE;
-        }
-
-        public int getDefenseStars() {
-            return defenseStars;
         }
 
         public String typeToString(){

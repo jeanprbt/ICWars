@@ -27,12 +27,19 @@ public class ICWars extends AreaGame {
     private ICWarsPlayer currentPlayer;
     private ICWarsRoundState currentRoundState ;
 
-    /**
-     * Add all the areas
-     */
-    private void createAreas(){
-        addArea(new Level0());
-        addArea(new Level1());
+
+    //-----------------------------------API-------------------------------------//
+
+    @Override
+    public boolean begin(Window window, FileSystem fileSystem) {
+        if (super.begin(window, fileSystem)) {
+            createAreas();
+            players = new ArrayList<ICWarsPlayer>();
+            currentRoundState = ICWarsRoundState.INIT;
+            initArea("icwars/Level0");
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -79,21 +86,6 @@ public class ICWars extends AreaGame {
         END
     }
 
-    /**
-     * Enumeration of all possible states of a round :
-     * INIT, CHOOSE_PLAYER, START_PLAYER_TURN, PLAYER_TURN, EN_PLAYER_TURN,
-     * END_TURN, END
-     */
-    private enum ICWarsRoundState{
-        INIT,
-        CHOOSE_PLAYER,
-        START_PLAYER_TURN,
-        PLAYER_TURN,
-        END_PLAYER_TURN,
-        END_TURN,
-        END
-    }
-
     private void updateRoundState(){
         switch(currentRoundState) {
             case INIT:
@@ -111,7 +103,10 @@ public class ICWars extends AreaGame {
                 }
                 break;
             case START_PLAYER_TURN:
-                if (currentPlayer.isVanquished()) currentRoundState = ICWarsRoundState.END_TURN;
+                if (currentPlayer.isVanquished()){
+                    currentRoundState = ICWarsRoundState.END_TURN;
+                    break;
+                    }
                 currentPlayer.startTurn();
                 currentRoundState = ICWarsRoundState.PLAYER_TURN;
                 break;
@@ -129,7 +124,6 @@ public class ICWars extends AreaGame {
                 currentRoundState = ICWarsRoundState.CHOOSE_PLAYER;
                 break;
             case END_TURN:
-                controlPlayers();
                 if (players.size() == 1) currentRoundState = ICWarsRoundState.END;
                 else {
                     currentRoundPlayers.addAll(nextRoundPlayers);
@@ -142,22 +136,6 @@ public class ICWars extends AreaGame {
         }
     }
 
-    @Override
-    public String getTitle() {
-        return "ICWars";
-    }
-
-    @Override
-    public boolean begin(Window window, FileSystem fileSystem) {
-        if (super.begin(window, fileSystem)) {
-            createAreas();
-            players = new ArrayList<ICWarsPlayer>();
-            currentRoundState = ICWarsRoundState.INIT;
-            initArea("icwars/Level0");
-            return true;
-        }
-        return false;
-    }
 
     /**
      * Initialises area by creating all that needs to be initialised
@@ -179,7 +157,7 @@ public class ICWars extends AreaGame {
      * Changing area to the following level, and
      * ending game if final level has been reached
      */
-    protected void changeArea() {
+    private void changeArea() {
         if(getCurrentArea().getTitle() == "icwars/Level0") {
             ICWarsArea currentArea = (ICWarsArea) setCurrentArea("icwars/Level1", false);
             currentArea.clearUnitList();
@@ -207,7 +185,7 @@ public class ICWars extends AreaGame {
      * Method to call at the end of each turn on order to check
      * how many players left there are in the game
      */
-    public void controlPlayers() {
+    private void controlPlayers() {
         ArrayList<ICWarsPlayer> playersToRemove = new ArrayList<ICWarsPlayer>();
         for (ICWarsPlayer player : players) {
             if (player.isVanquished()) {
@@ -218,17 +196,10 @@ public class ICWars extends AreaGame {
         players.removeAll(playersToRemove);
     }
 
-
-    @Override
-    public void end() {
-        System.out.println("Game Over");
-        System.exit(0);
-    }
-
     /**
      * Resets game
      */
-    public void resetGame(){
+    private void resetGame(){
         createAreas();
         players = new ArrayList<ICWarsPlayer>();
         currentRoundState = ICWarsRoundState.INIT;
@@ -236,10 +207,11 @@ public class ICWars extends AreaGame {
     }
 
     /**
-     * Private function used in begin() method to randomly choose the player which starts
+     * Add all the areas
      */
-    private int random() {
-        return (int) Math.floor(2*Math.random());
+    private void createAreas(){
+        addArea(new Level0());
+        addArea(new Level1());
     }
 }
 

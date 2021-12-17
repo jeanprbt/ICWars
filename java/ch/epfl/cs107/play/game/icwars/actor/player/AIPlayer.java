@@ -79,7 +79,8 @@ public class AIPlayer extends ICWarsPlayer {
                     selectedUnit.setHasBeenUsed(true);
                     waitFor(300);
                     selectedUnit.changePosition(getClosestPositionPossible());
-                    setCurrentPlayerState(ICWarsPlayerState.NORMAL);
+                    waitFor(300);
+                    setCurrentPlayerState(ICWarsPlayerState.ACTION_SELECTION);
                     break;
                 case ACTION_SELECTION:
                     selectedUnitPosition = new DiscreteCoordinates((int) selectedUnit.getPosition().x, (int)selectedUnit.getPosition().y);
@@ -92,7 +93,7 @@ public class AIPlayer extends ICWarsPlayer {
                     actionToExecute = (targets.isEmpty())? new WaitAction(area, selectedUnit) : new AttackAction(area, selectedUnit);
                     setCurrentPlayerState(ICWarsPlayerState.ACTION);
                 case ACTION:
-                    actionToExecute = new AttackAction((ICWarsArea)getOwnerArea(), selectedUnit);
+                    waitFor(800);
                     actionToExecute.doAutoAction(1.f, this);
                     break;
                 default:
@@ -106,8 +107,8 @@ public class AIPlayer extends ICWarsPlayer {
      */
     private DiscreteCoordinates getClosestPositionPossible(){
         DiscreteCoordinates closestUnitPosition = area.getClosestEnemyPosition(selectedUnit);
-        int finalX ;
-        int finalY ;
+        int finalX = -1 ;
+        int finalY = -1 ;
 
         //Handling the case when closestUnit is in the range of selectedUnit in  order to avoid the superposition
         if(isInRange(closestUnitPosition)){
