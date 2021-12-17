@@ -2,6 +2,7 @@ package ch.epfl.cs107.play.game.icwars.area;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.icwars.ICWars;
+import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.tutosSolution.Tuto2;
 import ch.epfl.cs107.play.game.tutosSolution.Tuto2Behavior;
@@ -9,6 +10,7 @@ import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Window;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public abstract class ICWarsArea extends Area {
@@ -50,17 +52,52 @@ public abstract class ICWarsArea extends Area {
         unitList.clear();
     }
 
-
-    public Unit getUnitFromIndex(int index){
-        return unitList.get(index);
+    /**
+     * Method returning all enemies given a selectedUnit (knowing its faction this way)
+     * @param selectedUnit : the unit for which we want to know its enemies
+     * @return
+     */
+    public ArrayList<Unit> getEnemies(Unit selectedUnit) {
+        ArrayList<Unit> enemies = new ArrayList<Unit>();
+        for (Unit unit : unitList) {
+            if(unit.getFaction() == selectedUnit.getFaction()) continue ;
+            enemies.add(unit);
+        }
+        return enemies;
     }
 
-    public int getIndexInUnitList(Unit unit){
-        return unitList.indexOf(unit);
+    /**
+     * Method returning all enemies position given a selectedUnit (knowing its faction this way)
+     * @param selectedUnit : the unit for which we want to know its enemies positions
+     */
+    public ArrayList<DiscreteCoordinates> getEnemiesPosition(Unit selectedUnit){
+        ArrayList<DiscreteCoordinates> enemiesPosition = new ArrayList<DiscreteCoordinates>();
+        for (Unit enemy : getEnemies(selectedUnit)) {
+            enemiesPosition.add(new DiscreteCoordinates((int)enemy.getPosition().x, (int)enemy.getPosition().y));
+        }
+        return enemiesPosition ;
     }
 
-    public int getUnitListSize(){
-        return unitList.size();
+    /**
+     * Method returning the closest enemy position given a selectedUnit (we use an ArrayList
+     * of all enemies positions and calculate their euclidian distance to the selectedUnit in
+     * order to determine the min distance and therefore the closest enemy)
+     * @param selectedUnit
+     * @return
+     */
+    public DiscreteCoordinates getClosestEnemyPosition(Unit selectedUnit){
+        ArrayList<DiscreteCoordinates> coordsToTest = getEnemiesPosition(selectedUnit);
+        DiscreteCoordinates closestEnemyPosition = null ;
+        DiscreteCoordinates selectedUnitPosition = new DiscreteCoordinates((int)selectedUnit.getPosition().x, (int)selectedUnit.getPosition().y);
+        double minDistance = getWidth() ;
+        for (DiscreteCoordinates coordinates : coordsToTest) {
+            double distance = Math.sqrt(Math.pow(coordinates.x - selectedUnitPosition.x, 2) + Math.pow(coordinates.y - selectedUnitPosition.y, 2));
+            if(distance < minDistance) {
+                minDistance = distance ;
+                closestEnemyPosition = coordinates ;
+            }
+        }
+        return closestEnemyPosition ;
     }
 
     @Override

@@ -1,13 +1,16 @@
 package ch.epfl.cs107.play.game.icwars.actor.player;
 
 import ch.epfl.cs107.play.game.areagame.Area;
-import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
+import ch.epfl.cs107.play.game.icwars.exception.WrongLocationException ;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Canvas;
 import java.util.ArrayList;
+
 
 public class AIPlayer extends ICWarsPlayer {
 
@@ -35,33 +38,37 @@ public class AIPlayer extends ICWarsPlayer {
     private void updatePlayerState(){
         switch (getCurrentPlayerState()){
             case IDLE:
+                fillEffectiveList();
                 break;
             case NORMAL:
                 centerCamera();
-                if(currentRoundUnits.size() == 0) setCurrentPlayerState(ICWarsPlayerState.IDLE);
-                else {
-                    while (!waitFor(1000000000, 1f)){break;}
-                    System.out.println("p");
-                    selectedUnit = currentRoundUnits.get(0);
-                    selectedUnitPosition = new DiscreteCoordinates((int) selectedUnit.getPosition().x, (int)selectedUnit.getPosition().y);
-                    currentRoundUnits.remove(selectedUnit);
-                    changePosition(new DiscreteCoordinates((int) selectedUnit.getPosition().x, (int) selectedUnit.getPosition().y));
-                    setCurrentPlayerState(ICWarsPlayerState.SELECT_CELL);
+                if(hasBeenUsed(aiEffectives)) {
+                    setCurrentPlayerState(ICWarsPlayerState.IDLE);
                 }
-                break;
-            case SELECT_CELL:
-                setCurrentPlayerState(ICWarsPlayerState.MOVE_UNIT);
+                else {
+                    selectedUnit = aiEffectives.get(counter);
+                    selectedUnitPosition = new DiscreteCoordinates((int) selectedUnit.getPosition().x, (int)selectedUnit.getPosition().y);
+                    waitFor(500);
+                    changePosition(new DiscreteCoordinates((int) selectedUnit.getPosition().x, (int) selectedUnit.getPosition().y));
+                    waitFor(500);
+                    setCurrentPlayerState(ICWarsPlayerState.MOVE_UNIT);
+                }
+                ++counter;
                 break ;
-            case MOVE_UNIT:
-                System.out.println(selectedUnit);
-                changePosition(dondeVamos());
-                selectedUnit.changePosition(dondeVamos());
-                setCurrentPlayerState(ICWarsPlayerState.NORMAL);
-                break;
-            case ACTION_SELECTION:
-            case ACTION:
-            default:
-                break;
+                case MOVE_UNIT:
+                    selectedUnit.setHasBeenUsed(true);
+                    waitFor(800);
+                    changePosition(getClosestPositionPossible());
+                    waitFor(800);
+                    selectedUnit.changePosition(getClosestPositionPossible());
+                    setCurrentPlayerState(ICWarsPlayerState.NORMAL);
+                    break;
+                case ACTION:
+                    actionToExecute = new AttackAction((ICWarsArea)getOwnerArea(), selectedUnit);
+                    actionToExecute.doAutoAction(1.f, this);
+                    break;
+                default:
+                    break;
         }
     }
 
@@ -91,6 +98,7 @@ public class AIPlayer extends ICWarsPlayer {
         return false ;
     }
 
+
     /**
      * Method to call when needing to fill the effective list of AIPlayer waiting
      * for current round (which have not been playe yet).
@@ -101,126 +109,88 @@ public class AIPlayer extends ICWarsPlayer {
         }
     }
 
-    /**
-     * Method to check if a given x is in the x-range of selectedUnit
-     * @param positionX positionX to check
-     */
-    private boolean isInRangeX(int positionX) {
-        if(Math.abs(selectedUnit.getPosition().x - positionX) <= selectedUnit.getRadius()) return true;
-        return false;
-    }
 
     /**
-     * Method to check if a given y is in the y-range of selectedUnit
-     * @param positionY positionY to check
+     * Method returning the optimal range border (left or right if given x's and up or down if given y's)
+     * to move to given the selectedUnitPosition.(x or y) and the closestUnitPositon.(x or y) :
+     * we call it only after veryfing the closestUnit is not in the (x or y)-range.
+     * @param selectedUnitPositionXOrY : the selectedUnit x or y
+     * @param closestUnitPositionXOrY : the closestUnit x or y
      */
-    private boolean isInRangeY(int positionY) {
-        if(Math.abs(selectedUnit.getPosition().y - positionY) <= selectedUnit.getRadius()) return true ;
-        return false ;
-    }
-
-    /**
-     * Method that returns the optimal position for selectedUnit to move to
-     * in step MOVE_UNIT
-     * @return optimal position for selectedUnit in step MOVE_UNIT
-     */
-    private DiscreteCoordinates dondeVamos(){
-        DiscreteCoordinates finalPosition ;
-        Unit closestUnit = getClosestUnit();
-        DiscreteCoordinates closestUnitPosition = new DiscreteCoordinates((int)closestUnit.getPosition().x, (int)closestUnit.getPosition().y);
-        finalPosition = getOptimalRangeBorders(closestUnitPosition);
-        return finalPosition;
+    private int optimalBorderXOrY(int selectedUnitPositionXOrY, int closestUnitPositionXOrY){
+        assert(selectedUnitPositionXOrY - closestUnitPositionXOrY != 0 );
+        int optimal ;
+        double difference = selectedUnitPositionXOrY - closestUnitPositionXOrY ;
+        if(difference < 0){
+            optimal = selectedUnitPositionXOrY + selectedUnit.getRadius() ;
+        } else {
+            optimal = selectedUnitPositionXOrY - selectedUnit.getRadius() ;
+        }
+        return optimal ;
     }
 
     /**
      * Method returning the position where selectedUnit should move in order to get as close
-     * as possible from the closest enemy unit
-     * @param closestUnitPosition : targeted unit's position
+     * as possible from the closest enemy unit, called in step MOVE_UNIT of the final state machine.
      */
-    private DiscreteCoordinates getOptimalRangeBorders(DiscreteCoordinates closestUnitPosition){
-        DiscreteCoordinates optimalRangeBorders;
-        int finalX = selectedUnitPosition.x;
-        int finalY = selectedUnitPosition.y;
+    private DiscreteCoordinates getClosestPositionPossible(){
+        ICWarsArea area = (ICWarsArea) getOwnerArea() ;
+        DiscreteCoordinates closestUnitPosition = area.getClosestEnemyPosition(selectedUnit);
+        int finalX ;
+        int finalY ;
+
+        //Handling the case when closestUnit is in the range of selectedUnit in  order to avoid the superposition
+        if(isInRange(closestUnitPosition)){
+           while(!(isInRange(closestUnitPosition))) {
+                try {
+                    changePosition(closestUnitPosition);
+                } catch (Exception e){
+
+                }
+            }
+        }
 
         // Compare the x's
-        if (isInRangeX(closestUnitPosition.x)) finalX = closestUnitPosition.x;
-        else {
-            int differenceX = selectedUnitPosition.x - closestUnitPosition.x;
-            if (differenceX < 0) {
-                finalX = selectedUnitPosition.x + selectedUnit.getRadius();
-            } else if (differenceX > 0) {
-                finalX = selectedUnitPosition.x - selectedUnit.getRadius();
-            }
-        }
+        //Check if closestUnitPosition.x is in the x-range of selectedUnit
+        if (Math.abs(selectedUnitPosition.x - closestUnitPosition.x) <= selectedUnit.getRadius()) finalX = closestUnitPosition.x;
+        else finalX = optimalBorderXOrY(selectedUnitPosition.x, closestUnitPosition.x);
 
         // Compare the y's
-        if(isInRangeY(closestUnitPosition.y)) finalY = closestUnitPosition.y;
-        else {
-            int differenceY = selectedUnitPosition.y - closestUnitPosition.y;
-            if (differenceY < 0) {
-                finalY = selectedUnitPosition.y + selectedUnit.getRadius();
-            } else if (differenceY > 0) {
-                finalY = selectedUnitPosition.y - selectedUnit.getRadius();
-            }
-        }
+        //Check if closestUnitPosition.y is in the y-range of selecteDunit
+        if(Math.abs(selectedUnitPosition.y - closestUnitPosition.y) <= selectedUnit.getRadius()) finalY = closestUnitPosition.y;
+        else finalY = optimalBorderXOrY(selectedUnitPosition.y, closestUnitPosition.y);
 
-        optimalRangeBorders = new DiscreteCoordinates(finalX, finalY);
-        return optimalRangeBorders ;
+        DiscreteCoordinates closestPositionPossible = new DiscreteCoordinates(finalX, finalY);
+        return closestPositionPossible ;
     }
 
     /**
-     * Method returning indexes of all enemy units on area
-     * @return the list of targets' indexes in ICWarsArea's unitList
+     * Method testing if a given position is in the range of selectedUnit
+     * @param position the position to test
      */
-    private ArrayList<Integer> findTargetsIndexes() {
-        ArrayList<Integer> targetsIndexes = new ArrayList<Integer>();
-        ICWarsArea area = (ICWarsArea) getOwnerArea() ;
-        for (int i = 0; i < area.getUnitListSize(); i++) {
-            Unit unit = area.getUnitFromIndex(i);
-            if(unit.getFaction() == this.getFaction()) continue ;
-            targetsIndexes.add(area.getIndexInUnitList(unit));
-        }
-        return targetsIndexes ;
+    private boolean isInRange(DiscreteCoordinates position){
+        boolean isInRangeX = position.x <= selectedUnitPosition.x + selectedUnit.getRadius() && position.x >= selectedUnitPosition.x - selectedUnit.getRadius();
+        boolean isInRangeY = position.y <= selectedUnitPosition.y + selectedUnit.getRadius() && position.y >= selectedUnitPosition.y - selectedUnit.getRadius();
+        return isInRangeX && isInRangeY ;
     }
 
     /**
-     * Method determining the closest enemy unit to the
-     * current selectedUnit.
+     * Method checking if all of AIPlayer effectives have been used
+     * @param effectives : List of AIPlayer effectives
      */
-    private Unit getClosestUnit(){
-        ArrayList<Unit> unitsToTest = new ArrayList<Unit>();
-        ArrayList<Integer> targetIndexes = findTargetsIndexes() ;
-        for (Integer targetIndex : targetIndexes) {
-            Unit unit = getUnitFromIndex(targetIndex);
-            unitsToTest.add(unit);
+    private boolean hasBeenUsed(ArrayList<Unit> effectives) {
+        for (Unit effective : effectives) {
+            if (!effective.isHasBeenUsed()) return false;
         }
-        Unit closestUnit = compareUnitsPositions(unitsToTest);
-        return closestUnit;
+        return true;
     }
 
 
-    /**
-     * Method returning the unit among a list whose position is closest to selectedUnit
-     * @param units : ArrayList of units to be checked
-     */
-    private Unit compareUnitsPositions(ArrayList<Unit> units) {
-        Unit closestUnit = null ;
-        //huge value - to be changed
-        double minEuclidianDistance = getOwnerArea().getWidth() ;
-        for (Unit unit : units) {
-            DiscreteCoordinates targetPosition = new DiscreteCoordinates((int)unit.getPosition().x, (int)unit.getPosition().y);
-            double euclidianDistance = Math.sqrt(Math.pow(selectedUnitPosition.x - targetPosition.x, 2) + Math.pow(selectedUnitPosition.y - targetPosition.y, 2));
-            if(euclidianDistance < minEuclidianDistance) {
-                minEuclidianDistance = euclidianDistance ;
-                closestUnit = unit ;
-            }
-        }
-        return closestUnit;
-    }
 
     @Override
     public void draw(Canvas canvas) {
         if(getCurrentPlayerState() != ICWarsPlayerState.IDLE) sprite.draw(canvas);
     }
 }
+
 

@@ -14,8 +14,8 @@ import java.util.ArrayList;
 public class AttackAction extends ICWarsAction{
 
     private ImageGraphics cursor;
-    private int targetIndex ;
-    private ArrayList<Integer> targetsIndexes;
+    private Unit target ;
+    private ArrayList<Unit> targets;
     private int index;
     // Boolean used to make sure that method draw of AttackAction is called after doAction
     // Without it method draw is called before and error occurs because targetIndexes is not
@@ -29,30 +29,22 @@ public class AttackAction extends ICWarsAction{
     }
 
     /**
-     * Method to find all units that are close enough to the ownerUnit to be considered
-     * as potential targets. If it is the case, then their index in the ICWarsArea's unitList
-     * is added to the list targetIndexes
-     * @return the list of targets' indexes in ICWarsArea's unitList
+     * Method to find all enemies that are close enough to the ownerUnit to be considered
+     * as potential targets.
+     * @return the list of potential targets
      */
-    private ArrayList<Integer> findTargetsIndexes() {
-        ArrayList<Integer> targetsIndexes = new ArrayList<Integer>();
-        for (int i = 0; i < area.getUnitListSize(); i++) {
-            Unit unit = area.getUnitFromIndex(i);
-            if(unit.getFaction() == ownerUnit.getFaction()) continue ;
-            DiscreteCoordinates position = new DiscreteCoordinates((int)unit.getPosition().x, (int)unit.getPosition().y);
-            if(isInRange(position)) targetsIndexes.add(area.getIndexInUnitList(unit));
+    private ArrayList<Unit> getCloseEnemies() {
+        ArrayList<Unit> closeEnemies = area.getEnemies(ownerUnit);
+
+        for (Unit enemy : area.getEnemies(ownerUnit)) {
+            DiscreteCoordinates position = new DiscreteCoordinates((int)enemy.getPosition().x, (int)enemy.getPosition().y);
+            if(Math.abs(ownerUnit.getPosition().x - position.x) <= ownerUnit.getRadius() && Math.abs(ownerUnit.getPosition().y - position.y) <= ownerUnit.getRadius()) continue;
+            closeEnemies.remove(enemy);
         }
-        return targetsIndexes ;
+
+        return closeEnemies ;
     }
 
-    /**
-     * Method to check if a given position is close enough to the ownerUnit's position
-     * @param position position to check
-     */
-    private boolean isInRange(DiscreteCoordinates position) {
-        if(Math.abs(ownerUnit.getPosition().x - position.x) <= ownerUnit.getRadius() && Math.abs(ownerUnit.getPosition().y - position.y) <= ownerUnit.getRadius()) return true;
-        return false;
-    }
 
     public void setIndex(int index) {
         this.index = index;
@@ -61,22 +53,22 @@ public class AttackAction extends ICWarsAction{
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
         waitingPurposeBoolean = true;
-        targetsIndexes = findTargetsIndexes();
-        if (targetsIndexes.size() == 0 || keyboard.get(Keyboard.TAB).isPressed()) {
+        targets = getCloseEnemies();
+        if (targets.size() == 0 || keyboard.get(Keyboard.TAB).isPressed()) {
             player.centerCamera();
             player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.ACTION_SELECTION);
         } else {
-            targetIndex = targetsIndexes.get(index);
-            if (keyboard.get(Keyboard.RIGHT).isPressed() && index < targetsIndexes.size() - 1) {
+            target = targets.get(index);
+            if (keyboard.get(Keyboard.RIGHT).isPressed() && index < targets.size() - 1) {
                 ++index;
-                targetIndex = targetsIndexes.get(index);
+                target = targets.get(index);
             }
             if (keyboard.get(Keyboard.LEFT).isPressed() && index > 0) {
                 --index;
-                targetIndex = targetsIndexes.get(index);
+                target = targets.get(index);
             }
             if (keyboard.get(Keyboard.ENTER).isReleased()) {
-                area.getUnitFromIndex(targetIndex).takeInjure(ownerUnit.getDamage());
+                target.takeInjure(ownerUnit.getDamage());
                 player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
                 waitingPurposeBoolean = false;
             }
@@ -87,9 +79,9 @@ public class AttackAction extends ICWarsAction{
     @Override
     public void draw(Canvas canvas) {
         if (waitingPurposeBoolean) {
-            if (targetsIndexes == null) ;
+            if (targets == null) ;
             else {
-                area.getUnitFromIndex(targetIndex).centerCamera();
+                target.centerCamera();
                 cursor.setAnchor(canvas.getPosition().add(1, 0));
                 cursor.draw(canvas);
             }

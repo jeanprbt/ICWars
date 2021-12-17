@@ -15,8 +15,8 @@ import java.util.List;
 
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
-    private ArrayList<Unit> effectives ;
     private ICWarsPlayerState currentPlayerState ;
+    protected ArrayList<Unit> effectives ;
     protected Unit selectedUnit ;
 
     /**
@@ -71,11 +71,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     public Unit getUnitFromIndex(int index){
         return effectives.get(index);
     }
-
-    public int getIndexFromUnit(Unit unit){
-        return effectives.indexOf(unit);
-    }
-
     public int getEffectivesSize(){
         return effectives.size();
     }
@@ -93,7 +88,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     /**
      * Method to call at then end of the selectedUnit's action to check if units died
      */
-    public void controlUnits() {
+    protected void controlUnits() {
         ArrayList<Unit> effectivesToRemove = new ArrayList<Unit>();
         for (Unit effective : effectives) {
             if(effective.isDead()) {

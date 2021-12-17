@@ -18,6 +18,13 @@ public class WaitAction extends ICWarsAction {
         player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
     }
 
+
+    @Override
+    public void doAutoAction(float dt, AIPlayer aiPlayer) {
+        aiPlayer.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
+    }
+
+
     @Override
     public void draw(Canvas canvas) {
 
