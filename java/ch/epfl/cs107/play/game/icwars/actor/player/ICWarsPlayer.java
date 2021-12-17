@@ -6,11 +6,8 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactor;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
-import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
-import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
 
 import java.util.ArrayList;
@@ -19,8 +16,7 @@ import java.util.List;
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
 
     private ArrayList<Unit> effectives ;
-    protected ICWarsAction actionToExecute ;
-    protected ICWarsPlayerState currentPlayerState ;
+    private ICWarsPlayerState currentPlayerState ;
     protected Unit selectedUnit ;
 
     /**
@@ -72,54 +68,16 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         this.currentPlayerState = state ;
     }
 
-    /**
-     * Method to update player's state if certain conditions are met
-     * The method is called by the update method of RealPlayer.java
-     */
-    public void updateState(){
-        Keyboard keyboard = getOwnerArea().getKeyboard();
-        switch (currentPlayerState) {
-            case NORMAL:
-                centerCamera();
-                if (keyboard.get(Keyboard.TAB).isPressed()){
-                    currentPlayerState = ICWarsPlayerState.IDLE;
-                }
-                if (keyboard.get(Keyboard.ENTER).isReleased()) currentPlayerState = ICWarsPlayerState.SELECT_CELL;
-                break;
-            case SELECT_CELL:
-                if (selectedUnit != null && !selectedUnit.isHasBeenUsed()) currentPlayerState = ICWarsPlayerState.MOVE_UNIT;
-                break;
-            case MOVE_UNIT:
-                if (keyboard.get(Keyboard.TAB).isReleased()){
-                    currentPlayerState = ICWarsPlayerState.NORMAL;
-                }
-                if(keyboard.get(Keyboard.ENTER).isReleased()){
-                    selectedUnit.changePosition(getCoordinates());
-                    currentPlayerState = ICWarsPlayerState.ACTION_SELECTION ;
-                }
-                break;
-            case ACTION_SELECTION:
-                actionToExecute = new AttackAction((ICWarsArea)getOwnerArea(), selectedUnit);
-                for (ICWarsAction act : selectedUnit.actionsList) {
-                    if(keyboard.get(act.getKey()).isPressed()){
-                        actionToExecute = act ;
-                        //Resetting index in AttackAction only once before calling doAction()
-                        //in order to take in consideration the update of the unitList of the
-                        //ICWarsArea
-                        if(actionToExecute instanceof AttackAction){
-                            AttackAction attackActionToExecute = (AttackAction) actionToExecute ;
-                            attackActionToExecute.setIndex(0);
-                        }
-                        currentPlayerState = ICWarsPlayerState.ACTION ;
-                    }
-                }
-                break;
-            case ACTION:
-                actionToExecute.doAction(1.f, this, keyboard);
-                break;
-            case IDLE:
-            default: break;
-        }
+    public Unit getUnitFromIndex(int index){
+        return effectives.get(index);
+    }
+
+    public int getIndexFromUnit(Unit unit){
+        return effectives.indexOf(unit);
+    }
+
+    public int getEffectivesSize(){
+        return effectives.size();
     }
 
     /**

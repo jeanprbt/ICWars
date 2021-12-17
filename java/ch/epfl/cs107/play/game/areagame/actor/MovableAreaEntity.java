@@ -49,6 +49,7 @@ public abstract class MovableAreaEntity extends AreaEntity {
         this.remainingFramesForCurrentMove = 0;
     }
 
+
     /**
      * Final move method
      * If no displacement occurs or if the displacement just ends now,

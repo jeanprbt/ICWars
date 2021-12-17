@@ -5,6 +5,9 @@ import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
+import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
 import ch.epfl.cs107.play.game.icwars.gui.ICWarsPlayerGUI;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
@@ -23,6 +26,7 @@ public class RealPlayer extends ICWarsPlayer {
     private final ICWarsPlayerInteractionHandler handler;
     private ICWarsBehavior.ICWarsCellType cellType;
     private Unit unitOnCell ;
+    private ICWarsAction actionToExecute ;
 
 
 
@@ -47,32 +51,78 @@ public class RealPlayer extends ICWarsPlayer {
         }
     }
 
-    public void setUnitOnCell(Unit unitOnCell) {
-        this.unitOnCell = unitOnCell;
-    }
-
     @Override
     public void draw(Canvas canvas) {
         if(getCurrentPlayerState() != ICWarsPlayerState.IDLE) sprite.draw(canvas);
-        if(selectedUnit != null && currentPlayerState == ICWarsPlayerState.MOVE_UNIT) gui.draw(canvas, selectedUnit);
-        if(currentPlayerState == ICWarsPlayerState.NORMAL || currentPlayerState == ICWarsPlayerState.SELECT_CELL) gui.draw(canvas, unitOnCell, cellType);
-        if(currentPlayerState == ICWarsPlayerState.ACTION_SELECTION) gui.draw(canvas, selectedUnit, true);
-        if(currentPlayerState == ICWarsPlayerState.ACTION) actionToExecute.draw(canvas);
+        if(selectedUnit != null && getCurrentPlayerState() == ICWarsPlayerState.MOVE_UNIT) gui.draw(canvas, selectedUnit);
+        if(getCurrentPlayerState() == ICWarsPlayerState.NORMAL || getCurrentPlayerState() == ICWarsPlayerState.SELECT_CELL) gui.draw(canvas, unitOnCell, cellType);
+        if(getCurrentPlayerState() == ICWarsPlayerState.ACTION_SELECTION) gui.draw(canvas, selectedUnit, true);
+        if(getCurrentPlayerState() == ICWarsPlayerState.ACTION) actionToExecute.draw(canvas);
     }
 
     @Override
     public void update(float deltaTime) {
 
         Keyboard keyboard= getOwnerArea().getKeyboard();
-        if (currentPlayerState == ICWarsPlayerState.NORMAL || currentPlayerState == ICWarsPlayerState.SELECT_CELL || currentPlayerState == ICWarsPlayerState.MOVE_UNIT) {
+        if (getCurrentPlayerState() == ICWarsPlayerState.NORMAL || getCurrentPlayerState() == ICWarsPlayerState.SELECT_CELL || getCurrentPlayerState() == ICWarsPlayerState.MOVE_UNIT) {
             moveIfPressed(Orientation.LEFT, keyboard.get(Keyboard.LEFT));
             moveIfPressed(Orientation.UP, keyboard.get(Keyboard.UP));
             moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
             moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
         }
         controlUnits();
-        updateState();
+        updatePlayerState();
         super.update(deltaTime);
+    }
+
+    /**
+     * Method to update player's state if certain conditions are met
+     * The method is called by the update method of RealPlayer.java
+     */
+    private void updatePlayerState(){
+        Keyboard keyboard = getOwnerArea().getKeyboard();
+        switch (getCurrentPlayerState()) {
+            case NORMAL:
+                centerCamera();
+                if (keyboard.get(Keyboard.TAB).isPressed()){
+                    setCurrentPlayerState(ICWarsPlayerState.IDLE);
+                }
+                if (keyboard.get(Keyboard.ENTER).isReleased()) setCurrentPlayerState(ICWarsPlayerState.SELECT_CELL);
+                break;
+            case SELECT_CELL:
+                if (selectedUnit != null && !selectedUnit.isHasBeenUsed()) setCurrentPlayerState(ICWarsPlayerState.MOVE_UNIT);
+                break;
+            case MOVE_UNIT:
+                if (keyboard.get(Keyboard.TAB).isReleased()){
+                    setCurrentPlayerState(ICWarsPlayerState.NORMAL);
+                }
+                if(keyboard.get(Keyboard.ENTER).isReleased()){
+                    selectedUnit.changePosition(getCoordinates());
+                    setCurrentPlayerState(ICWarsPlayerState.ACTION_SELECTION);
+                }
+                break;
+            case ACTION_SELECTION:
+                actionToExecute = new AttackAction((ICWarsArea)getOwnerArea(), selectedUnit);
+                for (ICWarsAction act : selectedUnit.actionsList) {
+                    if(keyboard.get(act.getKey()).isPressed()){
+                        actionToExecute = act ;
+                        //Resetting index in AttackAction only once before calling doAction()
+                        //in order to take in consideration the update of the unitList of the
+                        //ICWarsArea
+                        if(actionToExecute instanceof AttackAction){
+                            AttackAction attackActionToExecute = (AttackAction) actionToExecute ;
+                            attackActionToExecute.setIndex(0);
+                        }
+                        setCurrentPlayerState(ICWarsPlayerState.ACTION);
+                    }
+                }
+                break;
+            case ACTION:
+                actionToExecute.doAction(1.f, this, keyboard);
+                break;
+            case IDLE:
+            default: break;
+        }
     }
 
     @Override
@@ -96,14 +146,16 @@ public class RealPlayer extends ICWarsPlayer {
     }
 
     public void interactWith(Interactable other) {
-        other.acceptInteraction(handler);
+        if(!isDisplacementOccurs()) {
+            other.acceptInteraction(handler);
+        }
     }
 
     private class ICWarsPlayerInteractionHandler implements ICWarInteractionVisitor {
 
         @Override
         public void interactWith(Unit unit) {
-            if (currentPlayerState == ICWarsPlayerState.SELECT_CELL && unit.getFaction() == getFaction()) {
+            if (getCurrentPlayerState() == ICWarsPlayerState.SELECT_CELL && unit.getFaction() == getFaction()) {
                 selectedUnit = unit;
             }
             unitOnCell = unit;

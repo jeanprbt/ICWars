@@ -2,6 +2,7 @@ package ch.epfl.cs107.play.game.icwars;
 
 import ch.epfl.cs107.play.game.areagame.AreaGame;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
+import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Soldier;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Tank;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
@@ -84,7 +85,6 @@ public class ICWars extends AreaGame {
                 else {
                     currentPlayer = currentRoundPlayers.get(0);
                     currentRoundPlayers.remove(currentPlayer);
-                    System.out.println(currentRoundPlayers);
                     currentRoundState = ICWarsRoundState.START_PLAYER_TURN;
                 }
                 break;
@@ -108,7 +108,6 @@ public class ICWars extends AreaGame {
                 break;
             case END_TURN:
                 controlPlayers();
-                System.out.println(players.size());
                 if (players.size() == 1) currentRoundState = ICWarsRoundState.END;
                 else {
                     currentRoundPlayers.addAll(nextRoundPlayers);
@@ -144,20 +143,14 @@ public class ICWars extends AreaGame {
      */
     private void initArea(String areaKey) {
         ICWarsArea area = (ICWarsArea) setCurrentArea(areaKey, true);
-
-        DiscreteCoordinates [] coords = {area.getAllySpawnCoordinates(), area.getEnemySpawnCoordinates()};
-        ICWarsActor.Faction [] factions = {ICWarsActor.Faction.ALLY, ICWarsActor.Faction.ENEMY};
-        Tank [] tanks = new Tank[2];
-        Soldier [] soldiers = new Soldier[2];
-
-        for (int i = 0; i < 2 ; i++) {
-            Tank tank = new Tank(area, Tank.getSpawnCoordinates(factions[i]), factions[i]);
-            tanks[i] = tank;
-            Soldier soldier = new Soldier(area, Soldier.getSpawnCoordinates(factions[i]), factions[i]);
-            soldiers[i] = soldier;
-            players.add(i, new RealPlayer(area, coords[i], factions[i], tanks[i], soldiers[i]));
-            players.get(i).enterArea(area, coords[i]);
-        }
+        Tank tank1 = new Tank(area, Tank.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
+        Tank tank2 = new Tank(area, Tank.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
+        Soldier soldier1 = new Soldier(area, Soldier.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
+        Soldier soldier2 = new Soldier(area, Soldier.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
+        players.add(new RealPlayer(area, area.getAllySpawnCoordinates(), ICWarsActor.Faction.ALLY, tank1, soldier1));
+        players.add(new AIPlayer(area, area.getEnemySpawnCoordinates(), ICWarsActor.Faction.ENEMY, tank2, soldier2));
+        players.get(0).enterArea(area, area.getAllySpawnCoordinates());
+        players.get(1).enterArea(area, area.getEnemySpawnCoordinates());
     }
 
     /**

@@ -17,7 +17,8 @@ public interface Interactable {
      * Get this Interactor's current occupying cells coordinates
      * @return (List of DiscreteCoordinates). May be empty but not null
      */
-    List<DiscreteCoordinates> getCurrentCells();
+    List<DiscreteCoordinates>
+    getCurrentCells();
 
     /**
      * Indicate if the current Interactable take the whole cell space or not
