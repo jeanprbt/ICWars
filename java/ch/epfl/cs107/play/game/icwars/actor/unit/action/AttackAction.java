@@ -68,7 +68,6 @@ public class AttackAction extends ICWarsAction{
                 targetToAttack = target ;
             }
         }
-        System.out.println(targetToAttack);
         targetToAttack.takeInjure(ownerUnit.getDamage());
         aiPlayer.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
     }
