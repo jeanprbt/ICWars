@@ -60,7 +60,7 @@ public class AttackAction extends ICWarsAction{
     @Override
     public void doAutoAction(float dt, AIPlayer aiPlayer) {
         ArrayList<Unit> targets = getCloseEnemies();
-        int minHp = 11;
+        int minHp = 100;
         Unit targetToAttack = null ;
         for (Unit target : targets) {
             if(target.getHp() < minHp){

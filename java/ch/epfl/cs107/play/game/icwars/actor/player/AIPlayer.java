@@ -109,11 +109,16 @@ public class AIPlayer extends ICWarsPlayer {
         DiscreteCoordinates closestUnitPosition = area.getClosestEnemyPosition(selectedUnit);
         int finalX = -1 ;
         int finalY = -1 ;
+        int differenceX = closestUnitPosition.x - selectedUnitPosition.x ;
+        int differenceY = closestUnitPosition.y - selectedUnitPosition.y ;
+
+        //Handling the case when selectedUnit is already well positioned
+        if(Math.abs(differenceY) <= 1 && Math.abs(differenceX) <= 1){
+            return selectedUnitPosition;
+        }
 
         //Handling the case when closestUnit is in the range of selectedUnit in  order to avoid the superposition
         if(isInRange(closestUnitPosition)){
-            int differenceX = closestUnitPosition.x - selectedUnitPosition.x ;
-            int differenceY = closestUnitPosition.y - selectedUnitPosition.y ;
             ArrayList<DiscreteCoordinates> coords = new ArrayList<DiscreteCoordinates>();
 
             while(finalX < 0) {
@@ -171,12 +176,43 @@ public class AIPlayer extends ICWarsPlayer {
         if (Math.abs(selectedUnitPosition.x - closestUnitPosition.x) <= selectedUnit.getRadius()) finalX = closestUnitPosition.x;
         else finalX = optimalBorderXOrY(selectedUnitPosition.x, closestUnitPosition.x);
 
+
         // Compare the y's
         //Check if closestUnitPosition.y is in the y-range of selecteDunit
         if(Math.abs(selectedUnitPosition.y - closestUnitPosition.y) <= selectedUnit.getRadius()) finalY = closestUnitPosition.y;
         else finalY = optimalBorderXOrY(selectedUnitPosition.y, closestUnitPosition.y);
 
         DiscreteCoordinates closestPositionPossible = new DiscreteCoordinates(finalX, finalY);
+        ArrayList<DiscreteCoordinates> coords = new ArrayList<DiscreteCoordinates>();
+        coords.add(closestPositionPossible);
+
+        //Handling the special case when target is not in range of targetUnit and optimal position is
+        //already occupied by another unit
+        int index = 1;
+        while(!area.canEnterAreaCells(selectedUnit, coords)) {
+            coords.clear();
+            DiscreteCoordinates positionRight = new DiscreteCoordinates(closestPositionPossible.x + index, closestPositionPossible.y);
+            DiscreteCoordinates positionLeft = new DiscreteCoordinates(closestPositionPossible.x - index, closestPositionPossible.y);
+            DiscreteCoordinates positionDown = new DiscreteCoordinates(closestPositionPossible.x, closestPositionPossible.y + index);
+            DiscreteCoordinates positionUp = new DiscreteCoordinates(closestPositionPossible.x + index, closestPositionPossible.y - index);
+
+            if(isInRange(positionRight)) {
+                coords.clear();
+                coords.add(positionRight);
+            } else if(isInRange(positionLeft)){
+                coords.clear();
+                coords.add(positionLeft);
+            } else if(isInRange(positionDown)){
+                coords.clear();
+                coords.add(positionDown);
+            } else if (isInRange(positionUp)){
+                coords.clear();
+                coords.add(positionUp);
+            }
+            ++index;
+        }
+
+        closestPositionPossible = coords.get(0);
         return closestPositionPossible ;
     }
 
