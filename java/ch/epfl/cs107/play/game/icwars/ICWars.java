@@ -10,6 +10,7 @@ import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.area.Level0;
 import ch.epfl.cs107.play.game.icwars.area.Level1;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
+import ch.epfl.cs107.play.game.icwars.gui.ICWarsGameOverPanel;
 import ch.epfl.cs107.play.game.icwars.gui.ICWarsOpponentPanel;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -28,8 +29,10 @@ public class ICWars extends AreaGame {
     private ArrayList<ICWarsPlayer> currentRoundPlayers;
     private ICWarsPlayer currentPlayer;
     private ICWarsRoundState currentRoundState;
-    private ICWarsOpponentPanel panel;
+    private ICWarsOpponentPanel opponentPanel;
     private boolean playerHasBeenSelected = false ;
+    private ICWarsGameOverPanel gameOverPanel ;
+    private boolean gameOverDisplay = false ;
 
     //-----------------------------------API-------------------------------------//
 
@@ -40,7 +43,8 @@ public class ICWars extends AreaGame {
             players = new ArrayList<ICWarsPlayer>();
             currentRoundState = ICWarsRoundState.INIT;
             initArea("icwars/Level0");
-            panel = new ICWarsOpponentPanel(getCurrentArea().getCameraScaleFactor());
+            opponentPanel = new ICWarsOpponentPanel(getCurrentArea().getCameraScaleFactor());
+            gameOverPanel = new ICWarsGameOverPanel(getCurrentArea().getCameraScaleFactor());
             return true;
         }
         return false;
@@ -56,8 +60,9 @@ public class ICWars extends AreaGame {
     public void update(float deltaTime) {
         Keyboard keyboard = getWindow().getKeyboard();
         selectPlayer();
+        selectEnd();
         //Resetting game is key "N" is pressed
-        if (keyboard.get(Keyboard.N).isPressed()) {
+        if (keyboard.get(Keyboard.N).isPressed() && currentPlayer != null) {
             changeArea();
         }
         //Resetting game if key "S" is pressed
@@ -175,7 +180,10 @@ public class ICWars extends AreaGame {
 
             currentRoundState = ICWarsRoundState.INIT;
             currentPlayer.startTurn();
-        } else end();
+        } else {
+            gameOverDisplay = true ;
+            selectEnd();
+        }
     }
 
     /**
@@ -187,8 +195,8 @@ public class ICWars extends AreaGame {
     private void selectPlayer(){
         Keyboard keyboard = getWindow().getKeyboard();
         ICWarsArea area = (ICWarsArea) getCurrentArea() ;
-        if(!playerHasBeenSelected){
-            panel.draw(getWindow());
+        if(!playerHasBeenSelected && !gameOverDisplay){
+            opponentPanel.draw(getWindow());
 
             if(keyboard.get(Keyboard.R).isPressed()){
                 playerHasBeenSelected = true ;
@@ -203,6 +211,22 @@ public class ICWars extends AreaGame {
                 Soldier soldier = new Soldier(getCurrentArea(), Soldier.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
                 players.add(new AIPlayer(area, area.getEnemySpawnCoordinates(), ICWarsActor.Faction.ENEMY, tank, soldier));
                 players.get(1).enterArea(area, area.getEnemySpawnCoordinates());
+            }
+        }
+    }
+
+    private void selectEnd(){
+        Keyboard keyboard = getWindow().getKeyboard();
+        if(gameOverDisplay){
+            gameOverPanel.draw(getWindow());
+
+            if(keyboard.get(Keyboard.G).isPressed()){
+               gameOverDisplay = false;
+               resetGame();
+            }
+            if(keyboard.get(Keyboard.Q).isPressed()){
+                playerHasBeenSelected = false ;
+                end();
             }
         }
     }

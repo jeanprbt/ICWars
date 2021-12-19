@@ -60,8 +60,4 @@ public class ICWarsPlayerGUI implements Graphics {
         infoPanel.setCurrentCell(type);
         infoPanel.draw(canvas);
     }
-
-    public void drawOpponentPanel(Canvas canvas){
-        opponentPanel.draw(canvas);
-    }
 }
