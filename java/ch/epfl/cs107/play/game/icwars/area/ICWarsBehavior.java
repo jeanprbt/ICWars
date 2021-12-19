@@ -3,6 +3,7 @@ package ch.epfl.cs107.play.game.icwars.area;
 import ch.epfl.cs107.play.game.areagame.AreaBehavior;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.icwars.ICWars;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
 import ch.epfl.cs107.play.game.tutosSolution.Tuto2Behavior;
 import ch.epfl.cs107.play.window.Window;
@@ -35,16 +36,17 @@ public class ICWarsBehavior extends AreaBehavior {
      * Enumeration of all different types of cells in the grid
      */
     public enum ICWarsCellType {
-        NONE(0, 0), //Should be used except in the toType method
-        ROAD(-16777216, 0),
-        PLAIN(-14112955, 1),
-        WOOD(-65536, 3),
-        RIVER(-16776961, 0),
-        MOUNTAIN(-256, 4),
-        CITY(-1, 2);
+        NONE(0, 0, false), //Should be used except in the toType method
+        ROAD(-16777216, 0, true),
+        PLAIN(-14112955, 1, true),
+        WOOD(-65536, 3, true),
+        RIVER(-16776961, 0, false),
+        MOUNTAIN(-256, 4, true),
+        CITY(-1, 2, true);
 
         final int type;
         final int defenseStars ;
+        final boolean walkable ;
         // defenseStars getter
         public int getDefenseStars() {
             return defenseStars;
@@ -55,9 +57,10 @@ public class ICWarsBehavior extends AreaBehavior {
          * @param type : RGB color on image behavior
          * @param defenseStars : number of defense stars of the cell
          */
-        ICWarsCellType(int type, int defenseStars){
+        ICWarsCellType(int type, int defenseStars, boolean walkable){
             this.type = type ;
             this.defenseStars = defenseStars ;
+            this.walkable = walkable ;
         }
 
         /**
@@ -104,6 +107,9 @@ public class ICWarsBehavior extends AreaBehavior {
         public int getDefenseStars(ICWarsCellType type) {
             return type.defenseStars;
         }
+        public boolean isWalkable(ICWarsCellType type){
+            return type.walkable;
+        }
 
         @Override
         public boolean isCellInteractable() {
@@ -132,7 +138,7 @@ public class ICWarsBehavior extends AreaBehavior {
             for (Interactable interactable : entities) {
                 if (interactable.takeCellSpace()) cellSpaceTaken = true ;
             }
-            if(entity.takeCellSpace() && cellSpaceTaken) return false ;
+            if((entity.takeCellSpace() && cellSpaceTaken) || (!isWalkable(type) && entity.takeCellSpace())) return false ;
             return true ;
         }
     }

@@ -6,6 +6,7 @@ import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.WaitAction;
+import ch.epfl.cs107.play.game.icwars.exception.WrongLocationException;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Canvas;
@@ -105,12 +106,15 @@ public class AIPlayer extends ICWarsPlayer {
      * Method returning the position where selectedUnit should move in order to get as close
      * as possible from the closest enemy unit, called in step MOVE_UNIT of the final state machine.
      */
-    private DiscreteCoordinates getClosestPositionPossible(){
+    private DiscreteCoordinates getClosestPositionPossible() {
         DiscreteCoordinates closestUnitPosition = area.getClosestEnemyPosition(selectedUnit);
+        boolean impossibleForAI = closestUnitPosition.x == 9 && (closestUnitPosition.y == 0 || closestUnitPosition.y == 1) && getOwnerArea().getTitle() == "icwars/Level1";
         int finalX = -1 ;
         int finalY = -1 ;
         int differenceX = closestUnitPosition.x - selectedUnitPosition.x ;
         int differenceY = closestUnitPosition.y - selectedUnitPosition.y ;
+
+        System.out.println(closestUnitPosition);
 
         //Handling the case when selectedUnit is already well positioned
         if(Math.abs(differenceY) <= 1 && Math.abs(differenceX) <= 1){
@@ -118,30 +122,46 @@ public class AIPlayer extends ICWarsPlayer {
         }
 
         //Handling the case when closestUnit is in the range of selectedUnit in  order to avoid the superposition
-        if(isInRange(closestUnitPosition, selectedUnit)){
+        if(isInRange(closestUnitPosition, selectedUnit)) {
             ArrayList<DiscreteCoordinates> coords = new ArrayList<DiscreteCoordinates>();
 
+            int indexX = 1 ;
             while(finalX < 0) {
                 int index = 1 ;
                 if (differenceX < 0) { // closestUnit to the left of selectedUnit
-                    coords.add(new DiscreteCoordinates(closestUnitPosition.x + index, closestUnitPosition.y));
+                    try {
+                        if(impossibleForAI) throw new WrongLocationException();
+                        coords.add(new DiscreteCoordinates(closestUnitPosition.x + indexX, closestUnitPosition.y));
+                    } catch(WrongLocationException e) {
+                        return new DiscreteCoordinates(9, 2);
+                    }
                     if (area.canEnterAreaCells(selectedUnit, coords)) {
                         finalX = coords.get(0).x;
                     }
                 }
 
                 if (differenceX > 0) { // closestUnit to the right of selectedUnit
-                    coords.add(new DiscreteCoordinates(closestUnitPosition.x - index, closestUnitPosition.y));
+                    try {
+                        if(impossibleForAI) throw new WrongLocationException();
+                        coords.add(new DiscreteCoordinates(closestUnitPosition.x - indexX, closestUnitPosition.y));
+                    } catch(WrongLocationException e) {
+                        return new DiscreteCoordinates(9, 2);
+                    }
                     if (area.canEnterAreaCells(selectedUnit, coords)) {
                         finalX = coords.get(0).x;
                     }
                 }
 
                 if(differenceX == 0){ // closestUnit
-                    coords.add(closestUnitPosition);
+                    try {
+                        if(impossibleForAI) throw new WrongLocationException();
+                        coords.add(closestUnitPosition);
+                    } catch(WrongLocationException e) {
+                        return new DiscreteCoordinates(9, 2);
+                    }
                     finalX = coords.get(0).x;
                 }
-                ++index ;
+                ++indexX ;
                 coords.clear();
             }
 
@@ -171,16 +191,20 @@ public class AIPlayer extends ICWarsPlayer {
            return new DiscreteCoordinates(finalX, finalY);
         }
 
-        // Compare the x's
-        //Check if closestUnitPosition.x is in the x-range of selectedUnit
-        if (Math.abs(selectedUnitPosition.x - closestUnitPosition.x) <= selectedUnit.getRadius()) finalX = closestUnitPosition.x;
-        else finalX = optimalBorderXOrY(selectedUnitPosition.x, closestUnitPosition.x);
+            // Compare the x's
+            //Check if closestUnitPosition.x is in the x-range of selectedUnit
+            if (Math.abs(selectedUnitPosition.x - closestUnitPosition.x) <= selectedUnit.getRadius())
+                finalX = closestUnitPosition.x;
+            else finalX = optimalBorderXOrY(selectedUnitPosition.x, closestUnitPosition.x);
 
 
-        // Compare the y's
-        //Check if closestUnitPosition.y is in the y-range of selecteDunit
-        if(Math.abs(selectedUnitPosition.y - closestUnitPosition.y) <= selectedUnit.getRadius()) finalY = closestUnitPosition.y;
-        else finalY = optimalBorderXOrY(selectedUnitPosition.y, closestUnitPosition.y);
+            // Compare the y's
+            //Check if closestUnitPosition.y is in the y-range of selecteDunit
+            if (Math.abs(selectedUnitPosition.y - closestUnitPosition.y) <= selectedUnit.getRadius())
+                finalY = closestUnitPosition.y;
+            else finalY = optimalBorderXOrY(selectedUnitPosition.y, closestUnitPosition.y);
+
+        }
 
         DiscreteCoordinates closestPositionPossible = new DiscreteCoordinates(finalX, finalY);
         ArrayList<DiscreteCoordinates> coords = new ArrayList<DiscreteCoordinates>();
@@ -215,6 +239,7 @@ public class AIPlayer extends ICWarsPlayer {
         closestPositionPossible = coords.get(0);
         return closestPositionPossible ;
     }
+
 
     /**
      * Method returning the optimal range border (left or right if given x's and up or down if given y's)
