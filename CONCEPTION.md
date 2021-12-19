@@ -1,0 +1,25 @@
+﻿## CONCEPTION - Structure du jeu ICWars
+
+Nous avons codé la partie obligatoire du projet en suivant les consignes et en ne modifiant pas l'architecture de la maquette proposée. 
+Nous avons réalisé toutes les étapes et avons ajouté quelques fonctionnalités supplémentaires.
+
+## Partie obligatoire
+La partie la plus libre du projet concernait le AIPlayer, et notamment son algorithme de positionnement des unités. 
+
+Nous avons fait le choix de ne pas utiliser la méthode waitFor() proposée par l'énoncé, et de plutôt implémenter la nôtre qui nous donnait plus de liberté quant au temps d'attente entre les étapes du AIPlayer ; elle fonctionne en appelant la méthode sleep() du programme pendant un temps en millisecondes donné en paramètre.
+
+Pour faire notre algorithme de positionnement,  nous avons procédé comme suit : lors du passage dans l'automate à états finis à l'état MOVE_UNIT, nous appelons la méthode getClosestPositionPossible(). Cette dernière renvoie des DiscreteCoordinates correspondant à la destination optimale pour le déplacement de l'unité sélectionnée par le AIPlayer, soit la position la plus proche de la cible visée, mais comprise dans le rayon de déplacement de l'unité sélectionnée.
+
+Pour ce faire, la méthode vérifie premièrement que l'unité sélectionnée n'est pas déjà correctement positionnée (sur l'une des cellules voisines de la cible). Si ce n'est pas le cas, elle sépare ensuite les calculs en deux cas visant tous deux à produire une paire de int finalX et finalY qui seront vérifiés ultérieurement. 
+Le premier cas se produit si la cible est déjà dans le rayon de déplacement de l'unité sélectionnée, le second si elle est en dehors : ce second cas fait appel à une méthode auxiliaire optimalBorderXOrY qui renvoie la cellule aux confins du rayon de déplacements la plus proche de la cible. 
+Une fois la paire finalX - finalY obtenue, l'algorithme vérifie que la cellule correspondant à ces coordonnées est bien accessible via la méthode canEnterAreaCells : si ce n'est pas le cas elle itère sur toutes les cellules voisines pour trouver la première adéquate.
+
+## A propos des extensions
+
+La première fonctionnalité que nous avons ajoutée est l'impossibilité de se placer sur les rivières, ce qui rajoute des obstacles dans le placement des unités. Nous avons ajouté un booléen walkable à l'énumération des ICWarsCellType, est avons adapté la méthode canEnter() des ICWarsCell en conséquence. Nous avons seulement rencontré une difficulté causée par deux cas limite dans la seconde grille de jeu : la rivière prend la moitié de la largeur de la grille sur les deux dernières lignes, ce qui faisait rentrer notre AIPlayer dans une boucle infinie. Cela ne concernait cependant que deux cellules, aussi avons-nous décidé d'utiliser le mécanisme de gestion des exceptions fourni par Java : dans le sous-paquetage exception, nous avons créé la classe WrongLocationException, et nous avons lancé et géré cette exception dans la méthode getClosestPositionPossible si les coordonnées de la cible correspondait à ces deux cas limites.
+
+La seconde fonctionnalité que nous avons ajouté est la présence de deux panneaux qui rendent le jeu plus complet et structuré : le panneau de sélection de l'adversaire et de gestion de la fin du jeu. Dans le sous-paquetage gui, nous avons ajouté deux classes ICWarsOpponentPanel et ICWarsGameOverPanel sur le même modèle que la classe ICWarsActionPanel, dont l'affichage est géré dans la classe ICWars par les méthodes respectives selectPlayer() et selectEnd() appellées continuellement par la méthode update().
+
+La troisième fonctionnalité que nous avons ajouté est une musique d'ambiance rudimentaire tournant en fond composée par nos soins. Pour l'ajouter au jeu, nous avons ajouté le sous-paquetage music et créé la classe AudioFilePlayer.java s'occupant de jouer une musique, dont le fichier audio est placé dans les ressources. Pour lancer la musique, nous avons employé le multi-threading et avons donc lancé un second thread au démarrage du jeu s'occupant uniquement de la musique.
+
+
