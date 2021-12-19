@@ -10,8 +10,10 @@ import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.area.Level0;
 import ch.epfl.cs107.play.game.icwars.area.Level1;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
+import ch.epfl.cs107.play.game.icwars.gui.ICWarsOpponentPanel;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Keyboard;
 import ch.epfl.cs107.play.window.Window;
 
@@ -19,14 +21,15 @@ import java.util.ArrayList;
 
 public class ICWars extends AreaGame {
 
-    public static final float CAMERA_SCALE_FACTOR = 16.f ;
+    public static final float CAMERA_SCALE_FACTOR = 16.f;
 
-    private ArrayList<ICWarsPlayer> players ;
-    private ArrayList<ICWarsPlayer> nextRoundPlayers ;
-    private ArrayList<ICWarsPlayer> currentRoundPlayers ;
+    private ArrayList<ICWarsPlayer> players;
+    private ArrayList<ICWarsPlayer> nextRoundPlayers;
+    private ArrayList<ICWarsPlayer> currentRoundPlayers;
     private ICWarsPlayer currentPlayer;
-    private ICWarsRoundState currentRoundState ;
-
+    private ICWarsRoundState currentRoundState;
+    private ICWarsOpponentPanel panel;
+    private boolean playerHasBeenSelected = false ;
 
     //-----------------------------------API-------------------------------------//
 
@@ -37,6 +40,7 @@ public class ICWars extends AreaGame {
             players = new ArrayList<ICWarsPlayer>();
             currentRoundState = ICWarsRoundState.INIT;
             initArea("icwars/Level0");
+            panel = new ICWarsOpponentPanel(getCurrentArea().getCameraScaleFactor());
             return true;
         }
         return false;
@@ -51,12 +55,13 @@ public class ICWars extends AreaGame {
     @Override
     public void update(float deltaTime) {
         Keyboard keyboard = getWindow().getKeyboard();
+        selectPlayer();
         //Resetting game is key "N" is pressed
-        if(keyboard.get(Keyboard.N).isPressed()) {
+        if (keyboard.get(Keyboard.N).isPressed()) {
             changeArea();
         }
-        //Resetting game if key "R" is pressed
-        if (keyboard.get(Keyboard.R).isPressed()) {
+        //Resetting game if key "S" is pressed
+        if (keyboard.get(Keyboard.S).isPressed()) {
             resetGame();
         }
         super.update(deltaTime);
@@ -76,7 +81,7 @@ public class ICWars extends AreaGame {
      * INIT, CHOOSE_PLAYER, START_PLAYER_TURN, PLAYER_TURN, EN_PLAYER_TURN,
      * END_TURN, END
      */
-    private enum ICWarsRoundState{
+    private enum ICWarsRoundState {
         INIT,
         CHOOSE_PLAYER,
         START_PLAYER_TURN,
@@ -86,16 +91,18 @@ public class ICWars extends AreaGame {
         END
     }
 
-    private void updateRoundState(){
-        switch(currentRoundState) {
+    private void updateRoundState() {
+        switch (currentRoundState) {
             case INIT:
                 currentRoundPlayers = new ArrayList<ICWarsPlayer>();
-                nextRoundPlayers= new ArrayList<ICWarsPlayer>();
-                currentRoundPlayers.addAll(players);
-                currentRoundState = ICWarsRoundState.CHOOSE_PLAYER ;
+                nextRoundPlayers = new ArrayList<ICWarsPlayer>();
+                if(playerHasBeenSelected) {
+                    currentRoundPlayers.addAll(players);
+                    currentRoundState = ICWarsRoundState.CHOOSE_PLAYER;
+                }
                 break;
             case CHOOSE_PLAYER:
-                if(currentRoundPlayers.size() == 0) currentRoundState = ICWarsRoundState.END_TURN;
+                if (currentRoundPlayers.size() == 0) currentRoundState = ICWarsRoundState.END_TURN;
                 else {
                     currentPlayer = currentRoundPlayers.get(0);
                     currentRoundPlayers.remove(currentPlayer);
@@ -103,21 +110,21 @@ public class ICWars extends AreaGame {
                 }
                 break;
             case START_PLAYER_TURN:
-                if (currentPlayer.isVanquished()){
+                if (currentPlayer.isVanquished()) {
                     currentRoundState = ICWarsRoundState.END_TURN;
                     break;
-                    }
+                }
                 currentPlayer.startTurn();
                 currentRoundState = ICWarsRoundState.PLAYER_TURN;
                 break;
             case PLAYER_TURN:
-              if (currentPlayer.getCurrentPlayerState() == ICWarsPlayer.ICWarsPlayerState.IDLE) currentRoundState = ICWarsRoundState.END_PLAYER_TURN;
+                if (currentPlayer.getCurrentPlayerState() == ICWarsPlayer.ICWarsPlayerState.IDLE)
+                    currentRoundState = ICWarsRoundState.END_PLAYER_TURN;
                 break;
             case END_PLAYER_TURN:
-                if(currentPlayer.isVanquished()) {
+                if (currentPlayer.isVanquished()) {
                     getCurrentArea().unregisterActor(currentPlayer);
-                }
-                else {
+                } else {
                     nextRoundPlayers.add(currentPlayer);
                     currentPlayer.setUnitsAvailable();
                 }
@@ -139,18 +146,15 @@ public class ICWars extends AreaGame {
 
     /**
      * Initialises area by creating all that needs to be initialised
+     *
      * @param areaKey : key area
      */
     private void initArea(String areaKey) {
         ICWarsArea area = (ICWarsArea) setCurrentArea(areaKey, true);
-        Tank tank1 = new Tank(area, Tank.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
-        Tank tank2 = new Tank(area, Tank.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
-        Soldier soldier1 = new Soldier(area, Soldier.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
-        Soldier soldier2 = new Soldier(area, Soldier.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
-        players.add(new RealPlayer(area, area.getAllySpawnCoordinates(), ICWarsActor.Faction.ALLY, tank1, soldier1));
-        players.add(new AIPlayer(area, area.getEnemySpawnCoordinates(), ICWarsActor.Faction.ENEMY, tank2, soldier2));
+        Tank tank = new Tank(getCurrentArea(), Tank.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
+        Soldier soldier = new Soldier(getCurrentArea(), Soldier.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
+        players.add(new RealPlayer(area, area.getAllySpawnCoordinates(), ICWarsActor.Faction.ALLY, tank, soldier));
         players.get(0).enterArea(area, area.getAllySpawnCoordinates());
-        players.get(1).enterArea(area, area.getEnemySpawnCoordinates());
     }
 
     /**
@@ -158,27 +162,49 @@ public class ICWars extends AreaGame {
      * ending game if final level has been reached
      */
     private void changeArea() {
-        if(getCurrentArea().getTitle() == "icwars/Level0") {
-            ICWarsArea currentArea = (ICWarsArea) setCurrentArea("icwars/Level1", false);
-            currentArea.clearUnitList();
+        if (getCurrentArea().getTitle() == "icwars/Level0") {
+            ICWarsArea area = (ICWarsArea) setCurrentArea("icwars/Level1", false);
+            area.clearUnitList();
+            playerHasBeenSelected = false ;
+
             players = new ArrayList<ICWarsPlayer>();
+            Tank tank = new Tank(getCurrentArea(), Tank.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
+            Soldier soldier = new Soldier(getCurrentArea(), Soldier.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
+            players.add(new RealPlayer(area, area.getAllySpawnCoordinates(), ICWarsActor.Faction.ALLY, tank, soldier));
+            players.get(0).enterArea(area, area.getAllySpawnCoordinates());
 
-            DiscreteCoordinates [] coords = {currentArea.getAllySpawnCoordinates(), currentArea.getEnemySpawnCoordinates()};
-            ICWarsActor.Faction [] factions = {ICWarsActor.Faction.ALLY, ICWarsActor.Faction.ENEMY};
-            Tank [] tanks = new Tank[2];
-            Soldier [] soldiers = new Soldier[2];
-
-            for (int i = 0; i < 2 ; i++) {
-                Tank tank = new Tank(currentArea, Tank.getSpawnCoordinates(factions[i]), factions[i]);
-                tanks[i] = tank;
-                Soldier soldier = new Soldier(currentArea, Soldier.getSpawnCoordinates(factions[i]), factions[i]);
-                soldiers[i] = soldier;
-                players.add(i, new RealPlayer(currentArea, coords[i], factions[i], tanks[i], soldiers[i]));
-                players.get(i).enterArea(currentArea, coords[i]);
-            }
             currentRoundState = ICWarsRoundState.INIT;
             currentPlayer.startTurn();
         } else end();
+    }
+
+    /**
+     * Method aiming at giving the ability to the user to select its opponent : real or AI
+     * It displays the ICWarsOpponentPanel while the boolean playerHasBeenSelected is false,
+     * and when keys "A" or "R" are pressed it adds the corresponding players and makes
+     * playerHasBeenSelected true
+     */
+    private void selectPlayer(){
+        Keyboard keyboard = getWindow().getKeyboard();
+        ICWarsArea area = (ICWarsArea) getCurrentArea() ;
+        if(!playerHasBeenSelected){
+            panel.draw(getWindow());
+
+            if(keyboard.get(Keyboard.R).isPressed()){
+                playerHasBeenSelected = true ;
+                Tank tank = new Tank(getCurrentArea(), Tank.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
+                Soldier soldier = new Soldier(getCurrentArea(), Soldier.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
+                players.add(new RealPlayer(area, area.getEnemySpawnCoordinates(), ICWarsActor.Faction.ENEMY, tank, soldier));
+                players.get(1).enterArea(area, area.getEnemySpawnCoordinates());
+            }
+            if(keyboard.get(Keyboard.A).isPressed()){
+                playerHasBeenSelected = true ;
+                Tank tank = new Tank(getCurrentArea(), Tank.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
+                Soldier soldier = new Soldier(getCurrentArea(), Soldier.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
+                players.add(new AIPlayer(area, area.getEnemySpawnCoordinates(), ICWarsActor.Faction.ENEMY, tank, soldier));
+                players.get(1).enterArea(area, area.getEnemySpawnCoordinates());
+            }
+        }
     }
 
     /**
@@ -199,9 +225,10 @@ public class ICWars extends AreaGame {
     /**
      * Resets game
      */
-    private void resetGame(){
+    private void resetGame() {
         createAreas();
         players = new ArrayList<ICWarsPlayer>();
+        playerHasBeenSelected = false ;
         currentRoundState = ICWarsRoundState.INIT;
         initArea("icwars/Level0");
     }
@@ -209,7 +236,7 @@ public class ICWars extends AreaGame {
     /**
      * Add all the areas
      */
-    private void createAreas(){
+    private void createAreas() {
         addArea(new Level0());
         addArea(new Level1());
     }

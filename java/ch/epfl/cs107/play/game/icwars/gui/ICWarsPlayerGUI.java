@@ -15,6 +15,7 @@ public class ICWarsPlayerGUI implements Graphics {
     private ICWarsPlayer player ;
     private ICWarsActionsPanel actionsPanel;
     private ICWarsInfoPanel infoPanel;
+    private ICWarsOpponentPanel opponentPanel ;
 
 
     //-----------------------------------API-------------------------------------//
@@ -58,5 +59,9 @@ public class ICWarsPlayerGUI implements Graphics {
         infoPanel.setUnit(unitOnCell);
         infoPanel.setCurrentCell(type);
         infoPanel.draw(canvas);
+    }
+
+    public void drawOpponentPanel(Canvas canvas){
+        opponentPanel.draw(canvas);
     }
 }

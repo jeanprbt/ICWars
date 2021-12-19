@@ -76,7 +76,7 @@ public class AttackAction extends ICWarsAction{
     @Override
     public void draw(Canvas canvas) {
         if (waitingPurposeBoolean) {
-            if (targets == null) ;
+            if (target == null) ;
             else {
                 target.centerCamera();
                 cursor.setAnchor(canvas.getPosition().add(1, 0));

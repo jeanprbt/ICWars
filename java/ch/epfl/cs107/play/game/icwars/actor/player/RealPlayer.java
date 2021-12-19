@@ -9,6 +9,7 @@ import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
+import ch.epfl.cs107.play.game.icwars.gui.ICWarsOpponentPanel;
 import ch.epfl.cs107.play.game.icwars.gui.ICWarsPlayerGUI;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;

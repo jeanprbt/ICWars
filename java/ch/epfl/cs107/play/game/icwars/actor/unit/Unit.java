@@ -215,7 +215,10 @@ public abstract class Unit extends ICWarsActor implements Interactor{
      * @param damage : the number of healthPoints to decrease
      */
     public void takeInjure(int damage) {
-        hp = hp - damage + cellDefenseStars;
+        if(cellDefenseStars > damage){}
+        else {
+            hp = hp - damage + cellDefenseStars;
+        }
         hp = (hp <= 0) ? 0 : hp;
         if (hp == 0) isDead = true;
     }
