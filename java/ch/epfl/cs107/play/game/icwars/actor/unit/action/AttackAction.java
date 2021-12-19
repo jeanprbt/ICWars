@@ -34,7 +34,6 @@ public class AttackAction extends ICWarsAction{
 
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
-        waitingPurposeBoolean = true;
         targets = getCloseEnemies();
         if (targets.size() == 0 || keyboard.get(Keyboard.TAB).isPressed()) {
             player.centerCamera();
@@ -52,7 +51,6 @@ public class AttackAction extends ICWarsAction{
             if (keyboard.get(Keyboard.ENTER).isReleased()) {
                 target.takeInjure(ownerUnit.getDamage());
                 player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
-                waitingPurposeBoolean = false;
             }
             ownerUnit.setHasBeenUsed(true);
         }

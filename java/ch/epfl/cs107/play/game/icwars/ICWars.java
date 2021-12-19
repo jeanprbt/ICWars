@@ -2,6 +2,7 @@ package ch.epfl.cs107.play.game.icwars;
 
 import ch.epfl.cs107.play.game.areagame.AreaGame;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
+import ch.epfl.cs107.play.game.icwars.actor.unit.RocketMan;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Soldier;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Tank;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
@@ -34,6 +35,7 @@ public class ICWars extends AreaGame {
     private boolean playerHasBeenSelected = false ;
     private ICWarsGameOverPanel gameOverPanel ;
     private boolean gameOverDisplay = false ;
+    private AudioFilePlayer Audioplayer;
 
     //-----------------------------------API-------------------------------------//
 
@@ -44,6 +46,8 @@ public class ICWars extends AreaGame {
             players = new ArrayList<ICWarsPlayer>();
             currentRoundState = ICWarsRoundState.INIT;
             initArea("icwars/Level0");
+            Audioplayer = new AudioFilePlayer();
+            new Thread(this::playMusic).start();
             opponentPanel = new ICWarsOpponentPanel(getCurrentArea().getCameraScaleFactor());
             gameOverPanel = new ICWarsGameOverPanel(getCurrentArea().getCameraScaleFactor());
             return true;
@@ -182,7 +186,8 @@ public class ICWars extends AreaGame {
             players = new ArrayList<ICWarsPlayer>();
             Tank tank = new Tank(getCurrentArea(), Tank.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
             Soldier soldier = new Soldier(getCurrentArea(), Soldier.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
-            players.add(new RealPlayer(area, area.getAllySpawnCoordinates(), ICWarsActor.Faction.ALLY, tank, soldier));
+            RocketMan rocketMan = new RocketMan(getCurrentArea(), RocketMan.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
+            players.add(new RealPlayer(area, area.getAllySpawnCoordinates(), ICWarsActor.Faction.ALLY, tank, soldier, rocketMan));
             players.get(0).enterArea(area, area.getAllySpawnCoordinates());
 
             currentRoundState = ICWarsRoundState.INIT;
@@ -273,5 +278,13 @@ public class ICWars extends AreaGame {
         addArea(new Level0());
         addArea(new Level1());
     }
-}
+
+    /**
+     * Method that launches the music when beginning the game
+     */
+    private void playMusic (){
+            Audioplayer = new AudioFilePlayer();
+            Audioplayer.playLoop("res/music/backgroundmusic.wav");
+        }
+    }
 
