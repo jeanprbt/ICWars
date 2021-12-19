@@ -111,7 +111,7 @@ public class RealPlayer extends ICWarsPlayer {
                     setCurrentPlayerState(ICWarsPlayerState.NORMAL);
                 }
                 if(keyboard.get(Keyboard.ENTER).isReleased()){
-                    if(getOwnerArea().canEnterAreaCells(selectedUnit, getCurrentCells())|| new DiscreteCoordinates((int)getPosition().x, (int)getPosition().y).toVector().equals(selectedUnit.getPosition())) {
+                    if((getOwnerArea().canEnterAreaCells(selectedUnit, getCurrentCells()) && isInRange(new DiscreteCoordinates((int) getPosition().x, (int) getPosition().y), selectedUnit)) || new DiscreteCoordinates((int)getPosition().x, (int)getPosition().y).toVector().equals(selectedUnit.getPosition())) {
                         selectedUnit.changePosition(new DiscreteCoordinates((int)getPosition().x, (int)getPosition().y));
                         setCurrentPlayerState(ICWarsPlayerState.ACTION_SELECTION);
                     }

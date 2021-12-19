@@ -7,11 +7,8 @@ import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
-import ch.epfl.cs107.play.game.icwars.gui.ICWarsOpponentPanel;
-import ch.epfl.cs107.play.game.icwars.gui.ICWarsPlayerGUI;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
-import ch.epfl.cs107.play.window.Canvas;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -192,5 +189,15 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
             }
         }
         effectives.removeAll(effectivesToRemove);
+    }
+
+    /**
+     * Method testing if a given position is in the range of selectedUnit
+     * @param position the position to test
+     */
+    protected boolean isInRange(DiscreteCoordinates position, Unit selectedUnit){
+        boolean isInRangeX = position.x <= selectedUnit.getPosition().x + selectedUnit.getRadius() && position.x >= selectedUnit.getPosition().x - selectedUnit.getRadius();
+        boolean isInRangeY = position.y <= selectedUnit.getPosition().y + selectedUnit.getRadius() && position.y >= selectedUnit.getPosition().y - selectedUnit.getRadius();
+        return isInRangeX && isInRangeY ;
     }
 }

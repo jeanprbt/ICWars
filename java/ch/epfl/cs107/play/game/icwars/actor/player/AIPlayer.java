@@ -87,7 +87,7 @@ public class AIPlayer extends ICWarsPlayer {
                     ArrayList<Unit> targets = new ArrayList<Unit>();
                     for (Unit target: area.getEnemies(this.getFaction())) {
                         DiscreteCoordinates position = new DiscreteCoordinates((int)target.getPosition().x, (int)target.getPosition().y);
-                        if(!isInRange(position)) continue ;
+                        if(!isInRange(position, selectedUnit)) continue ;
                         targets.add(target);
                     }
                     actionToExecute = (targets.isEmpty())? new WaitAction(area, selectedUnit) : new AttackAction(area, selectedUnit);
@@ -118,7 +118,7 @@ public class AIPlayer extends ICWarsPlayer {
         }
 
         //Handling the case when closestUnit is in the range of selectedUnit in  order to avoid the superposition
-        if(isInRange(closestUnitPosition)){
+        if(isInRange(closestUnitPosition, selectedUnit)){
             ArrayList<DiscreteCoordinates> coords = new ArrayList<DiscreteCoordinates>();
 
             while(finalX < 0) {
@@ -196,16 +196,16 @@ public class AIPlayer extends ICWarsPlayer {
             DiscreteCoordinates positionDown = new DiscreteCoordinates(closestPositionPossible.x, closestPositionPossible.y + index);
             DiscreteCoordinates positionUp = new DiscreteCoordinates(closestPositionPossible.x + index, closestPositionPossible.y - index);
 
-            if(isInRange(positionRight)) {
+            if(isInRange(positionRight, selectedUnit)) {
                 coords.clear();
                 coords.add(positionRight);
-            } else if(isInRange(positionLeft)){
+            } else if(isInRange(positionLeft, selectedUnit)){
                 coords.clear();
                 coords.add(positionLeft);
-            } else if(isInRange(positionDown)){
+            } else if(isInRange(positionDown, selectedUnit)){
                 coords.clear();
                 coords.add(positionDown);
-            } else if (isInRange(positionUp)){
+            } else if (isInRange(positionUp, selectedUnit)){
                 coords.clear();
                 coords.add(positionUp);
             }
@@ -233,16 +233,6 @@ public class AIPlayer extends ICWarsPlayer {
             optimal = selectedUnitPositionXOrY - selectedUnit.getRadius() ;
         }
         return optimal ;
-    }
-
-    /**
-     * Method testing if a given position is in the range of selectedUnit
-     * @param position the position to test
-     */
-    private boolean isInRange(DiscreteCoordinates position){
-        boolean isInRangeX = position.x <= selectedUnitPosition.x + selectedUnit.getRadius() && position.x >= selectedUnitPosition.x - selectedUnit.getRadius();
-        boolean isInRangeY = position.y <= selectedUnitPosition.y + selectedUnit.getRadius() && position.y >= selectedUnitPosition.y - selectedUnit.getRadius();
-        return isInRangeX && isInRangeY ;
     }
 
     /**

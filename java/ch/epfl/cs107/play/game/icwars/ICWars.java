@@ -59,8 +59,13 @@ public class ICWars extends AreaGame {
     @Override
     public void update(float deltaTime) {
         Keyboard keyboard = getWindow().getKeyboard();
+
+        //If opponent is not selected
         selectPlayer();
+
+        //When game over happens
         selectEnd();
+
         //Resetting game is key "N" is pressed
         if (keyboard.get(Keyboard.N).isPressed() && currentPlayer != null) {
             changeArea();
