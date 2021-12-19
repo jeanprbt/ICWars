@@ -1,4 +1,4 @@
-## README - Description du jeu ICWars
+﻿## README - Description du jeu ICWars
 ICWars est un jeu de stratégie de type "Advance Wars" en 2D, articulé autour de grilles de jeu. 
 
 Il contient deux niveaux, les niveaux 0 et 1, et est prévu pour pouvoir jouer à 1 ou 2 joueurs : il est possible de jouer contre une IA ou contre un autre vrai joueur sur le même ordinateur.
@@ -10,7 +10,7 @@ Le but du jeu est de détruire les unités adverses à l'aide de ses propres uni
 Les grilles de jeu comportent 4 types de terrain : la route, l'eau, l'herbe et les montagnes. Chacun de ces types de terrains possède un nombre d'étoiles de défense qui lui est spécifique, et permettant aux unités présentes de subir moins de dégâts en cas d'attaque. De plus, les rivières ne permettent pas aux unités de stationner, elle font uniquement figure de décor.
 
 ## Unités
-Il y a deux unités : les soldats et les tanks, chacun d'eux ayant une faction : alliée ou ennemi. Les tanks ont une puissance de feu et des points de vie supérieurs aux soldats.
+Il y a trois types d'unités : les soldats, les tanks et les artilleurs, chacun d'eux ayant une faction : alliée ou ennemie. Les tanks ont une puissance de feu et des points de vie supérieurs aux soldats et aux artilleurs, tandis que les artilleurs ont la faculté de provoquer des dégâts de zone en attaquant : ils peuvent attaquer plusieurs unités à la fois si elles se trouvent à proximité. Attention cependant : les roquettes touchent aussi les unités alliées !
 
 ## Lancement du jeu
 Il suffit de lancer la fonction main() du fichier Play.java à la racine du projet afin de lancer le jeu : une fenêtre s'ouvre automatiquement.
@@ -26,6 +26,7 @@ Au lancement du jeu, un panneau permet de sélectionner l'adversaire désiré : 
 
 ## Commandes 
 |Touche|Action  |
+|--|--|
 |R| Choisir un adversaire réel |
 |A| Choisir un adversaire IA / Choisir d'attaquer|
 |W| Choisir d'attendre|

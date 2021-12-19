@@ -12,6 +12,7 @@ import ch.epfl.cs107.play.game.icwars.area.Level1;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.gui.ICWarsGameOverPanel;
 import ch.epfl.cs107.play.game.icwars.gui.ICWarsOpponentPanel;
+import ch.epfl.cs107.play.game.icwars.music.AudioFilePlayer;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Button;
@@ -163,7 +164,8 @@ public class ICWars extends AreaGame {
         ICWarsArea area = (ICWarsArea) setCurrentArea(areaKey, true);
         Tank tank = new Tank(getCurrentArea(), Tank.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
         Soldier soldier = new Soldier(getCurrentArea(), Soldier.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
-        players.add(new RealPlayer(area, area.getAllySpawnCoordinates(), ICWarsActor.Faction.ALLY, tank, soldier));
+        RocketMan rocketMan = new RocketMan(getCurrentArea(), RocketMan.getSpawnCoordinates(ICWarsActor.Faction.ALLY), ICWarsActor.Faction.ALLY);
+        players.add(new RealPlayer(area, area.getAllySpawnCoordinates(), ICWarsActor.Faction.ALLY, tank, soldier, rocketMan));
         players.get(0).enterArea(area, area.getAllySpawnCoordinates());
     }
 
@@ -207,14 +209,16 @@ public class ICWars extends AreaGame {
                 playerHasBeenSelected = true ;
                 Tank tank = new Tank(getCurrentArea(), Tank.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
                 Soldier soldier = new Soldier(getCurrentArea(), Soldier.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
-                players.add(new RealPlayer(area, area.getEnemySpawnCoordinates(), ICWarsActor.Faction.ENEMY, tank, soldier));
+                RocketMan rocketMan = new RocketMan(getCurrentArea(), RocketMan.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
+                players.add(new RealPlayer(area, area.getEnemySpawnCoordinates(), ICWarsActor.Faction.ENEMY, tank, soldier, rocketMan));
                 players.get(1).enterArea(area, area.getEnemySpawnCoordinates());
             }
             if(keyboard.get(Keyboard.A).isPressed()){
                 playerHasBeenSelected = true ;
                 Tank tank = new Tank(getCurrentArea(), Tank.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
                 Soldier soldier = new Soldier(getCurrentArea(), Soldier.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
-                players.add(new AIPlayer(area, area.getEnemySpawnCoordinates(), ICWarsActor.Faction.ENEMY, tank, soldier));
+                RocketMan rocketMan = new RocketMan(getCurrentArea(), RocketMan.getSpawnCoordinates(ICWarsActor.Faction.ENEMY), ICWarsActor.Faction.ENEMY);
+                players.add(new AIPlayer(area, area.getEnemySpawnCoordinates(), ICWarsActor.Faction.ENEMY, tank, soldier, rocketMan));
                 players.get(1).enterArea(area, area.getEnemySpawnCoordinates());
             }
         }

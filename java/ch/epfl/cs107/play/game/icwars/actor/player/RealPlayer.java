@@ -4,14 +4,17 @@ import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.icwars.actor.unit.RocketMan;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.RocketManAttackAction;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
 import ch.epfl.cs107.play.game.icwars.gui.ICWarsOpponentPanel;
 import ch.epfl.cs107.play.game.icwars.gui.ICWarsPlayerGUI;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
+import ch.epfl.cs107.play.game.icwars.scope.RocketManScope;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
@@ -28,6 +31,7 @@ public class RealPlayer extends ICWarsPlayer {
     private ICWarsBehavior.ICWarsCellType cellType;
     private Unit unitOnCell ;
     private ICWarsAction actionToExecute ;
+    private AttackAction attackActionToExecute ;
 
     //-----------------------------------API-------------------------------------//
 
@@ -69,7 +73,7 @@ public class RealPlayer extends ICWarsPlayer {
 
     @Override
     public void draw(Canvas canvas) {
-        if(getCurrentPlayerState() != ICWarsPlayerState.IDLE) sprite.draw(canvas);
+        if(getCurrentPlayerState() != ICWarsPlayerState.IDLE && getCurrentPlayerState() != ICWarsPlayerState.ACTION) sprite.draw(canvas);
         if(selectedUnit != null && getCurrentPlayerState() == ICWarsPlayerState.MOVE_UNIT) gui.draw(canvas, selectedUnit);
         if(getCurrentPlayerState() == ICWarsPlayerState.NORMAL || getCurrentPlayerState() == ICWarsPlayerState.SELECT_CELL) gui.drawInfoPanel(canvas, unitOnCell, cellType);
         if(getCurrentPlayerState() == ICWarsPlayerState.ACTION_SELECTION) gui.drawActionsPanel(canvas, selectedUnit);
@@ -126,8 +130,13 @@ public class RealPlayer extends ICWarsPlayer {
                         //in order to take in consideration the update of the unitList of the
                         //ICWarsArea
                         if(actionToExecute instanceof AttackAction){
-                            AttackAction attackActionToExecute = (AttackAction) actionToExecute ;
-                            attackActionToExecute.setIndex(0);
+                            if(selectedUnit instanceof RocketMan){
+                                RocketManAttackAction RocketManAttackActionToExecute = (RocketManAttackAction) actionToExecute ;
+                                RocketManAttackActionToExecute.setIndex(0);
+                            } else {
+                                attackActionToExecute = (AttackAction) actionToExecute;
+                                attackActionToExecute.setIndex(0);
+                            }
                         }
                         setCurrentPlayerState(ICWarsPlayerState.ACTION);
                     }

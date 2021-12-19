@@ -1,15 +1,21 @@
 package ch.epfl.cs107.play.game.icwars.actor.unit.action;
 
 import ch.epfl.cs107.play.game.actor.ImageGraphics;
+import ch.epfl.cs107.play.game.actor.ShapeGraphics;
+import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
-import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.math.RegionOfInterest;
+import ch.epfl.cs107.play.math.*;
+import ch.epfl.cs107.play.math.Polygon;
+import ch.epfl.cs107.play.math.Shape;
+import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
+
+import java.awt.*;
 import java.util.ArrayList;
 
 public class AttackAction extends ICWarsAction{
@@ -18,11 +24,6 @@ public class AttackAction extends ICWarsAction{
     private Unit target ;
     private ArrayList<Unit> targets;
     private int index;
-
-    // Boolean used to make sure that method draw of AttackAction is called after doAction
-    // Without it method draw is called before and error occurs because targetIndexes is not updated soon enough
-    private boolean waitingPurposeBoolean;
-
     //-----------------------------------API-------------------------------------//
 
     public AttackAction(ICWarsArea area, Unit ownerUnit) {
@@ -75,13 +76,11 @@ public class AttackAction extends ICWarsAction{
 
     @Override
     public void draw(Canvas canvas) {
-        if (waitingPurposeBoolean) {
-            if (target == null) ;
-            else {
-                target.centerCamera();
-                cursor.setAnchor(canvas.getPosition().add(1, 0));
-                cursor.draw(canvas);
-            }
+        if (target == null) ;
+        else {
+            target.centerCamera();
+            cursor.setAnchor(canvas.getPosition().add(1, 0));
+            cursor.draw(canvas);
         }
     }
 

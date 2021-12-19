@@ -40,6 +40,7 @@ public abstract class ICWarsArea extends Area {
         return ICWars.CAMERA_SCALE_FACTOR;
     }
 
+
     /**
      * Method returning all enemies given a faction
      * @param faction : the faction of the unit for which we want to know its enemies

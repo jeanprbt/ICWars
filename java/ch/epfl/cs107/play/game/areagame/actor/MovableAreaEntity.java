@@ -77,12 +77,10 @@ public abstract class MovableAreaEntity extends AreaEntity {
      */
     protected final boolean move(int frameForMove, int startingFrame){
     	if(!displacementOccurs || isTargetReached() ) {
-
         	List<DiscreteCoordinates> leavingCells = getLeavingCells();
         	List<DiscreteCoordinates> enteringCells = getEnteringCells();
 
             if(getOwnerArea().enterAreaCells(this, enteringCells) && getOwnerArea().leaveAreaCells(this, leavingCells)){
-
             	leftCells = leavingCells;
             	enteredCells = enteringCells;
             	

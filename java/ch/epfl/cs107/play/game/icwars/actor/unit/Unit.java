@@ -59,7 +59,8 @@ public abstract class Unit extends ICWarsActor implements Interactor{
      */
     public enum UnitType {
         SOLDIER,
-        TANK
+        TANK,
+        ROCKETMAN,
     }
 
     abstract public int getDamage();
@@ -164,6 +165,8 @@ public abstract class Unit extends ICWarsActor implements Interactor{
                 return Tank.getSpawnCoordinates(faction);
             case SOLDIER:
                 return Soldier.getSpawnCoordinates(faction);
+            case ROCKETMAN:
+                return RocketMan.getSpawnCoordinates(faction);
         }
         return null;
     }
