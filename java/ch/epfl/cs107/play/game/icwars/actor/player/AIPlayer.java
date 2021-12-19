@@ -127,7 +127,6 @@ public class AIPlayer extends ICWarsPlayer {
 
             int indexX = 1 ;
             while(finalX < 0) {
-                int index = 1 ;
                 if (differenceX < 0) { // closestUnit to the left of selectedUnit
                     try {
                         if(impossibleForAI) throw new WrongLocationException();
@@ -165,31 +164,46 @@ public class AIPlayer extends ICWarsPlayer {
                 coords.clear();
             }
 
-           while (finalY < 0) {
-               int index = 1;
-               if (differenceY < 0) { // closestUnit under selectedUnit
-                   coords.add(new DiscreteCoordinates(closestUnitPosition.x, closestUnitPosition.y + index));
-                   if (area.canEnterAreaCells(selectedUnit, coords)) {
-                       finalY = coords.get(0).y;
-                   }
-               }
+            int indexY = 1;
+            while (finalY < 0) {
+                if (differenceY < 0) { // closestUnit under selectedUnit
+                    try {
+                        if(impossibleForAI)throw new WrongLocationException();
+                        coords.add(new DiscreteCoordinates(closestUnitPosition.x, closestUnitPosition.y + indexY));
+                    } catch(WrongLocationException e) {
+                        return new DiscreteCoordinates(9, 2);
+                    }
+                    if (area.canEnterAreaCells(selectedUnit, coords)) {
+                        finalY = coords.get(0).y;
+                    }
+                }
 
-               if (differenceY > 0) { // closestUnit above selectedUnit
-                   coords.add(new DiscreteCoordinates(closestUnitPosition.x, closestUnitPosition.y - index));
-                   if (area.canEnterAreaCells(selectedUnit, coords)) {
-                       finalY = coords.get(0).y;
-                   }
-               }
+                if (differenceY > 0) { // closestUnit above selectedUnit
+                    try {
+                        if(impossibleForAI) throw new WrongLocationException();
+                        coords.add(new DiscreteCoordinates(closestUnitPosition.x, closestUnitPosition.y - indexY));
+                    } catch(WrongLocationException e) {
+                        return new DiscreteCoordinates(9, 2);
+                    }
+                    if (area.canEnterAreaCells(selectedUnit, coords)) {
+                        finalY = coords.get(0).y;
+                    }
+                }
 
-               if(differenceY == 0){
-                   coords.add(closestUnitPosition);
-                   finalY = coords.get(0).y;
-               }
-               ++index;
-               coords.clear();
-           }
-           return new DiscreteCoordinates(finalX, finalY);
-        }
+                if(differenceY == 0){
+                    try {
+                        if(impossibleForAI) throw new WrongLocationException();
+                        coords.add(closestUnitPosition);
+                    } catch(WrongLocationException e) {
+                        return new DiscreteCoordinates(9, 2);
+                    }
+                    finalY = coords.get(0).y;
+                }
+                ++indexY;
+                coords.clear();
+            }
+
+        } else {
 
             // Compare the x's
             //Check if closestUnitPosition.x is in the x-range of selectedUnit
