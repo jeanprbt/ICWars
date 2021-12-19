@@ -9,6 +9,7 @@ import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,7 +92,6 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         super.onLeaving(coordinates);
         if(currentPlayerState == ICWarsPlayerState.SELECT_CELL) currentPlayerState = ICWarsPlayerState.NORMAL;
     }
-
 
     @Override
     public void update(float deltaTime) {
@@ -189,5 +189,15 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
             }
         }
         effectives.removeAll(effectivesToRemove);
+    }
+
+    /**
+     * Method testing if a given position is in the range of selectedUnit
+     * @param position the position to test
+     */
+    protected boolean isInRange(DiscreteCoordinates position, Unit selectedUnit){
+        boolean isInRangeX = position.x <= selectedUnit.getPosition().x + selectedUnit.getRadius() && position.x >= selectedUnit.getPosition().x - selectedUnit.getRadius();
+        boolean isInRangeY = position.y <= selectedUnit.getPosition().y + selectedUnit.getRadius() && position.y >= selectedUnit.getPosition().y - selectedUnit.getRadius();
+        return isInRangeX && isInRangeY ;
     }
 }

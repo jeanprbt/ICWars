@@ -45,7 +45,6 @@ public abstract class ICWarsActor extends MovableAreaEntity {
 
     /**
      * Enter a new area and register player
-     *
      * @param area     (Area): initial area, not null
      * @param position (DiscreteCoordinates): initial position, not null
      */

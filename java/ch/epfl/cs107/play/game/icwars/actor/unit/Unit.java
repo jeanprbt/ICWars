@@ -59,7 +59,8 @@ public abstract class Unit extends ICWarsActor implements Interactor{
      */
     public enum UnitType {
         SOLDIER,
-        TANK
+        TANK,
+        ROCKETMAN,
     }
 
     abstract public int getDamage();
@@ -164,6 +165,8 @@ public abstract class Unit extends ICWarsActor implements Interactor{
                 return Tank.getSpawnCoordinates(faction);
             case SOLDIER:
                 return Soldier.getSpawnCoordinates(faction);
+            case ROCKETMAN:
+                return RocketMan.getSpawnCoordinates(faction);
         }
         return null;
     }
@@ -215,7 +218,10 @@ public abstract class Unit extends ICWarsActor implements Interactor{
      * @param damage : the number of healthPoints to decrease
      */
     public void takeInjure(int damage) {
-        hp = hp - damage + cellDefenseStars;
+        if(cellDefenseStars > damage){}
+        else {
+            hp = hp - damage + cellDefenseStars;
+        }
         hp = (hp <= 0) ? 0 : hp;
         if (hp == 0) isDead = true;
     }

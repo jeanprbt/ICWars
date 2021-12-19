@@ -50,10 +50,10 @@ public class Tank extends Unit {
 
 
     public int getDamage() {
-        return 7;
+        return 5;
     }
     public int getRadius(){
-        return 4 ;
+        return 3;
     }
     public int getMaxHp(){
         return 10;

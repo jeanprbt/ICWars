@@ -15,6 +15,7 @@ public class ICWarsPlayerGUI implements Graphics {
     private ICWarsPlayer player ;
     private ICWarsActionsPanel actionsPanel;
     private ICWarsInfoPanel infoPanel;
+    private ICWarsOpponentPanel opponentPanel ;
 
 
     //-----------------------------------API-------------------------------------//
