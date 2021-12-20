@@ -73,6 +73,8 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
         super.update(deltaTime);
+        targets.clear();
+        hasCollectedTargets = false;
     }
 
     @Override
