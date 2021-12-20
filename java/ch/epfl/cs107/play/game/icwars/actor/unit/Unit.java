@@ -4,6 +4,7 @@ import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
+import ch.epfl.cs107.play.game.icwars.actor.city.ICWarsCity;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsRange;
@@ -69,6 +70,10 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     abstract public int getRadius();
     abstract public  int getMaxHp();
     abstract public String getName();
+
+    public boolean isOnCity() {
+        return isOnCity;
+    }
 
     //Getter for hP
     public int getHp() {

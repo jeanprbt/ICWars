@@ -6,6 +6,7 @@ import ch.epfl.cs107.play.game.areagame.actor.Orientation;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
+import ch.epfl.cs107.play.game.icwars.actor.city.ICWarsCity;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
@@ -148,6 +149,14 @@ public class RocketManScope extends ICWarsActor implements Interactor {
             if (keyboard.get(Keyboard.ENTER).isReleased()) {
                 targets.add(unit);
                 hasCollectedTargets = true;
+            }
+        }
+
+        @Override
+        public void interactWith(ICWarsCity city) {
+            Keyboard keyboard = getOwnerArea().getKeyboard();
+            if (keyboard.get(Keyboard.ENTER).isReleased()) {
+                city.isCaptured(Faction.NEUTRAL);
             }
         }
     }

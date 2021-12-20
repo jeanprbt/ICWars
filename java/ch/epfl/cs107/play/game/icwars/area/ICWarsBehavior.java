@@ -25,6 +25,9 @@ public class ICWarsBehavior extends AreaBehavior {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 ICWarsCellType type = ICWarsCellType.toType(getRGB(height-1-y, x));
+                if (type == ICWarsCellType.CITY) {
+                    registerCity(ownerArea, new DiscreteCoordinates(x, y));
+                }
                 setCell(x, y, new ICWarsCell(x, y, type));
             }
         }
