@@ -10,6 +10,7 @@ import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
@@ -30,7 +31,12 @@ public class RocketManScope extends ICWarsActor implements Interactor {
 
     public RocketManScope(ICWarsArea area, DiscreteCoordinates position, Faction faction, int range){
         super(area, position, faction);
-        sprite = new Sprite("icwars/allyCursor", 1.f, 1.f, this);
+        switch (faction){
+            case ALLY:
+                sprite = new Sprite("icwars/allyCursor", 1.f, 1.f, this);
+            case ENEMY:
+                sprite = new Sprite("icwars/enemyCursor", 1.f, 1.f, this);
+        }
         sprite.setHeight(range);
         sprite.setWidth(range);
         targets = new ArrayList<Unit>();
@@ -72,9 +78,9 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         moveIfPressed(Orientation.UP, keyboard.get(Keyboard.UP));
         moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
-        super.update(deltaTime);
         targets.clear();
         hasCollectedTargets = false;
+        super.update(deltaTime);
     }
 
     @Override
@@ -127,6 +133,11 @@ public class RocketManScope extends ICWarsActor implements Interactor {
     public void interactWith(Interactable other) {
         other.acceptInteraction(handler);
     }
+
+    public void resetPosition(Vector position){
+        changePosition(new DiscreteCoordinates((int)position.x-2, (int)position.y));
+    }
+
     private class RocketManScopeInteractionHandler implements ICWarInteractionVisitor {
 
         //-----------------------------------API-------------------------------------//

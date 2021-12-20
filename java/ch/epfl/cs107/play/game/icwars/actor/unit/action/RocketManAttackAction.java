@@ -1,5 +1,6 @@
 package ch.epfl.cs107.play.game.icwars.actor.unit.action;
 
+import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.unit.RocketMan;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
@@ -19,15 +20,16 @@ public class RocketManAttackAction extends AttackAction {
 
     public RocketManAttackAction(ICWarsArea area, Unit ownerUnit) {
         super(area, ownerUnit);
-        scope = new RocketManScope(area, new DiscreteCoordinates((int)ownerUnit.getPosition().x, (int)ownerUnit.getPosition().y), ownerUnit.getFaction(), RocketMan.getDamageZone());
+        scope = new RocketManScope(area, new DiscreteCoordinates((int)ownerUnit.getPosition().x-2, (int)ownerUnit.getPosition().y), ownerUnit.getFaction(), RocketMan.getDamageZone());
     }
 
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
         if (waitingPurposeBoolean) {
             area.registerActor(scope);
+            scope.resetPosition(ownerUnit.getPosition());
             scope.centerCamera();
-            waitingPurposeBoolean = false ;
+            waitingPurposeBoolean = false;
         }
         if (scope.hasCollectedTargets()) {
             targets = scope.getTargets();
@@ -40,6 +42,13 @@ public class RocketManAttackAction extends AttackAction {
             player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
             ownerUnit.setHasBeenUsed(true);
             waitingPurposeBoolean = true;
+        }
+    }
+
+    @Override
+    public void doAutoAction(float dt, AIPlayer aiPlayer) {
+        if(waitingPurposeBoolean){
+            area.registerActor(scope);
         }
     }
 }

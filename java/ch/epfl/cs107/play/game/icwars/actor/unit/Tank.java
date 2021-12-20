@@ -2,10 +2,15 @@ package ch.epfl.cs107.play.game.icwars.actor.unit;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
+import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.icwars.actor.city.ICWarsCity;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.CaptureAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.WaitAction;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
+import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
+import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.math.Vector;
@@ -15,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tank extends Unit {
+    private boolean hasAddedCapture = false ;
 
     //-----------------------------------API-------------------------------------//
     /**
@@ -41,13 +47,28 @@ public class Tank extends Unit {
         }
     }
 
+    @Override
+    public void update(float deltaTime) {
+        if(isOnCity()){
+            if(!hasAddedCapture) {
+                ICWarsArea area = (ICWarsArea) getOwnerArea();
+                actionsList.add(new CaptureAction(area, this));
+                hasAddedCapture = true;
+            }
+        } else {
+            if(actionsList.size() == 3){
+                actionsList.remove(2);
+            }
+            hasAddedCapture = false  ;
+        }
+        super.update(deltaTime);
+    }
 
     public static DiscreteCoordinates getSpawnCoordinates(Faction faction){
         DiscreteCoordinates coordinates ;
         coordinates = (faction == Faction.ALLY) ? new DiscreteCoordinates(2, 5) : new DiscreteCoordinates(8, 5);
         return coordinates;
     }
-
 
     public int getDamage() {
         return 5;

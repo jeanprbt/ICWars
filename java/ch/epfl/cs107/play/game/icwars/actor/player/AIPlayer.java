@@ -114,8 +114,6 @@ public class AIPlayer extends ICWarsPlayer {
         int differenceX = closestUnitPosition.x - selectedUnitPosition.x ;
         int differenceY = closestUnitPosition.y - selectedUnitPosition.y ;
 
-        System.out.println(closestUnitPosition);
-
         //Handling the case when selectedUnit is already well positioned
         if(Math.abs(differenceY) <= 1 && Math.abs(differenceX) <= 1){
             return selectedUnitPosition;

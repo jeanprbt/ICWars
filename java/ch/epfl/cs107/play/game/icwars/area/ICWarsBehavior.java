@@ -3,15 +3,13 @@ package ch.epfl.cs107.play.game.icwars.area;
 import ch.epfl.cs107.play.game.areagame.AreaBehavior;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
-import ch.epfl.cs107.play.game.icwars.ICWars;
+import ch.epfl.cs107.play.game.icwars.actor.city.ICWarsCity;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
-import ch.epfl.cs107.play.game.tutosSolution.Tuto2Behavior;
+import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Window;
 
-import javax.swing.*;
-import java.util.function.ToDoubleBiFunction;
-
 public class ICWarsBehavior extends AreaBehavior {
+
 
     //-----------------------------------API-------------------------------------//
 
@@ -20,7 +18,7 @@ public class ICWarsBehavior extends AreaBehavior {
      * @param window (Window) : Window in which the game is launched
      * @param name (String) : Name of the file containing the behavior image
      * */
-    public ICWarsBehavior (Window window, String name) {
+    public ICWarsBehavior (Window window, String name, ICWarsArea ownerArea) {
         super(window, name);
         int height = getHeight();
         int width = getWidth();
@@ -30,6 +28,11 @@ public class ICWarsBehavior extends AreaBehavior {
                 setCell(x, y, new ICWarsCell(x, y, type));
             }
         }
+    }
+
+    public void registerCity(ICWarsArea area, DiscreteCoordinates position){
+        ICWarsCity city = new ICWarsCity(area, position);
+        area.registerActor(city);
     }
 
     /**

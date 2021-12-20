@@ -25,6 +25,8 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     private boolean isDead;
     private ICWarsUnitInteractionHandler handler ;
     private int cellDefenseStars ;
+    private boolean playerHasSelectedCapture ;
+    private boolean isOnCity ;
 
     protected int hp;
     protected Sprite sprite;
@@ -91,6 +93,10 @@ public abstract class Unit extends ICWarsActor implements Interactor{
         super.setCurrentPosition(v);
     }
 
+    //Setter for hasSelectedCapture
+    public void setPlayerHasSelectedCapture(boolean hasSelectedCapture) {
+        this.playerHasSelectedCapture = hasSelectedCapture;
+    }
 
     @Override
     public boolean changePosition(DiscreteCoordinates newPosition) {
@@ -251,6 +257,15 @@ public abstract class Unit extends ICWarsActor implements Interactor{
         @Override
         public void interactWith(ICWarsBehavior.ICWarsCell cell) {
             cellDefenseStars =  cell.getDefenseStars(cell.getType());
+            if(cell.getType() == ICWarsBehavior.ICWarsCellType.CITY) isOnCity = true ;
+            else isOnCity = false;
+        }
+
+        @Override
+        public void interactWith(ICWarsCity city) {
+            if(playerHasSelectedCapture && city.getFaction() != getFaction()) {
+                city.isCaptured(getFaction());
+            }
         }
     }
 }

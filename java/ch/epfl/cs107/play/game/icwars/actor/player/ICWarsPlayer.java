@@ -154,6 +154,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
      * on itself
      */
     public void startTurn() {
+        resetPosition();
         currentPlayerState = ICWarsPlayerState.NORMAL;
         centerCamera();
     }
@@ -199,5 +200,17 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         boolean isInRangeX = position.x <= selectedUnit.getPosition().x + selectedUnit.getRadius() && position.x >= selectedUnit.getPosition().x - selectedUnit.getRadius();
         boolean isInRangeY = position.y <= selectedUnit.getPosition().y + selectedUnit.getRadius() && position.y >= selectedUnit.getPosition().y - selectedUnit.getRadius();
         return isInRangeX && isInRangeY ;
+    }
+
+    //-----------------------------------Private-------------------------------------//
+
+    /**
+     * Method allowing player cursor to start on an effective when
+     * starting its turn
+     */
+    private void resetPosition(){
+        for (Unit effective : effectives) {
+            if (!effective.isDead()) changePosition(new DiscreteCoordinates((int)effective.getPosition().x, (int)effective.getPosition().y));
+        }
     }
 }

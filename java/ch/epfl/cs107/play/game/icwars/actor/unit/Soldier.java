@@ -2,6 +2,7 @@ package ch.epfl.cs107.play.game.icwars.actor.unit;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.CaptureAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.WaitAction;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
