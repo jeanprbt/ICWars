@@ -12,6 +12,7 @@ import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
+import org.w3c.dom.ls.LSOutput;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     private ICWarsUnitInteractionHandler handler ;
     private int cellDefenseStars ;
     private boolean playerHasSelectedCapture ;
-    private boolean isOnCity ;
+    private boolean isOnEnemyCity ;
 
     protected int hp;
     protected Sprite sprite;
@@ -71,8 +72,8 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     abstract public  int getMaxHp();
     abstract public String getName();
 
-    public boolean isOnCity() {
-        return isOnCity;
+    public boolean isOnEnemyCity() {
+        return isOnEnemyCity;
     }
 
     //Getter for hP
@@ -98,10 +99,11 @@ public abstract class Unit extends ICWarsActor implements Interactor{
         super.setCurrentPosition(v);
     }
 
-    //Setter for hasSelectedCapture
+    //Getter for hasSelectedCapture
     public void setPlayerHasSelectedCapture(boolean hasSelectedCapture) {
         this.playerHasSelectedCapture = hasSelectedCapture;
     }
+
 
     @Override
     public boolean changePosition(DiscreteCoordinates newPosition) {
@@ -262,14 +264,16 @@ public abstract class Unit extends ICWarsActor implements Interactor{
         @Override
         public void interactWith(ICWarsBehavior.ICWarsCell cell) {
             cellDefenseStars =  cell.getDefenseStars(cell.getType());
-            if(cell.getType() == ICWarsBehavior.ICWarsCellType.CITY) isOnCity = true ;
-            else isOnCity = false;
+            if(cell.getType() != ICWarsBehavior.ICWarsCellType.CITY) isOnEnemyCity = false ;
         }
 
         @Override
         public void interactWith(ICWarsCity city) {
-            if(playerHasSelectedCapture && city.getFaction() != getFaction()) {
+            if(city.getFaction() != getFaction()) isOnEnemyCity = true ;
+            if(playerHasSelectedCapture && isOnEnemyCity) {
                 city.isCaptured(getFaction());
+                isOnEnemyCity = false ;
+                playerHasSelectedCapture = false ;
             }
         }
     }

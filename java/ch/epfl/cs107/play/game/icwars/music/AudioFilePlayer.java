@@ -16,8 +16,8 @@ public class AudioFilePlayer {
             Clip clip = AudioSystem.getClip();
             final File file = new File(filename);
             AudioInputStream in = getAudioInputStream(file);
-            clip.open(in);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
+            //clip.open(in);
+            //clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
         catch (UnsupportedAudioFileException e) {
             throw new IllegalArgumentException("unsupported audio format: '" + filename + "'", e);

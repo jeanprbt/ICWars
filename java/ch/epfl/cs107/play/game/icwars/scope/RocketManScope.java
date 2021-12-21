@@ -1,9 +1,6 @@
 package ch.epfl.cs107.play.game.icwars.scope;
 
-import ch.epfl.cs107.play.game.areagame.actor.Interactable;
-import ch.epfl.cs107.play.game.areagame.actor.Interactor;
-import ch.epfl.cs107.play.game.areagame.actor.Orientation;
-import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
 import ch.epfl.cs107.play.game.icwars.actor.city.ICWarsCity;
@@ -28,15 +25,30 @@ public class RocketManScope extends ICWarsActor implements Interactor {
     private ArrayList<Unit> targets ;
     private int range ;
     private boolean hasCollectedTargets = false ;
+    private Animation animation ;
+    private Sprite[] sprites ;
+    private boolean isOnUnit ;
+
 
 
     public RocketManScope(ICWarsArea area, DiscreteCoordinates position, Faction faction, int range){
         super(area, position, faction);
+        sprites = new Sprite[7];
+        sprites[0] = new Sprite("1", 3, 3);
+        sprites[1] = new Sprite("2", 3, 3);
+        sprites[2] = new Sprite("3", 3, 3);
+        sprites[3] = new Sprite("4", 3, 3);
+        sprites[4] = new Sprite("5", 3, 3);
+        sprites[5] = new Sprite("6", 3, 3);
+        sprites[6] = new Sprite("7", 3, 3);
+        animation = new Animation(3, sprites, true);
         switch (faction){
             case ALLY:
                 sprite = new Sprite("icwars/allyCursor", 1.f, 1.f, this);
+                break;
             case ENEMY:
                 sprite = new Sprite("icwars/enemyCursor", 1.f, 1.f, this);
+                break;
         }
         sprite.setHeight(range);
         sprite.setWidth(range);
@@ -53,8 +65,14 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         return hasCollectedTargets;
     }
 
+    public void drawAnimation(Canvas canvas){
+        animation.update(1);
+        animation.draw(canvas);
+    }
+
     @Override
     public void draw(Canvas canvas) {
+        if(isOnUnit) drawAnimation(canvas);
         sprite.draw(canvas);
     }
 
@@ -80,6 +98,7 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
         targets.clear();
+        isOnUnit = false ;
         hasCollectedTargets = false;
         super.update(deltaTime);
     }
@@ -146,6 +165,10 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         @Override
         public void interactWith(Unit unit) {
             Keyboard keyboard = getOwnerArea().getKeyboard();
+            isOnUnit = true ;
+            for (int i = 0; i < sprites.length; i++) {
+                sprites[i].setAnchor(getPosition());
+            }
             if (keyboard.get(Keyboard.ENTER).isReleased()) {
                 targets.add(unit);
                 hasCollectedTargets = true;
@@ -155,7 +178,7 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         @Override
         public void interactWith(ICWarsCity city) {
             Keyboard keyboard = getOwnerArea().getKeyboard();
-            if (keyboard.get(Keyboard.ENTER).isReleased()) {
+            if (keyboard.get(Keyboard.ENTER).isReleased() && !targets.isEmpty()) {
                 city.isCaptured(Faction.NEUTRAL);
             }
         }

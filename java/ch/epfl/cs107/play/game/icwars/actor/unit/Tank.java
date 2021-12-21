@@ -49,7 +49,7 @@ public class Tank extends Unit {
 
     @Override
     public void update(float deltaTime) {
-        if(isOnCity()){
+        if(isOnEnemyCity()){
             if(!hasAddedCapture) {
                 ICWarsArea area = (ICWarsArea) getOwnerArea();
                 actionsList.add(new CaptureAction(area, this));

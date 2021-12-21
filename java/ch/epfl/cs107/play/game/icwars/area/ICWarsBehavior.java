@@ -8,7 +8,11 @@ import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Window;
 
+import java.util.ArrayList;
+
 public class ICWarsBehavior extends AreaBehavior {
+
+    private ArrayList<ICWarsCity> cities ;
 
 
     //-----------------------------------API-------------------------------------//
@@ -20,6 +24,7 @@ public class ICWarsBehavior extends AreaBehavior {
      * */
     public ICWarsBehavior (Window window, String name, ICWarsArea ownerArea) {
         super(window, name);
+        cities = new ArrayList<ICWarsCity>();
         int height = getHeight();
         int width = getWidth();
         for (int y = 0; y < height; y++) {
@@ -33,9 +38,18 @@ public class ICWarsBehavior extends AreaBehavior {
         }
     }
 
+    /**
+     * Method registering every case corresponding to a city
+     * in the current area, and adding it to the ArrayList of cities.
+     **/
     public void registerCity(ICWarsArea area, DiscreteCoordinates position){
         ICWarsCity city = new ICWarsCity(area, position);
         area.registerActor(city);
+        cities.add(city);
+    }
+
+    public ArrayList<ICWarsCity> getCities(){
+        return cities ;
     }
 
     /**

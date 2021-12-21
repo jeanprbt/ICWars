@@ -133,8 +133,13 @@ public class ICWars extends AreaGame {
                 currentRoundState = ICWarsRoundState.PLAYER_TURN;
                 break;
             case PLAYER_TURN:
-                if (currentPlayer.getCurrentPlayerState() == ICWarsPlayer.ICWarsPlayerState.IDLE)
+                if (currentPlayer.getCurrentPlayerState() == ICWarsPlayer.ICWarsPlayerState.IDLE) {
+                    ICWarsArea area = (ICWarsArea) getCurrentArea() ;
+                    if(area.getCities(currentPlayer.getFaction()).size() > 0){
+                        currentPlayer.healEffectives(area.getCities(currentPlayer.getFaction()).size());
+                    }
                     currentRoundState = ICWarsRoundState.END_PLAYER_TURN;
+                }
                 break;
             case END_PLAYER_TURN:
                 if (currentPlayer.isVanquished()) {

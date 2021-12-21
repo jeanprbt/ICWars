@@ -131,7 +131,7 @@ public class RPGSprite extends Sprite {
 	 *
 	 * @return an array of 4 Sprite[] (one Sprite[] per orientation)
 	 */
-	public static  Sprite[][] extractSprites(String name, int nbFrames, float width, float height, Positionable parent, int regionWidth, int regionHeight, Orientation[] order){  	
+	public static Sprite[][] extractSprites(String name, int nbFrames, float width, float height, Positionable parent, int regionWidth, int regionHeight, Orientation[] order){
 
 		Sprite[][] sprites = new Sprite[4][nbFrames];
 

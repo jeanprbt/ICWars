@@ -15,7 +15,7 @@ public class CaptureAction extends ICWarsAction {
 
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
-        if(ownerUnit.isOnCity()) {
+        if(ownerUnit.isOnEnemyCity()) {
             ownerUnit.setPlayerHasSelectedCapture(true);
             player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
         } else {

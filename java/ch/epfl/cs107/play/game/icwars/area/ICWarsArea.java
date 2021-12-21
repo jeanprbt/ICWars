@@ -3,6 +3,7 @@ package ch.epfl.cs107.play.game.icwars.area;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.icwars.ICWars;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
+import ch.epfl.cs107.play.game.icwars.actor.city.ICWarsCity;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.tutosSolution.Tuto2;
 import ch.epfl.cs107.play.game.tutosSolution.Tuto2Behavior;
@@ -38,6 +39,20 @@ public abstract class ICWarsArea extends Area {
     @Override
     public final float getCameraScaleFactor() {
         return ICWars.CAMERA_SCALE_FACTOR;
+    }
+
+    /**
+     * Method returning all ally cities given a faction
+     * @param faction : the ally faction for cities
+     */
+    public ArrayList<ICWarsCity> getCities(ICWarsActor.Faction faction){
+        ArrayList<ICWarsCity> cities = new ArrayList<ICWarsCity>();
+        for (ICWarsCity city : behavior.getCities()) {
+            if(city.getFaction() == faction){
+                cities.add(city);
+            }
+        }
+        return cities ;
     }
 
 

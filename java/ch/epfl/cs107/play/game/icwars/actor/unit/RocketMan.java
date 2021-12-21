@@ -63,7 +63,7 @@ public class RocketMan extends Unit {
     }
     @Override
     public String getName() {
-        return "RocketMan";
+        return "Rocket";
     }
 
 

@@ -93,6 +93,12 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         if(currentPlayerState == ICWarsPlayerState.SELECT_CELL) currentPlayerState = ICWarsPlayerState.NORMAL;
     }
 
+    public void healEffectives(int repair){
+        for (Unit effective : effectives) {
+            effective.takeRepair(repair);
+        }
+    }
+
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);

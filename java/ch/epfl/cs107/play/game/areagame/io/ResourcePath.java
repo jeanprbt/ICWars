@@ -3,6 +3,7 @@ package ch.epfl.cs107.play.game.areagame.io;
 
 public class ResourcePath {
 
+	private static final String EXPLOSION = "images/explosion/";
 	private static final String SPRITE = "images/sprites/";
 	private static final String BEHAVIORS = "images/behaviors/";
 	private static final String BACKGROUNDS = "images/backgrounds/";
@@ -17,6 +18,10 @@ public class ResourcePath {
 
 	public static String getSprite(String name){
 		return SPRITE+name+IMAGE_EXTENSION;
+	}
+
+	public static String getExplosion(String name){
+		return EXPLOSION+name+IMAGE_EXTENSION;
 	}
 
 	public static String getBehavior(String name){
