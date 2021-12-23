@@ -21,23 +21,23 @@ Taper ensuite les commandes suivantes :
     javac Play.java
     java Play
 
+Pour avoir une musique de fond, il suffira de placer le fichier backgroundmusic.wav fourni dans le dossier res/music et de décommenter le fichier AudioFilePlayer.java
 ## Déroulement du jeu
 Au lancement du jeu, un panneau permet de sélectionner l'adversaire désiré : une IA ou un vrai joueur. S'ensuit le déroulement de première manche dans la première grille de jeu. Lorsque le premier des deux joueurs voit toutes ses unités détruites (n'ayant plus de points de vie), la deuxième manche se lance. Il est à nouveau possible de sélectionner son adversaire, puis une deuxième manche se déroule dans la deuxième grille de jeu. Lorsque le premier des deux joueurs est éliminé, un panneau Game Over s'affiche, offrant le choix de recommencer une partie ou de quitter le jeu.
 
 ## Commandes 
-|Touche|Action  |
-|--|--|
+|Touche|Action|
 |R| Choisir un adversaire réel |
-|A| Choisir un adversaire IA / Choisir d'attaquer|
-|W| Choisir d'attendre|
-|C|Capturer une cité  |
-|S| Reset le jeu|
+|A| Choisir un adversaire IA / Choisir d'attaquer |
+|W| Choisir d'attendre |
+|C| Capturer une cité |
+|S| Reset le jeu |
 |N| Forcer le passage au niveau suivant |
-|Q| Quitter le jeu (lors du Game Over)|
-|G| Relancer le jeu (lors du Game Over)|
-|ENTER|Sélectionner l'unité à déplacer / Confirmer sa destination / Confirmer la cible à attaquer|
-| TAB | Annuler la sélection d'une unité / Passer au joueur suivant  |
-|Touches directionnelles | Déplacer le curseur et ses unités / sélectionner la cible à attaquer |
+|Q| Quitter le jeu (lors du Game Over) |
+|G| Relancer le jeu (lors du Game Over) |
+|ENTER| Sélectionner l'unité à déplacer / Confirmer sa destination / Confirmer la cible à attaquer |
+|TAB| Annuler la sélection d'une unité / Passer au joueur suivant |
+|Touches directionnelles| Déplacer le curseur et ses unités / sélectionner la cible à attaquer |
 
 
 
