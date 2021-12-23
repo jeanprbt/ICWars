@@ -21,7 +21,7 @@ Taper ensuite les commandes suivantes :
     javac Play.java
     java Play
 
-Pour avoir une musique de fond, il suffira de placer le fichier backgroundmusic.wav fourni dans le dossier res/music et de décommenter le fichier AudioFilePlayer.java
+Pour avoir une musique de fond, il suffira de placer le fichier backgroundmusic.wav fourni dans le dossier res/music et de décommenter la ligne 48 du fichier ICWars.java
 ## Déroulement du jeu
 Au lancement du jeu, un panneau permet de sélectionner l'adversaire désiré : une IA ou un vrai joueur. S'ensuit le déroulement de première manche dans la première grille de jeu. Lorsque le premier des deux joueurs voit toutes ses unités détruites (n'ayant plus de points de vie), la deuxième manche se lance. Il est à nouveau possible de sélectionner son adversaire, puis une deuxième manche se déroule dans la deuxième grille de jeu. Lorsque le premier des deux joueurs est éliminé, un panneau Game Over s'affiche, offrant le choix de recommencer une partie ou de quitter le jeu.
 

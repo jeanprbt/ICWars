@@ -35,7 +35,6 @@ public class ICWars extends AreaGame {
     private boolean playerHasBeenSelected = false ;
     private ICWarsGameOverPanel gameOverPanel ;
     private boolean gameOverDisplay = false ;
-    private AudioFilePlayer Audioplayer;
 
     //-----------------------------------API-------------------------------------//
 
@@ -46,8 +45,7 @@ public class ICWars extends AreaGame {
             players = new ArrayList<ICWarsPlayer>();
             currentRoundState = ICWarsRoundState.INIT;
             initArea("icwars/Level0");
-            Audioplayer = new AudioFilePlayer();
-            new Thread(this::playMusic).start();
+            //new Thread(this::playMusic).start();
             opponentPanel = new ICWarsOpponentPanel(getCurrentArea().getCameraScaleFactor());
             gameOverPanel = new ICWarsGameOverPanel(getCurrentArea().getCameraScaleFactor());
             return true;
