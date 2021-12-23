@@ -32,6 +32,7 @@ public class RealPlayer extends ICWarsPlayer {
     private Unit unitOnCell ;
     private ICWarsAction actionToExecute ;
     private AttackAction attackActionToExecute ;
+    private  RocketManAttackAction rocketManAttackActionToExecute ;
 
     //-----------------------------------API-------------------------------------//
 
@@ -126,18 +127,6 @@ public class RealPlayer extends ICWarsPlayer {
                 for (ICWarsAction act : selectedUnit.actionsList) {
                     if(keyboard.get(act.getKey()).isPressed()){
                         actionToExecute = act ;
-                        //Resetting index in AttackAction only once before calling doAction()
-                        //in order to take in consideration the update of the unitList of the
-                        //ICWarsArea
-                        if(actionToExecute instanceof AttackAction){
-                            if(selectedUnit instanceof RocketMan){
-                                RocketManAttackAction RocketManAttackActionToExecute = (RocketManAttackAction) actionToExecute ;
-                                RocketManAttackActionToExecute.setIndex(0);
-                            } else {
-                                attackActionToExecute = (AttackAction) actionToExecute;
-                                attackActionToExecute.setIndex(0);
-                            }
-                        }
                         setCurrentPlayerState(ICWarsPlayerState.ACTION);
                     }
                 }

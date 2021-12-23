@@ -135,8 +135,8 @@ public class ICWars extends AreaGame {
             case PLAYER_TURN:
                 if (currentPlayer.getCurrentPlayerState() == ICWarsPlayer.ICWarsPlayerState.IDLE) {
                     ICWarsArea area = (ICWarsArea) getCurrentArea() ;
-                    if(area.getCities(currentPlayer.getFaction()).size() > 0){
-                        currentPlayer.healEffectives(area.getCities(currentPlayer.getFaction()).size());
+                    if(area.getCities(currentPlayer.getFaction(), false).size() > 0){
+                        currentPlayer.healEffectives(area.getCities(currentPlayer.getFaction(), false).size());
                     }
                     currentRoundState = ICWarsRoundState.END_PLAYER_TURN;
                 }

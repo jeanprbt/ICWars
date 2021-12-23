@@ -42,14 +42,24 @@ public abstract class ICWarsArea extends Area {
     }
 
     /**
-     * Method returning all ally cities given a faction
+     * Method returning all cities given a faction and a boolean foreign : if
+     * foreign is true then it returns all enemy and neutral cities, if foreign
+     * is false then it returns all ally cities.
      * @param faction : the ally faction for cities
+     * @param foreign : ally or enemy cities wanted
      */
-    public ArrayList<ICWarsCity> getCities(ICWarsActor.Faction faction){
+    public ArrayList<ICWarsCity> getCities(ICWarsActor.Faction faction, boolean foreign){
         ArrayList<ICWarsCity> cities = new ArrayList<ICWarsCity>();
         for (ICWarsCity city : behavior.getCities()) {
-            if(city.getFaction() == faction){
-                cities.add(city);
+            if(!foreign) {
+                if (city.getFaction() == faction) {
+                    cities.add(city);
+                }
+            }
+            if(foreign) {
+                if(city.getFaction() != faction) {
+                    cities.add(city);
+                }
             }
         }
         return cities ;

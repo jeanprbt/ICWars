@@ -19,11 +19,14 @@ import java.util.ArrayList;
 public class AttackAction extends ICWarsAction{
 
     private ImageGraphics cursor;
-    private Unit target ;
+    private Unit realTarget ;
+    Unit aiTarget;
     private ArrayList<Unit> targets;
     private int index;
     private  Animation animation ;
     private Sprite [] sprites ;
+    private boolean hasTakenInjure ;
+    private boolean isInProgress ;
 
     //-----------------------------------API-------------------------------------//
 
@@ -38,8 +41,7 @@ public class AttackAction extends ICWarsAction{
         sprites[4] = new Sprite("5", 1, 1);
         sprites[5] = new Sprite("6", 1, 1);
         sprites[6] = new Sprite("7", 1, 1);
-
-        animation = new Animation(3, sprites, true);
+        animation = new Animation(3, sprites, false);
         cursor = new ImageGraphics(ResourcePath.getSprite("icwars/UIpackSheet"), 1f, 1f, new RegionOfInterest(4*18, 26*18,16,16));
         cursor.setDepth(2);
     }
@@ -50,18 +52,31 @@ public class AttackAction extends ICWarsAction{
         if (targets.size() == 0 || keyboard.get(Keyboard.TAB).isPressed()) {
             player.centerCamera();
             player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.ACTION_SELECTION);
-        } else {
-            target = targets.get(index);
-            if (keyboard.get(Keyboard.RIGHT).isPressed() && index < targets.size() - 1) {
-                ++index;
-                target = targets.get(index);
-            }
-            if (keyboard.get(Keyboard.LEFT).isPressed() && index > 0) {
-                --index;
-                target = targets.get(index);
+        } else  {
+            if (!isInProgress) {
+                realTarget = targets.get(index);
+                    if (keyboard.get(Keyboard.RIGHT).isPressed() && index < targets.size() - 1) {
+                      ++index;
+                     realTarget = targets.get(index);
+                  }
+                  if (keyboard.get(Keyboard.LEFT).isPressed() && index > 0) {
+                      --index;
+                      realTarget = targets.get(index);
+                  }
             }
             if (keyboard.get(Keyboard.ENTER).isReleased()) {
-                target.takeInjure(ownerUnit.getDamage());
+                realTarget.takeInjure(ownerUnit.getDamage());
+                index = 0 ; 
+                hasTakenInjure = true;
+                for (int i = 0; i < sprites.length; i++) {
+                    sprites[i].setAnchor(realTarget.getPosition());
+                    sprites[i].setDepth(2);
+                }
+            }
+            if (animation.isCompleted()) {
+                isInProgress = false;
+                animation.reset();
+                hasTakenInjure = false;
                 player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
             }
             ownerUnit.setHasBeenUsed(true);
@@ -70,42 +85,56 @@ public class AttackAction extends ICWarsAction{
 
     @Override
     public void doAutoAction(float dt, AIPlayer aiPlayer) {
-        ArrayList<Unit> targets = getCloseEnemies();
-        int minHp = 100;
-        Unit targetToAttack = null ;
-        for (Unit target : targets) {
-            if(target.getHp() < minHp){
-                minHp = target.getHp();
-                targetToAttack = target ;
+        if (!isInProgress) {
+            ArrayList<Unit> targets = getCloseEnemies();
+            int minHp = 100;
+            aiTarget = null ;
+            for (Unit target : targets) {
+                if (target.getHp() < minHp) {
+                    minHp = target.getHp();
+                    aiTarget = target;
+                }
             }
+        aiTarget.takeInjure(ownerUnit.getDamage());
+        hasTakenInjure = true;
+        for (int i = 0; i < sprites.length; i++) {
+            sprites[i].setAnchor(aiTarget.getPosition());
+            sprites[i].setDepth(2);
         }
-        targetToAttack.takeInjure(ownerUnit.getDamage());
-        aiPlayer.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
     }
-
-    public void drawAnimation(Canvas canvas){
-        animation.update(1);
-        animation.draw(canvas);
+        if(animation.isCompleted()){
+            isInProgress = false ;
+            animation.reset();
+            hasTakenInjure = false;
+            aiPlayer.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
+        }
     }
 
 
     @Override
     public void draw(Canvas canvas) {
-        if (target == null) ;
-        else {
-            drawAnimation(canvas);
-            for (int i = 0; i < sprites.length; i++) {
-                sprites[i].setAnchor(target.getPosition());
-                sprites[i].setDepth(2);
-            }
-            target.centerCamera();
+        //Draw pour un Real Player
+        if (realTarget != null) {
+            realTarget.centerCamera();
             cursor.setAnchor(canvas.getPosition().add(1, 0));
             cursor.draw(canvas);
+            if (hasTakenInjure && !animation.isCompleted()) {
+                isInProgress = true ;
+                animation.update(1);
+                animation.draw(canvas);
+            }
         }
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
+        //Draw pour un AIPlayer
+        if (aiTarget != null) {
+            aiTarget.centerCamera();
+            cursor.setAnchor(aiTarget.getPosition().add(1, 0));
+            cursor.draw(canvas);
+            if(hasTakenInjure && !animation.isCompleted()) {
+                isInProgress = true ;
+                animation.update(1);
+                animation.draw(canvas);
+            }
+        }
     }
 
     //-----------------------------------Private-------------------------------------//

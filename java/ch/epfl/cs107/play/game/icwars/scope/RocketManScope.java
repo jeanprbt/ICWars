@@ -27,12 +27,15 @@ public class RocketManScope extends ICWarsActor implements Interactor {
     private boolean hasCollectedTargets = false ;
     private Animation animation ;
     private Sprite[] sprites ;
-    private boolean isOnUnit ;
+    private boolean isInProgress ;
+    private boolean isReal ;
+    private boolean aiHasMovedScope = false ;;
 
 
 
-    public RocketManScope(ICWarsArea area, DiscreteCoordinates position, Faction faction, int range){
+    public RocketManScope(ICWarsArea area, DiscreteCoordinates position, Faction faction, int range, boolean isReal){
         super(area, position, faction);
+        this.isReal = isReal ;
         sprites = new Sprite[7];
         sprites[0] = new Sprite("1", 3, 3);
         sprites[1] = new Sprite("2", 3, 3);
@@ -41,7 +44,7 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         sprites[4] = new Sprite("5", 3, 3);
         sprites[5] = new Sprite("6", 3, 3);
         sprites[6] = new Sprite("7", 3, 3);
-        animation = new Animation(3, sprites, true);
+        animation = new Animation(3, sprites, false);
         switch (faction){
             case ALLY:
                 sprite = new Sprite("icwars/allyCursor", 1.f, 1.f, this);
@@ -65,25 +68,35 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         return hasCollectedTargets;
     }
 
-    public void drawAnimation(Canvas canvas){
-        animation.update(1);
-        animation.draw(canvas);
+    public void setAiHasMovedScope(boolean aiHasMovedScope) {
+        this.aiHasMovedScope = aiHasMovedScope;
     }
+
 
     @Override
     public void draw(Canvas canvas) {
-        if(isOnUnit) drawAnimation(canvas);
         sprite.draw(canvas);
+        if (isInProgress){
+            animation.update(1);
+            animation.draw(canvas);
+        }
     }
 
     private void moveIfPressed(Orientation orientation, Button b){
-        if(!isDisplacementOccurs()) {
-            if (b.isDown()) {{
+        if(isReal) {
+            if (!isDisplacementOccurs() && b.isDown()) {
                 orientate(orientation);
                 move(MOVE_DURATION);
-                }
             }
         }
+    }
+
+    public boolean isInProgress(){
+        return isInProgress;
+    }
+
+    public boolean animationCompleted(){
+        return animation.isCompleted() ;
     }
 
     public void centerCamera(){
@@ -98,8 +111,6 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
         targets.clear();
-        isOnUnit = false ;
-        hasCollectedTargets = false;
         super.update(deltaTime);
     }
 
@@ -165,13 +176,28 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         @Override
         public void interactWith(Unit unit) {
             Keyboard keyboard = getOwnerArea().getKeyboard();
-            isOnUnit = true ;
-            for (int i = 0; i < sprites.length; i++) {
-                sprites[i].setAnchor(getPosition());
+            if(isReal) {
+                if (keyboard.get(Keyboard.ENTER).isReleased()) {
+                    for (int i = 0; i < sprites.length; i++) {
+                        sprites[i].setAnchor(getPosition());
+                    }
+                    hasCollectedTargets = true;
+                    isInProgress = true;
+                    targets.add(unit);
+                }
             }
-            if (keyboard.get(Keyboard.ENTER).isReleased()) {
+
+            if (!isReal && aiHasMovedScope){
+                for (int i = 0; i < sprites.length; i++) {
+                    sprites[i].setAnchor(getPosition());
+                }
+                isInProgress = true ;
                 targets.add(unit);
-                hasCollectedTargets = true;
+                hasCollectedTargets = true ;
+
+            }
+            if(animation.isCompleted()) {
+                isInProgress = false ;
             }
         }
 

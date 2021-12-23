@@ -144,7 +144,7 @@ public class ICWarsInfoPanel implements Graphics {
         unitDetailsBackground.draw(canvas);
 
         final Transform nameTransform = Transform.I.translated(canvas.getPosition().add(width/4+.1f, -height/4));
-       unitNameText.setRelativeTransform(nameTransform);
+        unitNameText.setRelativeTransform(nameTransform);
         unitNameText.setText(unit.getName());
         unitNameText.draw(canvas);
 
