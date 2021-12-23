@@ -24,6 +24,7 @@ import java.util.List;
 
 
 public class RealPlayer extends ICWarsPlayer {
+
     private final static int MOVE_DURATION = 4;
     private Sprite sprite ;
     private ICWarsPlayerGUI gui ;
@@ -31,8 +32,6 @@ public class RealPlayer extends ICWarsPlayer {
     private ICWarsBehavior.ICWarsCellType cellType;
     private Unit unitOnCell ;
     private ICWarsAction actionToExecute ;
-    private AttackAction attackActionToExecute ;
-    private  RocketManAttackAction rocketManAttackActionToExecute ;
 
     //-----------------------------------API-------------------------------------//
 

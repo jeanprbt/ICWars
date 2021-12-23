@@ -47,6 +47,10 @@ public class Tank extends Unit {
         }
     }
 
+    /**
+     * Method adding the Capture Action to the tank actionsList if it is placed
+     * on an enemy city, and removing it otherwise
+     */
     @Override
     public void update(float deltaTime) {
         if(isOnEnemyCity()){
@@ -64,24 +68,29 @@ public class Tank extends Unit {
         super.update(deltaTime);
     }
 
+    @Override
+    public int getDamage() {
+        return 5;
+    }
+    @Override
+    public int getRadius(){
+        return 3;
+    }
+    @Override
+    public int getMaxHp(){
+        return 10;
+    }
+    @Override
+    public String getName(){
+        return "Tank";
+    }
+
     public static DiscreteCoordinates getSpawnCoordinates(Faction faction){
         DiscreteCoordinates coordinates ;
         coordinates = (faction == Faction.ALLY) ? new DiscreteCoordinates(2, 5) : new DiscreteCoordinates(8, 5);
         return coordinates;
     }
 
-    public int getDamage() {
-        return 5;
-    }
-    public int getRadius(){
-        return 3;
-    }
-    public int getMaxHp(){
-        return 10;
-    }
-    public String getName(){
-        return "Tank";
-    }
 }
 
 

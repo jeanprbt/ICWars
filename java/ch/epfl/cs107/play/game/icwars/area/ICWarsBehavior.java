@@ -14,7 +14,6 @@ public class ICWarsBehavior extends AreaBehavior {
 
     private ArrayList<ICWarsCity> cities ;
 
-
     //-----------------------------------API-------------------------------------//
 
     /**

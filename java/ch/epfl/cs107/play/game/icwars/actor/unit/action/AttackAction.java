@@ -46,6 +46,10 @@ public class AttackAction extends ICWarsAction{
         cursor.setDepth(2);
     }
 
+    /**
+     * Method handling a standard attack action for a real player. It handles
+     * the search of enemies, the damages to the opponent and the animation.
+     */
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
         targets = getCloseEnemies();
@@ -66,7 +70,7 @@ public class AttackAction extends ICWarsAction{
             }
             if (keyboard.get(Keyboard.ENTER).isReleased()) {
                 realTarget.takeInjure(ownerUnit.getDamage());
-                index = 0 ; 
+                index = 0 ;
                 hasTakenInjure = true;
                 for (int i = 0; i < sprites.length; i++) {
                     sprites[i].setAnchor(realTarget.getPosition());
@@ -110,7 +114,10 @@ public class AttackAction extends ICWarsAction{
         }
     }
 
-
+    /**
+     * Method handling the display of cursor and the update
+     * and drawing of the animation during attack.
+     */
     @Override
     public void draw(Canvas canvas) {
         //Draw pour un Real Player
@@ -154,19 +161,6 @@ public class AttackAction extends ICWarsAction{
         }
 
         return closeEnemies ;
-    }
-
-    /**
-     * Function making the program wait for a certain time before resuming action
-     * @param ms : Time in milliseconds
-     */
-    private static void waitFor(int ms) {
-        try {
-            Thread.sleep(ms);
-        }
-        catch(InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
     }
 }
 

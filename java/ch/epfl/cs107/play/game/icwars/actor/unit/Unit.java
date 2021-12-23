@@ -72,6 +72,7 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     abstract public  int getMaxHp();
     abstract public String getName();
 
+    //Getter for isOnEnemyCity
     public boolean isOnEnemyCity() {
         return isOnEnemyCity;
     }
@@ -172,7 +173,7 @@ public abstract class Unit extends ICWarsActor implements Interactor{
      * @param faction  : Ally or Enemy
      * @param unitType : Soldier or Tank
      */
-    public DiscreteCoordinates getSpawnCoordinates(Faction faction, UnitType unitType) {
+    public static DiscreteCoordinates getSpawnCoordinates(Faction faction, UnitType unitType) {
         switch (unitType) {
             case TANK:
                 return Tank.getSpawnCoordinates(faction);
@@ -218,7 +219,6 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     public void drawRangeAndPathTo(DiscreteCoordinates destination, Canvas canvas) {
         range.draw(canvas);
         Queue<Orientation> path = range.shortestPath(getCurrentMainCellCoordinates(), destination);
-        //Draw path only if it exists (destination inside the range)
         if (path != null) {
             new Path(getCurrentMainCellCoordinates().toVector(), path).draw(canvas);
         }

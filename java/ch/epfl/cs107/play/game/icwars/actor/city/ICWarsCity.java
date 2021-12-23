@@ -11,6 +11,8 @@ import ch.epfl.cs107.play.window.Canvas;
 public class ICWarsCity extends ICWarsActor {
     private Sprite sprite ;
 
+    //-----------------------------------API-------------------------------------//
+
     public ICWarsCity(Area area, DiscreteCoordinates position) {
         super(area, position, Faction.NEUTRAL);
         sprite = new Sprite("icwars/neutralBuilding", 1.f, 1.f, this);

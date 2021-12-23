@@ -39,16 +39,6 @@ public class RocketMan extends Unit {
         }
     }
 
-    public static DiscreteCoordinates getSpawnCoordinates(Faction faction){
-        DiscreteCoordinates coordinates ;
-        coordinates = (faction == Faction.ALLY) ? new DiscreteCoordinates(2, 4) : new DiscreteCoordinates(8, 4);
-        return coordinates;
-    }
-    
-    public static int getDamageZone(){
-        return 3 ;
-    }
-
     @Override
     public int getDamage() {
         return 3;
@@ -66,5 +56,13 @@ public class RocketMan extends Unit {
         return "Rocket";
     }
 
+    public static DiscreteCoordinates getSpawnCoordinates(Faction faction){
+        DiscreteCoordinates coordinates ;
+        coordinates = (faction == Faction.ALLY) ? new DiscreteCoordinates(2, 4) : new DiscreteCoordinates(8, 4);
+        return coordinates;
+    }
 
+    public static int getDamageZone(){
+        return 3 ;
+    }
 }

@@ -16,26 +16,27 @@ import ch.epfl.cs107.play.window.Keyboard;
 import java.util.ArrayList;
 import java.util.List;
 
-//-----------------------------------API-------------------------------------//
-
 public class RocketManScope extends ICWarsActor implements Interactor {
+
     private final static int MOVE_DURATION = 4;
     private Sprite sprite ;
     private RocketManScopeInteractionHandler handler;
     private ArrayList<Unit> targets ;
     private int range ;
-    private boolean hasCollectedTargets = false ;
     private Animation animation ;
     private Sprite[] sprites ;
     private boolean isInProgress ;
     private boolean isReal ;
-    private boolean aiHasMovedScope = false ;;
+    private boolean aiHasMovedScope ;
+    private boolean hasCollectedTargets ;
 
 
 
     public RocketManScope(ICWarsArea area, DiscreteCoordinates position, Faction faction, int range, boolean isReal){
         super(area, position, faction);
         this.isReal = isReal ;
+        aiHasMovedScope = false ;
+        hasCollectedTargets = false ;
         sprites = new Sprite[7];
         sprites[0] = new Sprite("1", 3, 3);
         sprites[1] = new Sprite("2", 3, 3);
@@ -60,16 +61,24 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         handler = new RocketManScopeInteractionHandler();
     }
 
+    //Getter for targets
     public ArrayList<Unit> getTargets() {
         return targets;
     }
 
+    //Getter used in RocketManAttackAction
     public boolean hasCollectedTargets() {
         return hasCollectedTargets;
     }
 
+    //Setter used in RocketManAttackAction
     public void setAiHasMovedScope(boolean aiHasMovedScope) {
         this.aiHasMovedScope = aiHasMovedScope;
+    }
+
+    //Getter used for animations
+    public boolean isInProgress(){
+        return isInProgress;
     }
 
 
@@ -80,19 +89,6 @@ public class RocketManScope extends ICWarsActor implements Interactor {
             animation.update(1);
             animation.draw(canvas);
         }
-    }
-
-    private void moveIfPressed(Orientation orientation, Button b){
-        if(isReal) {
-            if (!isDisplacementOccurs() && b.isDown()) {
-                orientate(orientation);
-                move(MOVE_DURATION);
-            }
-        }
-    }
-
-    public boolean isInProgress(){
-        return isInProgress;
     }
 
     public boolean animationCompleted(){
@@ -141,9 +137,7 @@ public class RocketManScope extends ICWarsActor implements Interactor {
     }
 
     @Override
-    public void acceptInteraction(AreaInteractionVisitor v) {
-    }
-
+    public void acceptInteraction(AreaInteractionVisitor v) {}
 
     @Override
     public List<DiscreteCoordinates> getFieldOfViewCells() {
@@ -169,16 +163,14 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         changePosition(new DiscreteCoordinates((int)position.x, (int)position.y));
     }
 
-    /**
-     * Function making the program wait for a certain time before resuming action
-     * @param ms : Time in milliseconds
-     */
-    private static void waitFor(int ms) {
-        try {
-            Thread.sleep(ms);
-        }
-        catch(InterruptedException ex) {
-            Thread.currentThread().interrupt();
+    //-----------------------------------Private-------------------------------------//
+
+    private void moveIfPressed(Orientation orientation, Button b){
+        if(isReal) {
+            if (!isDisplacementOccurs() && b.isDown()) {
+                orientate(orientation);
+                move(MOVE_DURATION);
+            }
         }
     }
 

@@ -1,13 +1,10 @@
 package ch.epfl.cs107.play.game.icwars.actor.unit.action;
 
-import ch.epfl.cs107.play.game.areagame.actor.Animation;
-import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.unit.RocketMan;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
-import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
 import ch.epfl.cs107.play.game.icwars.scope.RocketManScope;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Vector;
@@ -28,6 +25,11 @@ public class RocketManAttackAction extends AttackAction {
 
     }
 
+    /**
+     * Method handling the attack action for real player using rocketMan. It initializes a
+     * RocketManScope and handles the damages of opponent and the search of enemies along
+     * with the interactWith() method of RocketManScope.
+     */
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
         if (waitingPurposeBoolean) {
@@ -54,6 +56,11 @@ public class RocketManAttackAction extends AttackAction {
 
     }
 
+    /**
+     * Method handling the attack action for AIPlayer using rocketMan. It initializes a
+     * RocketManScope and handles both the damages to opponent and the animation. As an
+     * algorithm it selects the enemy with the min Hp and places the scope on it
+     */
     @Override
     public void doAutoAction(float dt, AIPlayer aiPlayer) {
         if (waitingPurposeBoolean) {
