@@ -35,6 +35,7 @@ public class ICWars extends AreaGame {
     private boolean playerHasBeenSelected = false ;
     private ICWarsGameOverPanel gameOverPanel ;
     private boolean gameOverDisplay = false ;
+    private AudioFilePlayer Audioplayer;
 
     //-----------------------------------API-------------------------------------//
 
