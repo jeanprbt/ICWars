@@ -8,6 +8,8 @@ import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
 
 public interface ICWarInteractionVisitor extends AreaInteractionVisitor {
 
+    //-----------------------------------API-------------------------------------//
+
     default void interactWith(Interactable other){
 
     }

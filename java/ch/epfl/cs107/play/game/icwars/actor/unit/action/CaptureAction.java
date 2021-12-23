@@ -31,7 +31,10 @@ public class CaptureAction extends ICWarsAction {
         }
     }
 
-
+    /**
+     * Captures city if unit is a tank and is standing on a city :
+     * sets city as same faction
+     */
     @Override
     public void doAutoAction(float dt, AIPlayer aiPlayer) {
         ownerUnit.setPlayerHasSelectedCapture(true);

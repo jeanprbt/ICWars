@@ -5,6 +5,9 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
 public class Level1 extends ICWarsArea {
 
+    //-----------------------------------API-------------------------------------//
+
+
     @Override
     public String getTitle() {
         return "icwars/Level1";
@@ -19,4 +22,10 @@ public class Level1 extends ICWarsArea {
     public DiscreteCoordinates getEnemySpawnCoordinates() {
         return new DiscreteCoordinates(8, 5);
     }
+
+    @Override
+    protected void createArea() {
+        registerActor(new Background(this));
+    }
+
 }

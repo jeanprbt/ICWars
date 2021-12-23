@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
-    protected Unit selectedUnit ;
 
     private ICWarsPlayerState currentPlayerState ;
     private ArrayList<Unit> effectives ;
 
+    protected Unit selectedUnit ;
 
     //-----------------------------------API-------------------------------------//
 

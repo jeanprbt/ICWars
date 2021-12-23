@@ -87,6 +87,10 @@ public class AttackAction extends ICWarsAction{
         }
     }
 
+    /**
+     ** Method handling a standard attack action for an AIPlayer. The AIPlayer selects the enemyUnit in range
+     * with the lowest HP and attacks him
+     */
     @Override
     public void doAutoAction(float dt, AIPlayer aiPlayer) {
         if (!isInProgress) {

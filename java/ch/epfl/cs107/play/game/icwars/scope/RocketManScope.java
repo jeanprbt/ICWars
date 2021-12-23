@@ -30,7 +30,7 @@ public class RocketManScope extends ICWarsActor implements Interactor {
     private boolean aiHasMovedScope ;
     private boolean hasCollectedTargets ;
 
-
+    //-----------------------------------API-------------------------------------//
 
     public RocketManScope(ICWarsArea area, DiscreteCoordinates position, Faction faction, int range, boolean isReal){
         super(area, position, faction);
