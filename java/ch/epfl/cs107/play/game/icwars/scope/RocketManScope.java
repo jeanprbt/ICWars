@@ -166,7 +166,20 @@ public class RocketManScope extends ICWarsActor implements Interactor {
     }
 
     public void resetPosition(Vector position){
-        changePosition(new DiscreteCoordinates((int)position.x-2, (int)position.y));
+        changePosition(new DiscreteCoordinates((int)position.x, (int)position.y));
+    }
+
+    /**
+     * Function making the program wait for a certain time before resuming action
+     * @param ms : Time in milliseconds
+     */
+    private static void waitFor(int ms) {
+        try {
+            Thread.sleep(ms);
+        }
+        catch(InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private class RocketManScopeInteractionHandler implements ICWarInteractionVisitor {
@@ -204,9 +217,11 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         @Override
         public void interactWith(ICWarsCity city) {
             Keyboard keyboard = getOwnerArea().getKeyboard();
-            if (keyboard.get(Keyboard.ENTER).isReleased() && !targets.isEmpty()) {
+            //if a city is in sight of a RocketMan's attack it gets destroyed and goes back to neutral
+            if (keyboard.get(Keyboard.ENTER).isReleased() && !targets.isEmpty() && isReal) {
                 city.isCaptured(Faction.NEUTRAL);
             }
+            if (!isReal && aiHasMovedScope)city.isCaptured(Faction.NEUTRAL);
         }
     }
 }

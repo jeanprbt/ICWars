@@ -123,7 +123,6 @@ public class RealPlayer extends ICWarsPlayer {
                 }
                 break;
             case ACTION_SELECTION:
-                actionToExecute = new AttackAction((ICWarsArea)getOwnerArea(), selectedUnit);
                 for (ICWarsAction act : selectedUnit.actionsList) {
                     if(keyboard.get(act.getKey()).isPressed()){
                         actionToExecute = act ;

@@ -2,6 +2,9 @@ package ch.epfl.cs107.play.game.icwars.actor.player;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.icwars.actor.city.ICWarsCity;
+import ch.epfl.cs107.play.game.icwars.actor.unit.RocketMan;
+import ch.epfl.cs107.play.game.icwars.actor.unit.Tank;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.*;
 import ch.epfl.cs107.play.game.icwars.exception.WrongLocationException;
@@ -9,6 +12,7 @@ import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Canvas;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AIPlayer extends ICWarsPlayer {
 
@@ -52,6 +56,7 @@ public class AIPlayer extends ICWarsPlayer {
         switch (getCurrentPlayerState()){
             case IDLE:
                 fillEffectiveList();
+                actionToExecute = null ;
                 break;
             case NORMAL:
                 area = (ICWarsArea) getOwnerArea() ;

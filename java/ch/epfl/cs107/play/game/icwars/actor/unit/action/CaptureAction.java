@@ -26,7 +26,8 @@ public class CaptureAction extends ICWarsAction {
 
     @Override
     public void doAutoAction(float dt, AIPlayer aiPlayer) {
-
+        ownerUnit.setPlayerHasSelectedCapture(true);
+        aiPlayer.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
     }
 
     @Override

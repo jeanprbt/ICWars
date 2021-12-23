@@ -155,5 +155,18 @@ public class AttackAction extends ICWarsAction{
 
         return closeEnemies ;
     }
+
+    /**
+     * Function making the program wait for a certain time before resuming action
+     * @param ms : Time in milliseconds
+     */
+    private static void waitFor(int ms) {
+        try {
+            Thread.sleep(ms);
+        }
+        catch(InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+    }
 }
 
