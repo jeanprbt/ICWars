@@ -3,15 +3,16 @@ package ch.epfl.cs107.play.game.icwars.area;
 import ch.epfl.cs107.play.game.areagame.AreaBehavior;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
-import ch.epfl.cs107.play.game.icwars.ICWars;
+import ch.epfl.cs107.play.game.icwars.actor.city.ICWarsCity;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
-import ch.epfl.cs107.play.game.tutosSolution.Tuto2Behavior;
+import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Window;
 
-import javax.swing.*;
-import java.util.function.ToDoubleBiFunction;
+import java.util.ArrayList;
 
 public class ICWarsBehavior extends AreaBehavior {
+
+    private ArrayList<ICWarsCity> cities ;
 
     //-----------------------------------API-------------------------------------//
 
@@ -20,16 +21,34 @@ public class ICWarsBehavior extends AreaBehavior {
      * @param window (Window) : Window in which the game is launched
      * @param name (String) : Name of the file containing the behavior image
      * */
-    public ICWarsBehavior (Window window, String name) {
+    public ICWarsBehavior (Window window, String name, ICWarsArea ownerArea) {
         super(window, name);
+        cities = new ArrayList<ICWarsCity>();
         int height = getHeight();
         int width = getWidth();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 ICWarsCellType type = ICWarsCellType.toType(getRGB(height-1-y, x));
+                if (type == ICWarsCellType.CITY) {
+                    registerCity(ownerArea, new DiscreteCoordinates(x, y));
+                }
                 setCell(x, y, new ICWarsCell(x, y, type));
             }
         }
+    }
+
+    /**
+     * Method registering every case corresponding to a city
+     * in the current area, and adding it to the ArrayList of cities.
+     **/
+    public void registerCity(ICWarsArea area, DiscreteCoordinates position){
+        ICWarsCity city = new ICWarsCity(area, position);
+        area.registerActor(city);
+        cities.add(city);
+    }
+
+    public ArrayList<ICWarsCity> getCities(){
+        return cities ;
     }
 
     /**

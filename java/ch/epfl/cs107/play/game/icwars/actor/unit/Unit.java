@@ -4,6 +4,7 @@ import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
+import ch.epfl.cs107.play.game.icwars.actor.city.ICWarsCity;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsRange;
@@ -11,6 +12,7 @@ import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
+import org.w3c.dom.ls.LSOutput;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,8 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     private boolean isDead;
     private ICWarsUnitInteractionHandler handler ;
     private int cellDefenseStars ;
+    private boolean playerHasSelectedCapture ;
+    private boolean isOnEnemyCity ;
 
     protected int hp;
     protected Sprite sprite;
@@ -68,6 +72,11 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     abstract public  int getMaxHp();
     abstract public String getName();
 
+    //Getter for isOnEnemyCity
+    public boolean isOnEnemyCity() {
+        return isOnEnemyCity;
+    }
+
     //Getter for hP
     public int getHp() {
         return hp;
@@ -89,6 +98,11 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     //Setter for current position
     public void setCurrentPosition(Vector v) {
         super.setCurrentPosition(v);
+    }
+
+    //Getter for hasSelectedCapture
+    public void setPlayerHasSelectedCapture(boolean hasSelectedCapture) {
+        this.playerHasSelectedCapture = hasSelectedCapture;
     }
 
 
@@ -159,7 +173,7 @@ public abstract class Unit extends ICWarsActor implements Interactor{
      * @param faction  : Ally or Enemy
      * @param unitType : Soldier or Tank
      */
-    public DiscreteCoordinates getSpawnCoordinates(Faction faction, UnitType unitType) {
+    public static DiscreteCoordinates getSpawnCoordinates(Faction faction, UnitType unitType) {
         switch (unitType) {
             case TANK:
                 return Tank.getSpawnCoordinates(faction);
@@ -205,7 +219,6 @@ public abstract class Unit extends ICWarsActor implements Interactor{
     public void drawRangeAndPathTo(DiscreteCoordinates destination, Canvas canvas) {
         range.draw(canvas);
         Queue<Orientation> path = range.shortestPath(getCurrentMainCellCoordinates(), destination);
-        //Draw path only if it exists (destination inside the range)
         if (path != null) {
             new Path(getCurrentMainCellCoordinates().toVector(), path).draw(canvas);
         }
@@ -251,6 +264,17 @@ public abstract class Unit extends ICWarsActor implements Interactor{
         @Override
         public void interactWith(ICWarsBehavior.ICWarsCell cell) {
             cellDefenseStars =  cell.getDefenseStars(cell.getType());
+            if(cell.getType() != ICWarsBehavior.ICWarsCellType.CITY) isOnEnemyCity = false ;
+        }
+
+        @Override
+        public void interactWith(ICWarsCity city) {
+            if(city.getFaction() != getFaction()) isOnEnemyCity = true ;
+            if(playerHasSelectedCapture && isOnEnemyCity) {
+                city.isCaptured(getFaction());
+                isOnEnemyCity = false ;
+                playerHasSelectedCapture = false ;
+            }
         }
     }
 }

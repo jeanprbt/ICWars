@@ -1,14 +1,17 @@
 package ch.epfl.cs107.play.game.icwars.actor.unit.action;
 
+import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.unit.RocketMan;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.scope.RocketManScope;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Keyboard;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RocketManAttackAction extends AttackAction {
     private RocketManScope scope;
@@ -19,27 +22,86 @@ public class RocketManAttackAction extends AttackAction {
 
     public RocketManAttackAction(ICWarsArea area, Unit ownerUnit) {
         super(area, ownerUnit);
-        scope = new RocketManScope(area, new DiscreteCoordinates((int)ownerUnit.getPosition().x, (int)ownerUnit.getPosition().y), ownerUnit.getFaction(), RocketMan.getDamageZone());
+
     }
 
+    /**
+     * Method handling the attack action for real player using rocketMan. It initializes a
+     * RocketManScope and handles the damages of opponent and the search of enemies along
+     * with the interactWith() method of RocketManScope.
+     */
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
         if (waitingPurposeBoolean) {
+            scope = new RocketManScope(area, new DiscreteCoordinates((int)area.getWidth() / 2 - 1, (int)area.getHeight() / 2 - 1), ownerUnit.getFaction(), RocketMan.getDamageZone(), true);
             area.registerActor(scope);
             scope.centerCamera();
-            waitingPurposeBoolean = false ;
+            waitingPurposeBoolean = false;
         }
-        if (scope.hasCollectedTargets()) {
-            targets = scope.getTargets();
-            if (targets != null) {
-                for (Unit target : targets) {
-                    target.takeInjure(ownerUnit.getDamage());
-                }
+
+            if (scope.hasCollectedTargets()) {
+                targets = scope.getTargets();
+                    if (targets != null) {
+                        for (Unit target : targets) {
+                            target.takeInjure(ownerUnit.getDamage());
+                        }
+                    }
             }
+        if (!scope.isInProgress() && scope.hasCollectedTargets()) {
             area.unregisterActor(scope);
             player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
             ownerUnit.setHasBeenUsed(true);
             waitingPurposeBoolean = true;
         }
+
     }
-}
+
+    /**
+     * Method handling the attack action for AIPlayer using rocketMan. It initializes a
+     * RocketManScope and handles both the damages to opponent and the animation. As an
+     * algorithm it selects the enemy with the min Hp and places the scope on it
+     */
+    @Override
+    public void doAutoAction(float dt, AIPlayer aiPlayer) {
+        if (waitingPurposeBoolean) {
+            scope = new RocketManScope(area, new DiscreteCoordinates(area.getWidth() / 2 - 1, area.getHeight() / 2 - 1), ownerUnit.getFaction(), RocketMan.getDamageZone(), false);
+            area.registerActor(scope);
+            scope.centerCamera();
+            waitingPurposeBoolean = false;
+        }
+        if (!scope.isInProgress()) {
+            int minHp = 100;
+            aiTarget = null;
+            List<Unit> enemies = area.getEnemies(ownerUnit.getFaction());
+            for (Unit enemy : enemies) {
+                if (enemy.getHp() < minHp) {
+                    minHp = enemy.getHp();
+                    aiTarget = enemy;
+                }
+            }
+            if(aiTarget.getPosition().x > area.getWidth() - 3 || aiTarget.getPosition().y > area.getHeight() - 3) {
+                if (aiTarget.getPosition().x > area.getWidth() - 3) {
+                    scope.resetPosition(new Vector(aiTarget.getPosition().x - 2, aiTarget.getPosition().y));
+                }
+                if (aiTarget.getPosition().y > area.getHeight() - 3) {
+                    scope.resetPosition(new Vector(aiTarget.getPosition().x, aiTarget.getPosition().y - 2));
+                }
+            } else {
+                scope.resetPosition(aiTarget.getPosition());
+            }
+
+            scope.setAiHasMovedScope(true);
+            if (scope.hasCollectedTargets()) {
+                List<Unit> targets = scope.getTargets();
+                for (Unit target : targets) {
+                    target.takeInjure(ownerUnit.getDamage());
+                }
+            }
+                if (scope.animationCompleted()) {
+                    area.unregisterActor(scope);
+                    aiPlayer.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
+
+                }
+            }
+        }
+    }

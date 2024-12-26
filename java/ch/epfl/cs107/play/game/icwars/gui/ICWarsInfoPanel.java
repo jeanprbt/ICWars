@@ -18,15 +18,14 @@ import java.awt.*;
 public class ICWarsInfoPanel implements Graphics {
 
     private final float fontSize;
-
     private ICWarsBehavior.ICWarsCellType cellType;
     private Unit unit;
-
-    /// Sprite and text graphics line
     private final ShapeGraphics cellDetailsBackground, unitDetailsBackground;
     private final TextGraphics cellTypeText, cellDefenseText;
     private final TextGraphics unitNameText, unitHealthText, unitDamageText;
     private final ImageGraphics woodSprite, plainSprite, citySprite, mountSprite, riverSprite, roadSprite;
+
+    //-----------------------------------API-------------------------------------//
 
     /**
      * Default Dialog Constructor
@@ -92,6 +91,8 @@ public class ICWarsInfoPanel implements Graphics {
 		    drawUnitDetails(canvas, height, width);
     }
 
+    //-----------------------------------Private-------------------------------------//
+
     private void drawCellDetails(Canvas canvas, float height, float width) {
         final Transform transform = Transform.I.translated(canvas.getPosition().add(3*width/8, -height/2));
         cellDetailsBackground.setRelativeTransform(transform);
@@ -144,7 +145,7 @@ public class ICWarsInfoPanel implements Graphics {
         unitDetailsBackground.draw(canvas);
 
         final Transform nameTransform = Transform.I.translated(canvas.getPosition().add(width/4+.1f, -height/4));
-       unitNameText.setRelativeTransform(nameTransform);
+        unitNameText.setRelativeTransform(nameTransform);
         unitNameText.setText(unit.getName());
         unitNameText.draw(canvas);
 

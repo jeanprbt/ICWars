@@ -1,15 +1,14 @@
 package ch.epfl.cs107.play.game.icwars.scope;
 
-import ch.epfl.cs107.play.game.areagame.actor.Interactable;
-import ch.epfl.cs107.play.game.areagame.actor.Interactor;
-import ch.epfl.cs107.play.game.areagame.actor.Orientation;
-import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.areagame.actor.*;
 import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
+import ch.epfl.cs107.play.game.icwars.actor.city.ICWarsCity;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
@@ -17,20 +16,44 @@ import ch.epfl.cs107.play.window.Keyboard;
 import java.util.ArrayList;
 import java.util.List;
 
-//-----------------------------------API-------------------------------------//
-
 public class RocketManScope extends ICWarsActor implements Interactor {
+
     private final static int MOVE_DURATION = 4;
     private Sprite sprite ;
     private RocketManScopeInteractionHandler handler;
     private ArrayList<Unit> targets ;
     private int range ;
-    private boolean hasCollectedTargets = false ;
+    private Animation animation ;
+    private Sprite[] sprites ;
+    private boolean isInProgress ;
+    private boolean isReal ;
+    private boolean aiHasMovedScope ;
+    private boolean hasCollectedTargets ;
 
+    //-----------------------------------API-------------------------------------//
 
-    public RocketManScope(ICWarsArea area, DiscreteCoordinates position, Faction faction, int range){
+    public RocketManScope(ICWarsArea area, DiscreteCoordinates position, Faction faction, int range, boolean isReal){
         super(area, position, faction);
-        sprite = new Sprite("icwars/allyCursor", 1.f, 1.f, this);
+        this.isReal = isReal ;
+        aiHasMovedScope = false ;
+        hasCollectedTargets = false ;
+        sprites = new Sprite[7];
+        sprites[0] = new Sprite("1", 3, 3);
+        sprites[1] = new Sprite("2", 3, 3);
+        sprites[2] = new Sprite("3", 3, 3);
+        sprites[3] = new Sprite("4", 3, 3);
+        sprites[4] = new Sprite("5", 3, 3);
+        sprites[5] = new Sprite("6", 3, 3);
+        sprites[6] = new Sprite("7", 3, 3);
+        animation = new Animation(3, sprites, false);
+        switch (faction){
+            case ALLY:
+                sprite = new Sprite("icwars/allyCursor", 1.f, 1.f, this);
+                break;
+            case ENEMY:
+                sprite = new Sprite("icwars/enemyCursor", 1.f, 1.f, this);
+                break;
+        }
         sprite.setHeight(range);
         sprite.setWidth(range);
         targets = new ArrayList<Unit>();
@@ -38,27 +61,38 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         handler = new RocketManScopeInteractionHandler();
     }
 
+    //Getter for targets
     public ArrayList<Unit> getTargets() {
         return targets;
     }
 
+    //Getter used in RocketManAttackAction
     public boolean hasCollectedTargets() {
         return hasCollectedTargets;
     }
 
+    //Setter used in RocketManAttackAction
+    public void setAiHasMovedScope(boolean aiHasMovedScope) {
+        this.aiHasMovedScope = aiHasMovedScope;
+    }
+
+    //Getter used for animations
+    public boolean isInProgress(){
+        return isInProgress;
+    }
+
+
     @Override
     public void draw(Canvas canvas) {
         sprite.draw(canvas);
+        if (isInProgress){
+            animation.update(1);
+            animation.draw(canvas);
+        }
     }
 
-    private void moveIfPressed(Orientation orientation, Button b){
-        if(!isDisplacementOccurs()) {
-            if (b.isDown()) {{
-                orientate(orientation);
-                move(MOVE_DURATION);
-                }
-            }
-        }
+    public boolean animationCompleted(){
+        return animation.isCompleted() ;
     }
 
     public void centerCamera(){
@@ -72,6 +106,7 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         moveIfPressed(Orientation.UP, keyboard.get(Keyboard.UP));
         moveIfPressed(Orientation.RIGHT, keyboard.get(Keyboard.RIGHT));
         moveIfPressed(Orientation.DOWN, keyboard.get(Keyboard.DOWN));
+        targets.clear();
         super.update(deltaTime);
     }
 
@@ -102,9 +137,7 @@ public class RocketManScope extends ICWarsActor implements Interactor {
     }
 
     @Override
-    public void acceptInteraction(AreaInteractionVisitor v) {
-    }
-
+    public void acceptInteraction(AreaInteractionVisitor v) {}
 
     @Override
     public List<DiscreteCoordinates> getFieldOfViewCells() {
@@ -125,6 +158,22 @@ public class RocketManScope extends ICWarsActor implements Interactor {
     public void interactWith(Interactable other) {
         other.acceptInteraction(handler);
     }
+
+    public void resetPosition(Vector position){
+        changePosition(new DiscreteCoordinates((int)position.x, (int)position.y));
+    }
+
+    //-----------------------------------Private-------------------------------------//
+
+    private void moveIfPressed(Orientation orientation, Button b){
+        if(isReal) {
+            if (!isDisplacementOccurs() && b.isDown()) {
+                orientate(orientation);
+                move(MOVE_DURATION);
+            }
+        }
+    }
+
     private class RocketManScopeInteractionHandler implements ICWarInteractionVisitor {
 
         //-----------------------------------API-------------------------------------//
@@ -132,10 +181,39 @@ public class RocketManScope extends ICWarsActor implements Interactor {
         @Override
         public void interactWith(Unit unit) {
             Keyboard keyboard = getOwnerArea().getKeyboard();
-            if (keyboard.get(Keyboard.ENTER).isReleased()) {
-                targets.add(unit);
-                hasCollectedTargets = true;
+            if(isReal) {
+                if (keyboard.get(Keyboard.ENTER).isReleased()) {
+                    for (int i = 0; i < sprites.length; i++) {
+                        sprites[i].setAnchor(getPosition());
+                    }
+                    hasCollectedTargets = true;
+                    isInProgress = true;
+                    targets.add(unit);
+                }
             }
+
+            if (!isReal && aiHasMovedScope){
+                for (int i = 0; i < sprites.length; i++) {
+                    sprites[i].setAnchor(getPosition());
+                }
+                isInProgress = true ;
+                targets.add(unit);
+                hasCollectedTargets = true ;
+
+            }
+            if(animation.isCompleted()) {
+                isInProgress = false ;
+            }
+        }
+
+        @Override
+        public void interactWith(ICWarsCity city) {
+            Keyboard keyboard = getOwnerArea().getKeyboard();
+            //if a city is in sight of a RocketMan's attack it gets destroyed and goes back to neutral
+            if (keyboard.get(Keyboard.ENTER).isReleased() && !targets.isEmpty() && isReal) {
+                city.isCaptured(Faction.NEUTRAL);
+            }
+            if (!isReal && aiHasMovedScope)city.isCaptured(Faction.NEUTRAL);
         }
     }
 }

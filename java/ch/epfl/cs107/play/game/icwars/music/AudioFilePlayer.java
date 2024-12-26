@@ -9,6 +9,8 @@ import static javax.sound.sampled.AudioSystem.getAudioInputStream;
 
 public class AudioFilePlayer {
 
+    //-----------------------------------API-------------------------------------//
+
     public static synchronized void playLoop(String filename) {
         if (filename == null) throw new IllegalArgumentException();
         // code adapted from: http://stackoverflow.com/questions/26305/how-can-i-play-sound-in-java

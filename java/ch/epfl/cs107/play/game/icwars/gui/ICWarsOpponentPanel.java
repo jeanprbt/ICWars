@@ -16,6 +16,7 @@ public class ICWarsOpponentPanel implements Graphics {
     private final float fontSize;
     private TextGraphics[] choicesText ;
 
+    //-----------------------------------API-------------------------------------//
 
     /**
      * Default Dialog Constructor

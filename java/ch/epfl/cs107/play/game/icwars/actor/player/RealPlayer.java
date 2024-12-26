@@ -24,6 +24,7 @@ import java.util.List;
 
 
 public class RealPlayer extends ICWarsPlayer {
+
     private final static int MOVE_DURATION = 4;
     private Sprite sprite ;
     private ICWarsPlayerGUI gui ;
@@ -31,7 +32,6 @@ public class RealPlayer extends ICWarsPlayer {
     private ICWarsBehavior.ICWarsCellType cellType;
     private Unit unitOnCell ;
     private ICWarsAction actionToExecute ;
-    private AttackAction attackActionToExecute ;
 
     //-----------------------------------API-------------------------------------//
 
@@ -122,22 +122,9 @@ public class RealPlayer extends ICWarsPlayer {
                 }
                 break;
             case ACTION_SELECTION:
-                actionToExecute = new AttackAction((ICWarsArea)getOwnerArea(), selectedUnit);
                 for (ICWarsAction act : selectedUnit.actionsList) {
                     if(keyboard.get(act.getKey()).isPressed()){
                         actionToExecute = act ;
-                        //Resetting index in AttackAction only once before calling doAction()
-                        //in order to take in consideration the update of the unitList of the
-                        //ICWarsArea
-                        if(actionToExecute instanceof AttackAction){
-                            if(selectedUnit instanceof RocketMan){
-                                RocketManAttackAction RocketManAttackActionToExecute = (RocketManAttackAction) actionToExecute ;
-                                RocketManAttackActionToExecute.setIndex(0);
-                            } else {
-                                attackActionToExecute = (AttackAction) actionToExecute;
-                                attackActionToExecute.setIndex(0);
-                            }
-                        }
                         setCurrentPlayerState(ICWarsPlayerState.ACTION);
                     }
                 }

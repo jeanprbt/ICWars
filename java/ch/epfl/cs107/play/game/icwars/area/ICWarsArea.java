@@ -3,6 +3,7 @@ package ch.epfl.cs107.play.game.icwars.area;
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.icwars.ICWars;
 import ch.epfl.cs107.play.game.icwars.actor.ICWarsActor;
+import ch.epfl.cs107.play.game.icwars.actor.city.ICWarsCity;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.tutosSolution.Tuto2;
 import ch.epfl.cs107.play.game.tutosSolution.Tuto2Behavior;
@@ -26,7 +27,7 @@ public abstract class ICWarsArea extends Area {
     @Override
     public boolean begin(Window window, FileSystem fileSystem) {
         if (super.begin(window, fileSystem)) {
-            behavior = new ICWarsBehavior(window, getTitle());
+            behavior = new ICWarsBehavior(window, getTitle(), this);
             unitList = new ArrayList<Unit>();
             setBehavior(behavior);
             createArea();
@@ -38,6 +39,30 @@ public abstract class ICWarsArea extends Area {
     @Override
     public final float getCameraScaleFactor() {
         return ICWars.CAMERA_SCALE_FACTOR;
+    }
+
+    /**
+     * Method returning all cities given a faction and a boolean foreign : if
+     * foreign is true then it returns all enemy and neutral cities, if foreign
+     * is false then it returns all ally cities.
+     * @param faction : the ally faction for cities
+     * @param foreign : ally or enemy cities wanted
+     */
+    public ArrayList<ICWarsCity> getCities(ICWarsActor.Faction faction, boolean foreign){
+        ArrayList<ICWarsCity> cities = new ArrayList<ICWarsCity>();
+        for (ICWarsCity city : behavior.getCities()) {
+            if(!foreign) {
+                if (city.getFaction() == faction) {
+                    cities.add(city);
+                }
+            }
+            if(foreign) {
+                if(city.getFaction() != faction) {
+                    cities.add(city);
+                }
+            }
+        }
+        return cities ;
     }
 
 

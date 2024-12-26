@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
-    protected Unit selectedUnit ;
 
     private ICWarsPlayerState currentPlayerState ;
     private ArrayList<Unit> effectives ;
 
+    protected Unit selectedUnit ;
 
     //-----------------------------------API-------------------------------------//
 
@@ -73,8 +73,8 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     public void enterArea(ICWarsArea area, DiscreteCoordinates position) {
         super.enterArea(area, position);
         for (Unit effective : effectives) {
-            effective.enterArea(area, effective.getSpawnCoordinates(effective.getFaction(), effective.unitType));
-            effective.fillRange(effective.getSpawnCoordinates(effective.getFaction(), effective.unitType));
+            effective.enterArea(area, Unit.getSpawnCoordinates(effective.getFaction(), effective.unitType));
+            effective.fillRange(Unit.getSpawnCoordinates(effective.getFaction(), effective.unitType));
             area.addToUnitList(effective);
         }
     }
@@ -91,6 +91,12 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
     public void onLeaving(List<DiscreteCoordinates> coordinates) {
         super.onLeaving(coordinates);
         if(currentPlayerState == ICWarsPlayerState.SELECT_CELL) currentPlayerState = ICWarsPlayerState.NORMAL;
+    }
+
+    public void healEffectives(int repair){
+        for (Unit effective : effectives) {
+            effective.takeRepair(repair);
+        }
     }
 
     @Override
@@ -154,6 +160,7 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
      * on itself
      */
     public void startTurn() {
+        resetPosition();
         currentPlayerState = ICWarsPlayerState.NORMAL;
         centerCamera();
     }
@@ -199,5 +206,17 @@ public abstract class ICWarsPlayer extends ICWarsActor implements Interactor {
         boolean isInRangeX = position.x <= selectedUnit.getPosition().x + selectedUnit.getRadius() && position.x >= selectedUnit.getPosition().x - selectedUnit.getRadius();
         boolean isInRangeY = position.y <= selectedUnit.getPosition().y + selectedUnit.getRadius() && position.y >= selectedUnit.getPosition().y - selectedUnit.getRadius();
         return isInRangeX && isInRangeY ;
+    }
+
+    //-----------------------------------Private-------------------------------------//
+
+    /**
+     * Method allowing player cursor to start on an effective when
+     * starting its turn
+     */
+    private void resetPosition(){
+        for (Unit effective : effectives) {
+            if (!effective.isDead()) changePosition(new DiscreteCoordinates((int)effective.getPosition().x, (int)effective.getPosition().y));
+        }
     }
 }

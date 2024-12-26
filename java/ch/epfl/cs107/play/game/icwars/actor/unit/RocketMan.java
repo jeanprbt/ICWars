@@ -2,7 +2,6 @@ package ch.epfl.cs107.play.game.icwars.actor.unit;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
-import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.RocketManAttackAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.WaitAction;
@@ -40,16 +39,6 @@ public class RocketMan extends Unit {
         }
     }
 
-    public static DiscreteCoordinates getSpawnCoordinates(Faction faction){
-        DiscreteCoordinates coordinates ;
-        coordinates = (faction == Faction.ALLY) ? new DiscreteCoordinates(2, 4) : new DiscreteCoordinates(8, 4);
-        return coordinates;
-    }
-    
-    public static int getDamageZone(){
-        return 3 ;
-    }
-
     @Override
     public int getDamage() {
         return 3;
@@ -64,8 +53,16 @@ public class RocketMan extends Unit {
     }
     @Override
     public String getName() {
-        return "RocketMan";
+        return "Rocket";
     }
 
+    public static DiscreteCoordinates getSpawnCoordinates(Faction faction){
+        DiscreteCoordinates coordinates ;
+        coordinates = (faction == Faction.ALLY) ? new DiscreteCoordinates(2, 4) : new DiscreteCoordinates(8, 4);
+        return coordinates;
+    }
 
+    public static int getDamageZone(){
+        return 3 ;
+    }
 }

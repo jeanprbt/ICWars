@@ -8,6 +8,7 @@ import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.io.ResourceFileSystem;
 //import ch.epfl.cs107.play.recorder.RecordReplayer;
 //import ch.epfl.cs107.play.recorder.Recorder;
+import ch.epfl.cs107.play.io.XMLTexts;
 import ch.epfl.cs107.play.window.Window;
 import ch.epfl.cs107.play.window.swing.SwingWindow;
 
@@ -31,7 +32,7 @@ public class Play {
 		final FileSystem fileSystem = new ResourceFileSystem(DefaultFileSystem.INSTANCE);
 
         // Create a demo game and initialize corresponding texts
-		//XMLTexts.initialize(fileSystem, "strings/icmon_fr.xml"); // example of dialog strings
+		XMLTexts.initialize(fileSystem, "strings/icmon_fr.xml"); // example of dialog strings
 		final Game game = new ICWars();
 		//final Game game = new Tuto2();
 

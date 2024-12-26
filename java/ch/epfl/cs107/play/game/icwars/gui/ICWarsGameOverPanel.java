@@ -16,6 +16,8 @@ public class ICWarsGameOverPanel implements Graphics {
     private final float fontSize;
     private TextGraphics[] lines;
 
+    //-----------------------------------API-------------------------------------//
+
     public ICWarsGameOverPanel(float cameraScaleFactor) {
         final float height = cameraScaleFactor / 7;
         final float width = cameraScaleFactor / 3;
@@ -39,9 +41,6 @@ public class ICWarsGameOverPanel implements Graphics {
         lines[0] = text1;
         lines[1] = text2;
     }
-
-
-
 
     @Override
     public void draw(Canvas canvas) {

@@ -2,15 +2,17 @@ package ch.epfl.cs107.play.game.icwars.actor.player;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
+import ch.epfl.cs107.play.game.icwars.actor.city.ICWarsCity;
+import ch.epfl.cs107.play.game.icwars.actor.unit.RocketMan;
+import ch.epfl.cs107.play.game.icwars.actor.unit.Tank;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
-import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
-import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
-import ch.epfl.cs107.play.game.icwars.actor.unit.action.WaitAction;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.*;
 import ch.epfl.cs107.play.game.icwars.exception.WrongLocationException;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.window.Canvas;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AIPlayer extends ICWarsPlayer {
 
@@ -41,6 +43,7 @@ public class AIPlayer extends ICWarsPlayer {
     @Override
     public void draw(Canvas canvas) {
         if(getCurrentPlayerState() != ICWarsPlayerState.IDLE) sprite.draw(canvas);
+        if(getCurrentPlayerState() == ICWarsPlayerState.ACTION) actionToExecute.draw(canvas);
     }
 
     //-----------------------------------Private-------------------------------------//
@@ -53,6 +56,7 @@ public class AIPlayer extends ICWarsPlayer {
         switch (getCurrentPlayerState()){
             case IDLE:
                 fillEffectiveList();
+                actionToExecute = null ;
                 break;
             case NORMAL:
                 area = (ICWarsArea) getOwnerArea() ;
@@ -68,7 +72,7 @@ public class AIPlayer extends ICWarsPlayer {
                     selectedUnit = aiEffectives.get(counter);
                     selectedUnitPosition = new DiscreteCoordinates((int) selectedUnit.getPosition().x, (int)selectedUnit.getPosition().y);
                     waitFor(300);
-                    changePosition(new DiscreteCoordinates((int) selectedUnit.getPosition().x, (int) selectedUnit.getPosition().y));
+                    changePosition(selectedUnitPosition);
                     waitFor(300);
                     setCurrentPlayerState(ICWarsPlayerState.MOVE_UNIT);
                 }
@@ -76,6 +80,35 @@ public class AIPlayer extends ICWarsPlayer {
                 break ;
                 case MOVE_UNIT:
                     waitFor(300);
+                    if(selectedUnit instanceof Tank){
+                        List<ICWarsCity>foreignCities = area.getCities(getFaction(), true);
+                        if (foreignCities != null){
+                            for (ICWarsCity foreignCity : foreignCities) {
+                                DiscreteCoordinates cityPosition = new DiscreteCoordinates((int) foreignCity.getPosition().x, (int) foreignCity.getPosition().y);
+                                if(isInRange(cityPosition, selectedUnit)) {
+                                    changePosition(cityPosition);
+                                    selectedUnit.setHasBeenUsed(true);
+                                    waitFor(300);
+                                    selectedUnit.changePosition(cityPosition);
+                                    waitFor(300);
+                                    setCurrentPlayerState(ICWarsPlayerState.ACTION_SELECTION);
+                                    break;
+                                }
+                            }
+                            if(getCurrentPlayerState() == ICWarsPlayerState.ACTION_SELECTION){
+                                break ;
+                            }
+                            else {
+                                changePosition(getClosestPositionPossible());
+                                selectedUnit.setHasBeenUsed(true);
+                                waitFor(300);
+                                selectedUnit.changePosition(getClosestPositionPossible());
+                                waitFor(300);
+                                setCurrentPlayerState(ICWarsPlayerState.ACTION_SELECTION);
+                                break;
+                            }
+                        }
+                    }
                     changePosition(getClosestPositionPossible());
                     selectedUnit.setHasBeenUsed(true);
                     waitFor(300);
@@ -84,17 +117,36 @@ public class AIPlayer extends ICWarsPlayer {
                     setCurrentPlayerState(ICWarsPlayerState.ACTION_SELECTION);
                     break;
                 case ACTION_SELECTION:
-                    selectedUnitPosition = new DiscreteCoordinates((int) selectedUnit.getPosition().x, (int)selectedUnit.getPosition().y);
                     ArrayList<Unit> targets = new ArrayList<Unit>();
-                    for (Unit target: area.getEnemies(this.getFaction())) {
-                        DiscreteCoordinates position = new DiscreteCoordinates((int)target.getPosition().x, (int)target.getPosition().y);
-                        if(!isInRange(position, selectedUnit)) continue ;
+                    if(selectedUnit instanceof Tank){
+                        for (ICWarsCity city : area.getCities(getFaction(), true)) {
+                            if(selectedUnit.getPosition().equals(city.getPosition())){
+                                actionToExecute = new CaptureAction(area, selectedUnit);
+                                setCurrentPlayerState(ICWarsPlayerState.ACTION);
+                            }
+                        }
+                       if(actionToExecute == null){}
+                       else break ;
+                    }
+                    if(selectedUnit instanceof RocketMan){
+                        for (Unit enemy : area.getEnemies(this.getFaction())) {
+                            targets.add(enemy);
+                        }
+                        actionToExecute = new RocketManAttackAction(area, selectedUnit);
+                        setCurrentPlayerState(ICWarsPlayerState.ACTION);
+                        waitFor(800);
+                        break ;
+                    }
+                    for (Unit target : area.getEnemies(this.getFaction())) {
+                        DiscreteCoordinates position = new DiscreteCoordinates((int) target.getPosition().x, (int) target.getPosition().y);
+                        if (!isInRange(position, selectedUnit)) continue;
                         targets.add(target);
                     }
-                    actionToExecute = (targets.isEmpty())? new WaitAction(area, selectedUnit) : new AttackAction(area, selectedUnit);
+                    actionToExecute = (targets.isEmpty()) ? new WaitAction(area, selectedUnit) : new AttackAction(area, selectedUnit);
                     setCurrentPlayerState(ICWarsPlayerState.ACTION);
-                case ACTION:
                     waitFor(800);
+                    break;
+            case ACTION:
                     actionToExecute.doAutoAction(1.f, this);
                     break;
                 default:
@@ -113,8 +165,6 @@ public class AIPlayer extends ICWarsPlayer {
         int finalY = -1 ;
         int differenceX = closestUnitPosition.x - selectedUnitPosition.x ;
         int differenceY = closestUnitPosition.y - selectedUnitPosition.y ;
-
-        System.out.println(closestUnitPosition);
 
         //Handling the case when selectedUnit is already well positioned
         if(Math.abs(differenceY) <= 1 && Math.abs(differenceX) <= 1){

@@ -46,8 +46,7 @@ public class ICWars extends AreaGame {
             players = new ArrayList<ICWarsPlayer>();
             currentRoundState = ICWarsRoundState.INIT;
             initArea("icwars/Level0");
-            Audioplayer = new AudioFilePlayer();
-            new Thread(this::playMusic).start();
+            //new Thread(this::playMusic).start();
             opponentPanel = new ICWarsOpponentPanel(getCurrentArea().getCameraScaleFactor());
             gameOverPanel = new ICWarsGameOverPanel(getCurrentArea().getCameraScaleFactor());
             return true;
@@ -133,8 +132,13 @@ public class ICWars extends AreaGame {
                 currentRoundState = ICWarsRoundState.PLAYER_TURN;
                 break;
             case PLAYER_TURN:
-                if (currentPlayer.getCurrentPlayerState() == ICWarsPlayer.ICWarsPlayerState.IDLE)
+                if (currentPlayer.getCurrentPlayerState() == ICWarsPlayer.ICWarsPlayerState.IDLE) {
+                    ICWarsArea area = (ICWarsArea) getCurrentArea() ;
+                    if(area.getCities(currentPlayer.getFaction(), false).size() > 0){
+                        currentPlayer.healEffectives(area.getCities(currentPlayer.getFaction(), false).size());
+                    }
                     currentRoundState = ICWarsRoundState.END_PLAYER_TURN;
+                }
                 break;
             case END_PLAYER_TURN:
                 if (currentPlayer.isVanquished()) {

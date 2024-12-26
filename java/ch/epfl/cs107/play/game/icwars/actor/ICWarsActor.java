@@ -28,13 +28,16 @@ public abstract class ICWarsActor extends MovableAreaEntity {
     }
 
     /**
-     * Enumeration for the type of an ICWarsActor : Ally or Ennemy
+     * Enumeration for the type of an ICWarsActor : Ally, Ennemy or Neutral
      */
-    public enum Faction {ALLY, ENEMY}
+    public enum Faction {ALLY, ENEMY, NEUTRAL}
 
-    //Getter for faction
+    //Getter and Setter for faction
     public Faction getFaction() {
         return faction;
+    }
+    public void setFaction(Faction faction) {
+        this.faction = faction;
     }
 
 

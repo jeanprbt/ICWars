@@ -1,89 +1,151 @@
 package ch.epfl.cs107.play.game.icwars.actor.unit.action;
 
 import ch.epfl.cs107.play.game.actor.ImageGraphics;
-import ch.epfl.cs107.play.game.actor.ShapeGraphics;
+import ch.epfl.cs107.play.game.areagame.actor.Animation;
 import ch.epfl.cs107.play.game.areagame.actor.Orientation;
+import ch.epfl.cs107.play.game.areagame.actor.RPGSprite;
+import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.game.areagame.io.ResourcePath;
 import ch.epfl.cs107.play.game.icwars.actor.unit.Unit;
 import ch.epfl.cs107.play.game.icwars.actor.player.ICWarsPlayer;
 import ch.epfl.cs107.play.game.icwars.actor.player.AIPlayer;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
 import ch.epfl.cs107.play.math.*;
-import ch.epfl.cs107.play.math.Polygon;
-import ch.epfl.cs107.play.math.Shape;
-import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class AttackAction extends ICWarsAction{
 
     private ImageGraphics cursor;
-    private Unit target ;
+    private Unit realTarget ;
+    Unit aiTarget;
     private ArrayList<Unit> targets;
     private int index;
+    private  Animation animation ;
+    private Sprite [] sprites ;
+    private boolean hasTakenInjure ;
+    private boolean isInProgress ;
+
     //-----------------------------------API-------------------------------------//
 
     public AttackAction(ICWarsArea area, Unit ownerUnit) {
         super(area, ownerUnit, Keyboard.A, "(A)ttack");
         index = 0 ;
+        sprites = new Sprite[7];
+        sprites[0] = new Sprite("1", 1, 1);
+        sprites[1] = new Sprite("2", 1, 1);
+        sprites[2] = new Sprite("3", 1, 1);
+        sprites[3] = new Sprite("4", 1, 1);
+        sprites[4] = new Sprite("5", 1, 1);
+        sprites[5] = new Sprite("6", 1, 1);
+        sprites[6] = new Sprite("7", 1, 1);
+        animation = new Animation(3, sprites, false);
         cursor = new ImageGraphics(ResourcePath.getSprite("icwars/UIpackSheet"), 1f, 1f, new RegionOfInterest(4*18, 26*18,16,16));
+        cursor.setDepth(2);
     }
 
+    /**
+     * Method handling a standard attack action for a real player. It handles
+     * the search of enemies, the damages to the opponent and the animation.
+     */
     @Override
     public void doAction(float dt, ICWarsPlayer player, Keyboard keyboard) {
         targets = getCloseEnemies();
         if (targets.size() == 0 || keyboard.get(Keyboard.TAB).isPressed()) {
             player.centerCamera();
             player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.ACTION_SELECTION);
-        } else {
-            target = targets.get(index);
-            if (keyboard.get(Keyboard.RIGHT).isPressed() && index < targets.size() - 1) {
-                ++index;
-                target = targets.get(index);
-            }
-            if (keyboard.get(Keyboard.LEFT).isPressed() && index > 0) {
-                --index;
-                target = targets.get(index);
+        } else  {
+            if (!isInProgress) {
+                realTarget = targets.get(index);
+                    if (keyboard.get(Keyboard.RIGHT).isPressed() && index < targets.size() - 1) {
+                      ++index;
+                     realTarget = targets.get(index);
+                  }
+                  if (keyboard.get(Keyboard.LEFT).isPressed() && index > 0) {
+                      --index;
+                      realTarget = targets.get(index);
+                  }
             }
             if (keyboard.get(Keyboard.ENTER).isReleased()) {
-                target.takeInjure(ownerUnit.getDamage());
+                realTarget.takeInjure(ownerUnit.getDamage());
+                index = 0 ;
+                hasTakenInjure = true;
+                for (int i = 0; i < sprites.length; i++) {
+                    sprites[i].setAnchor(realTarget.getPosition());
+                    sprites[i].setDepth(2);
+                }
+            }
+            if (animation.isCompleted()) {
+                isInProgress = false;
+                animation.reset();
+                hasTakenInjure = false;
                 player.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
             }
             ownerUnit.setHasBeenUsed(true);
         }
     }
 
+    /**
+     ** Method handling a standard attack action for an AIPlayer. The AIPlayer selects the enemyUnit in range
+     * with the lowest HP and attacks him
+     */
     @Override
     public void doAutoAction(float dt, AIPlayer aiPlayer) {
-        ArrayList<Unit> targets = getCloseEnemies();
-        int minHp = 100;
-        Unit targetToAttack = null ;
-        for (Unit target : targets) {
-            if(target.getHp() < minHp){
-                minHp = target.getHp();
-                targetToAttack = target ;
+        if (!isInProgress) {
+            ArrayList<Unit> targets = getCloseEnemies();
+            int minHp = 100;
+            aiTarget = null ;
+            for (Unit target : targets) {
+                if (target.getHp() < minHp) {
+                    minHp = target.getHp();
+                    aiTarget = target;
+                }
             }
+        aiTarget.takeInjure(ownerUnit.getDamage());
+        hasTakenInjure = true;
+        for (int i = 0; i < sprites.length; i++) {
+            sprites[i].setAnchor(aiTarget.getPosition());
+            sprites[i].setDepth(2);
         }
-        targetToAttack.takeInjure(ownerUnit.getDamage());
-        aiPlayer.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
+    }
+        if(animation.isCompleted()){
+            isInProgress = false ;
+            animation.reset();
+            hasTakenInjure = false;
+            aiPlayer.setCurrentPlayerState(ICWarsPlayer.ICWarsPlayerState.NORMAL);
+        }
     }
 
-
+    /**
+     * Method handling the display of cursor and the update
+     * and drawing of the animation during attack.
+     */
     @Override
     public void draw(Canvas canvas) {
-        if (target == null) ;
-        else {
-            target.centerCamera();
+        //Draw pour un Real Player
+        if (realTarget != null) {
+            realTarget.centerCamera();
             cursor.setAnchor(canvas.getPosition().add(1, 0));
             cursor.draw(canvas);
+            if (hasTakenInjure && !animation.isCompleted()) {
+                isInProgress = true ;
+                animation.update(1);
+                animation.draw(canvas);
+            }
         }
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
+        //Draw pour un AIPlayer
+        if (aiTarget != null) {
+            aiTarget.centerCamera();
+            cursor.setAnchor(aiTarget.getPosition().add(1, 0));
+            cursor.draw(canvas);
+            if(hasTakenInjure && !animation.isCompleted()) {
+                isInProgress = true ;
+                animation.update(1);
+                animation.draw(canvas);
+            }
+        }
     }
 
     //-----------------------------------Private-------------------------------------//

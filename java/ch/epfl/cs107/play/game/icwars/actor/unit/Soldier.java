@@ -2,6 +2,7 @@ package ch.epfl.cs107.play.game.icwars.actor.unit;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.CaptureAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.WaitAction;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
@@ -40,22 +41,26 @@ public class Soldier extends Unit {
         }
     }
 
+    @Override
+    public int getDamage(){
+        return 2 ;
+    }
+    @Override
+    public int getRadius(){
+        return 2 ;
+    }
+    @Override
+    public int getMaxHp(){
+        return 5 ;
+    }
+    @Override
+    public String getName(){
+        return "Soldier";
+    }
+
     public static DiscreteCoordinates getSpawnCoordinates(Faction faction){
         DiscreteCoordinates coordinates ;
         coordinates = (faction == Faction.ALLY) ? new DiscreteCoordinates(3, 5) : new DiscreteCoordinates(9, 5);
         return coordinates;
-    }
-
-    public int getDamage(){
-        return 2 ;
-    }
-    public int getRadius(){
-        return 2 ;
-    }
-    public int getMaxHp(){
-        return 5 ;
-    }
-    public String getName(){
-        return "Soldier";
     }
 }

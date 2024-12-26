@@ -2,10 +2,15 @@ package ch.epfl.cs107.play.game.icwars.actor.unit;
 
 import ch.epfl.cs107.play.game.areagame.Area;
 import ch.epfl.cs107.play.game.areagame.actor.Interactable;
+import ch.epfl.cs107.play.game.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.game.icwars.actor.city.ICWarsCity;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.AttackAction;
+import ch.epfl.cs107.play.game.icwars.actor.unit.action.CaptureAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.ICWarsAction;
 import ch.epfl.cs107.play.game.icwars.actor.unit.action.WaitAction;
 import ch.epfl.cs107.play.game.icwars.area.ICWarsArea;
+import ch.epfl.cs107.play.game.icwars.area.ICWarsBehavior;
+import ch.epfl.cs107.play.game.icwars.handler.ICWarInteractionVisitor;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.game.areagame.actor.Sprite;
 import ch.epfl.cs107.play.math.Vector;
@@ -15,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tank extends Unit {
+    private boolean hasAddedCapture = false ;
 
     //-----------------------------------API-------------------------------------//
     /**
@@ -41,6 +47,43 @@ public class Tank extends Unit {
         }
     }
 
+    /**
+     * Method adding the Capture Action to the tank actionsList if it is placed
+     * on an enemy city, and removing it otherwise
+     */
+    @Override
+    public void update(float deltaTime) {
+        if(isOnEnemyCity()){
+            if(!hasAddedCapture) {
+                ICWarsArea area = (ICWarsArea) getOwnerArea();
+                actionsList.add(new CaptureAction(area, this));
+                hasAddedCapture = true;
+            }
+        } else {
+            if(actionsList.size() == 3){
+                actionsList.remove(2);
+            }
+            hasAddedCapture = false  ;
+        }
+        super.update(deltaTime);
+    }
+
+    @Override
+    public int getDamage() {
+        return 5;
+    }
+    @Override
+    public int getRadius(){
+        return 3;
+    }
+    @Override
+    public int getMaxHp(){
+        return 10;
+    }
+    @Override
+    public String getName(){
+        return "Tank";
+    }
 
     public static DiscreteCoordinates getSpawnCoordinates(Faction faction){
         DiscreteCoordinates coordinates ;
@@ -48,19 +91,6 @@ public class Tank extends Unit {
         return coordinates;
     }
 
-
-    public int getDamage() {
-        return 5;
-    }
-    public int getRadius(){
-        return 3;
-    }
-    public int getMaxHp(){
-        return 10;
-    }
-    public String getName(){
-        return "Tank";
-    }
 }
 
 
