@@ -2,11 +2,15 @@
 
 Ce repository contient le code pour le second projet du cours **CS-107 - Introduction à la Programmation**, donné en première année à l'EPFL.
 
-**ICWars** est un jeu de stratégie de type *Advance Wars* en 2D, articulé autour de grilles de jeu. Il contient deux niveaux, les niveaux $0$ et $1$, et est prévu pour pouvoir jouer à $1$ ou $2$ joueurs : il est possible de jouer contre une IA ou contre un autre vrai joueur sur le même ordinateur.
+**ICWars** est un jeu de stratégie de type *Advance Wars* en 2D, articulé autour de grilles de jeu. Il contient deux niveaux et il est prévu pour pouvoir jouer à $1$ ou $2$ joueurs : il est possible de jouer contre un robot ou contre un autre vrai joueur sur le même ordinateur.
+
+![niveau 1](res/docs/level1.png)
 
 ## Règles du jeu
 
 Le but du jeu est de détruire les unités adverses à l'aide de ses propres unités. Pour ce faire, à chaque tour, chacun des joueurs peut déplacer chacune de ses unités dans un rayon de déplacement propre à chaque unité, puis lui faire effectuer une action au choix : **attaquer** ou **attendre**. Dans le cas d'une attaque, il est possible de sélectionner une cible ennemie dans son rayon d'attaque, et de lui infliger les dégâts correspondant à la puissance de feu de l'unité.
+
+![rocketman](res/docs/rocketman.png)
 
 ## Grille de jeu
 
