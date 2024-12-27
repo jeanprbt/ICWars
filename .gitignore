@@ -3,6 +3,13 @@
 
 # binary
 bin/
+out/
+classes/
+build/
+
+# cache
+.gradle/
 
 # IDEs
 .idea/
+*.iml
