@@ -22,7 +22,7 @@ Il y a trois types d'unités : les **soldats**, les **tanks** et les **artilleur
 
 ## Lancement du jeu
 
-Les dépendances et le processus de build sont gérés par [`gradle`](https://gradle.org). Pour lancer le jeu, il suffit d'exécuter le wrapper spécifique à votre OS.
+Les dépendances et le processus de build sont gérés par [`gradle`](https://gradle.org). Pour lancer le jeu, il suffit d'exécuter le wrapper spécifique à votre OS. Vous devez égalemnt avoir installé `java` (version comprise entre $11$ et $21$).)
 
 ### macOS & Linux
 
